@@ -1,6 +1,7 @@
----
-layout:default
-title:hello world
----
 # Hello world title
-hello world body
+```c
+int main(void){
+  printf("Hello world\n");
+  return 0;
+}
+```
