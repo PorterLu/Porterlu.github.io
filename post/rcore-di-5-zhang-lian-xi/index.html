@@ -1,0 +1,358 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第5章练习 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第5章练习
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-19 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="实践作业1">实践作业1</h2>
+<h3 id="进程创建">进程创建</h3>
+<p>大家一定好奇过为啥进程创建要用<code>fork + execve</code>这么一个奇怪的系统调用，就不能直接搞一个新进程吗？思而不学则殆，我们就来试一试！这章的编程练习请大家实现一个完全 <code>DIY</code> 的系统调用 <code>spawn</code>，用以创建一个新进程。</p>
+<p><code>spawn</code> 系统调用定义( <a href="https://man7.org/linux/man-pages/man3/posix_spawn.3.html">标准spawn看这里</a> )：</p>
+<pre><code>fn sys_spawn(path: *const u8) -&gt; isize
+</code></pre>
+<ul>
+<li>
+<p><code>syscall ID</code>: 400</p>
+</li>
+<li>
+<p>功能：新建子进程，使其执行目标程序。</p>
+</li>
+<li>
+<p>说明：成功返回子进程<code>id</code>，否则返回 -1。</p>
+</li>
+<li>
+<ul>
+<li>
+<p>可能的错误：</p>
+<p>无效的文件名。进程池满/内存不足等资源错误。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>TIPS：虽然测例很简单，但提醒读者 <code>spawn</code> <strong>不必</strong> 像<code> fork</code> 一样复制父进程的地址空间。</p>
+<h2 id="实验练习2">实验练习2</h2>
+<h3 id="实践作业">实践作业</h3>
+<h4 id="stride-调度算法">stride 调度算法</h4>
+<p><code>ch3</code> 中我们实现的调度算法十分简单。现在我们要为我们的 <code>os</code> 实现一种带优先级的调度算法：<code>stride</code> 调度算法。</p>
+<p>算法描述如下:</p>
+<ol>
+<li>为每个进程设置一个当前 <code>stride</code>，表示该进程当前已经运行的“长度”。另外设置其对应的 <code>pass</code> 值（只与进程的优先权有关系），表示对应进程在调度后，<code>stride</code> 需要进行的累加值。</li>
+<li>每次需要调度时，从当前<code> runnable</code> 态的进程中选择 <code>stride</code> 最小的进程调度。对于获得调度的进程<code> P</code>，将对应的<code> stride</code> 加上其对应的步长 <code>pass</code>。</li>
+<li>一个时间片后，回到上一步骤，重新调度当前 stride 最小的进程。</li>
+</ol>
+<p>可以证明，如果令 <code>P.pass = BigStride / P.priority</code> 其中<code> P.priority</code> 表示进程的优先权（大于 1），而 <code>BigStride</code> 表示一个预先定义的大常数，则该调度方案为每个进程分配的时间将与其优先级成正比。证明过程我们在这里略去，有兴趣的同学可以在网上查找相关资料。</p>
+<p>其他实验细节：</p>
+<ul>
+<li><code>stride</code> 调度要求进程优先级 ≥2，所以设定进程优先级 ≤1 会导致错误。</li>
+<li>进程初始 <code>stride</code> 设置为 0 即可。</li>
+<li>进程初始优先级设置为 16。</li>
+</ul>
+<p>为了实现该调度算法，内核还要增加 <code>set_prio</code> 系统调用</p>
+<pre><code>// syscall ID：140
+// 设置当前进程优先级为 prio
+// 参数：prio 进程优先级，要求 prio &gt;= 2
+// 返回值：如果输入合法则返回 prio，否则返回 -1
+fn sys_set_priority(prio: isize) -&gt; isize;
+</code></pre>
+<p>tips: 可以使用优先级队列比较方便的实现 stride 算法，但是我们的实验不考察效率，所以手写一个简单粗暴的也完全没问题。</p>
+<h2 id="我的实现">我的实现</h2>
+<h3 id="简述">简述</h3>
+<h4 id="spawn">spawn</h4>
+<p>​	这里的<code>spawn</code>需要我们生成一个进程，并且将这个进程加入到队列中, 和<code>fork</code>不同的点在于它不会赋值父进程的空间，和<code>exec</code>不同的点在于它不会替换进程的执行流。这里实现的过程为在<code>TaskControlBlock</code>中新加入一个函数，它会直接根据<code>path</code>由<code>elf</code>生成一个地址空间，同时将这个进程加入到父进程下，在生成自己的<code>trap</code>上下文后，这个<code>block</code>会被加入到调度队列中。</p>
+<h3 id="stride调度">stride调度</h3>
+<p>​	这里需要为每一个<code>control block</code>添加两个新的成员<code>stride</code>和<code>priority</code>，前一个初始值为0，后一个为<code>16</code>。这里我们将<code>Manager</code>中的队列替换为<code>BinaryHeap</code>, 还要为<code>TaskControlBlock</code>实现<code>Eq</code>，<code>PartialEq</code>, <code>Ord</code>和<code>PartialOrd</code>，我们通过比较<code>stride</code>获取到关系。修改外<code>fetch</code>等方法后，每一次获取的都是<code>stride</code>最小的任务。最后我们在<code>run_task</code>中每一调度一个新的任务时，更新我们的<code>stride</code>值，注意这里不要把<code>BIG_STRIDE</code>设置太大，否则会溢出。</p>
+<h3 id="具体代码">具体代码</h3>
+<pre><code class="language-rust">impl TaskControlBlock {
+	pub fn spawn(self: &amp;Arc&lt;Self&gt;, elf_data: &amp;[u8]) -&gt; Arc&lt;Self&gt; {
+        let mut parent_inner = self.inner_exclusive_access();
+        let (memory_set, user_sp, entry_point) = MemorySet::from_elf(elf_data);
+        let trap_cx_ppn = memory_set
+            .translate(VirtAddr::from(TRAP_CONTEXT).into())
+            .unwrap()
+            .ppn();
+        let pid_handle = pid_alloc();
+        let kernel_stack = KernelStack::new(&amp;pid_handle);
+        let kernel_stack_top = kernel_stack.get_top();
+        let task_control_block = Arc::new(TaskControlBlock {
+            pid: pid_handle,
+            kernel_stack,
+            inner: unsafe {
+                UPSafeCell::new(TaskControlBlockInner {
+                    trap_cx_ppn,
+                    base_size: user_sp,
+                    task_cx: TaskContext::goto_trap_return(kernel_stack_top),
+                    task_status: TaskStatus::Ready,
+                    memory_set,
+                    parent: Some(Arc::downgrade(self)),
+                    children: Vec::new(),
+                    exit_code: 0,
+                    stride: 0,
+                    priority: 16,
+                })
+            },
+        });
+        let trap_cx = task_control_block.inner_exclusive_access().get_trap_cx();
+        *trap_cx = TrapContext::app_init_context(
+            entry_point,
+            user_sp,
+            KERNEL_SPACE.exclusive_access().token(),
+            kernel_stack_top,
+            trap_handler as usize,
+        );
+        parent_inner.children.push(task_control_block.clone());
+        task_control_block
+
+    }
+}
+</code></pre>
+<p>​	这里依次解析<code>elf</code>文件，获取了<code>pid</code>和内核栈，创建控制块，设置<code>trap</code>上下文，最后返回这个控制块，这个控制块会被加入到队列中。</p>
+<pre><code class="language-rust">impl PartialEq for TaskControlBlock {
+    fn eq(&amp;self, other: &amp;Self) -&gt; bool {
+        let self_control_block = self.inner_exclusive_access();
+        let other_control_block = other.inner_exclusive_access();
+        let self_stride = self_control_block.stride;
+        let other_stride = other_control_block.stride;
+        
+        drop(self_control_block);
+        drop(other_control_block);
+
+        self_stride == other_stride
+    }
+}
+
+impl Eq for TaskControlBlock {}
+
+impl Ord for TaskControlBlock {
+    fn cmp(&amp;self, other: &amp;Self) -&gt; Ordering {
+        let self_control_block = self.inner_exclusive_access();
+        let other_control_block = other.inner_exclusive_access();
+        let self_stride = self_control_block.stride;
+        let other_stride = other_control_block.stride;
+        drop(self_control_block);
+        drop(other_control_block);
+        other_stride.cmp(&amp;self_stride)
+    }
+}
+
+impl PartialOrd for TaskControlBlock {
+    fn partial_cmp(&amp;self, other: &amp;Self) -&gt; Option&lt;Ordering&gt; {
+        Some(self.cmp(other))
+    }
+}
+</code></pre>
+<p>​	这里会有一些繁琐，实际上可以直接将<code>drop</code>任务交给编译器。需要注意的是由于是大根堆，所以如果要最小值排在最前面，我们需要将比较对象的位置互换。</p>
+<pre><code class="language-rust">impl TaskManager {
+    pub fn new() -&gt; Self {
+        Self {
+            ready_queue: BinaryHeap::new(),
+        }
+    }
+    pub fn add(&amp;mut self, task: Arc&lt;TaskControlBlock&gt;) {
+        self.ready_queue.push(task);
+    }
+    pub fn fetch(&amp;mut self) -&gt; Option&lt;Arc&lt;TaskControlBlock&gt;&gt; {
+        self.ready_queue.pop()
+    }
+}
+</code></pre>
+<p>​	同时可以看到，我们将数据结构替换了堆。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rust-lian-biao/" class="post-title gt-a-link">
+                    Rust链表
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

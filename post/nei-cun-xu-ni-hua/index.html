@@ -1,0 +1,237 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>内存虚拟化 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    内存虚拟化
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-04-16 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/Ml-Q-VwEq/" class="post-tags">
+                            # virtualization
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="三种地址">三种地址</h2>
+<ul>
+<li>客户虚拟地址<code>Guest Virtual Address</code></li>
+<li>客户物理地址<code>Guest Physical Address</code></li>
+<li>主机物理地址<code>Host Physical Address</code></li>
+</ul>
+<p>将<code>GPA</code>和<code>HPA</code>进行管理，是<code>VMM</code>需要负责的工作。</p>
+<h3 id="内存虚拟化的方式">内存虚拟化的方式</h3>
+<h3 id="影子页表">影子页表</h3>
+<pre><code class="language-c">set_cr3 (guest_page_table):
+	for GVA in 0 to pow(2, 20)
+        if guest_page_table[GVA] &amp; PTE_P:
+			GPA = guest_page_table[GVA] &gt;&gt; 12
+            HPA = host_page_table[GPA] &gt;&gt; 12
+            shadow_page_table[GVA] = (HPA &lt;&lt; 12) | PTE_P
+        else
+            shadow_page_table[GVA] = 0
+   	CR3 = PHYSICAL_ADDR(shadow_page_table)
+</code></pre>
+<p>​	这里遍历了页表，将影子页表设置为了将<code>GVA</code>翻译为<code>HPA</code>的结构，这个过程需要遍历所有<code>GVA</code>项，最后将影子页表基地址设置到<code>CR3</code>中。</p>
+<p>​	这样<code>VMM</code>就可以拥有一个独立的影子页表，相应的，一旦<code>guest OS</code>修改页表，影子页表也要做相应的更新。</p>
+<p>​	为了达到这样的目的，这里使用一些手法，将这些页中的所有页都设置为只读，如果<code>guest OS</code>修改了这些页，那么硬件就会触发缺页异常。这样<code>VMM</code>就可以处理缺页异常，更新影子页表。如何将<code>Guest OS</code>和<code>Guest app</code>进行隔离？在影子页表的实现中，需要同时维护两个页表，当<code>guest os</code>切换到<code>U</code>，<code>VMM</code>也要做切换影子页表的操作。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/vmm_kernel_only_page.png" alt="" loading="lazy"></figure>
+<p>​		如果切换到<code>U</code>，我们需要调用<code>set_ptp(current, 0)</code>,  这样只有标注为<code>User</code>，会被添加到影子页表中。</p>
+<h3 id="直接映射">直接映射</h3>
+<p>​		这是一种半虚拟化的方式，我们需要直接修改<code>guest OS</code>代码，只用<code>GVA</code>和<code>HPA</code>，<code>Guest OS</code>接着操纵它的<code>HPA</code>空间，然后使用<code>hypercall</code>将自己要修改的信息告诉<code>VMM</code>， <code>VMM</code>来更新页表，<code>CR3</code>指向这个<code>GUEST OS</code>的页表。</p>
+<h3 id="硬件虚拟化对于内存翻译的支持">硬件虚拟化对于内存翻译的支持</h3>
+<p>​	创建一个新的页表将<code>GPA</code>翻译为<code>HPA</code>，这个表由<code>VMM</code>直接控制，每个<code>VM</code>一个表，<code>Intel</code>称之为<code>EPT</code>，<code>ARM</code>上叫<code>Stage-2 Page Table</code>。这样在翻译完成<code>GVA-&gt;GPA</code>后会自动进一步的翻译。</p>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/gva_hpa_translation.png" alt="" loading="lazy">	由于本身一次非虚拟化页表的页表访问需要4次内存访问，但是在虚拟化场景下，这里的地址都变为了<code>GPA</code>了，需要进行进一步的翻译。不同的是，每一级的都要将<code>GPA</code>翻译为<code>HPA</code>，总共需要24次访存。</p>
+<p>​	这里<code>TLB</code>可以缓存<code>GVA-&gt;HPA</code>，大大加速了翻译过程。同时一阶段页表缺失不会引起<code>VM Exit</code>.</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/ying-jian-fu-zhu-xu-ni-hua/" class="post-title gt-a-link">
+                    硬件辅助虚拟化
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

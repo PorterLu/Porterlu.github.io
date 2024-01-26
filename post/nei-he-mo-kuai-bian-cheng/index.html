@@ -1,0 +1,362 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>内核模块编程 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    内核模块编程
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-10 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/rmElbrhZn/" class="post-tags">
+                            # linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="实验目的">实验目的</h3>
+<p>​	熟悉内核模块编程和<code>proc</code>文件系统的编程。</p>
+<h3 id="内核模块命令">内核模块命令</h3>
+<ul>
+<li>插入模块：<code>insmod hello.ko</code></li>
+<li>移除模块：<code>rmmod hello</code></li>
+<li>列出模块：<code>lsmod</code></li>
+<li>查看模块信息：<code>modinfo hello.ko</code></li>
+<li>插入模块，并自动处理存在依赖关系的模块：<code>modprobe hello.ko</code></li>
+</ul>
+<h3 id="模块的加载和移除">模块的加载和移除</h3>
+<p>​	引入3个基本的头文件，其中的<code>kernel.h</code>中包含了打印函数<code>printk()</code>等基本函数原型。接着<code>module.h</code>的作用是动态地将模块加载到内核中，<code>init.h</code>包含了模块的初始化的宏定义和函数的初始化函数。</p>
+<pre><code class="language-c">#include &lt;linux/kernel.h&gt;
+#include &lt;linux/module.h&gt;
+#include &lt;linux/init.h&gt;
+</code></pre>
+<p>​	可以通过如下代码进行加载和移除模块。</p>
+<pre><code class="language-c">module_init(hello_init);
+module_exit(hello_exit);
+</code></pre>
+<p>​	在两个函数在<code>linux/init.h</code>中定义，用于定义了内核模块的出入口。函数体如下：</p>
+<pre><code class="language-c">static int __init hello_init(void){
+    printk(KERN_INFO &quot;Hello Linux Module...\n&quot;);
+    return 0;
+}
+
+static void __exit hello_exit(void){
+    printk(KERN_INFO &quot;Bye.\n&quot;);
+}
+</code></pre>
+<p>​	最后某块需要对于一些作者信息，许可证的说明。</p>
+<pre><code class="language-c">MODULE_LICENSE(&quot;GPL&quot;);
+MODULE_DESCRIPTION(&quot;Module1&quot;);
+MODULE_AUTHOR(&quot;Porterlu&quot;);
+</code></pre>
+<h3 id="模块参数传递">模块参数传递</h3>
+<p>​	接着加入两个头文件<code>linux/moduleparam.h</code>和<code>linux/string.h</code>用于参数传递和字符串处理。</p>
+<pre><code class="language-c">static int int_var = -9999;
+static char *str_var = &quot;Default&quot;;
+static int int_array[10];
+int arrNum;
+
+module_param(int_var, int, 0644);
+MODULE_PARM_DESC(int_var, &quot;An integer variable&quot;);
+module_param(str_var, charp, 0644);
+MODULE_PARM_DESC(str_var, &quot;A string variable&quot;);
+module_param_array(int_array, int, &amp;arrNum, 0644);
+MODULE_PARM_DESC(int_array, &quot;An integer array&quot;);
+</code></pre>
+<p>​	参数说明完毕后，进行函数编写：</p>
+<pre><code class="language-c">static int __init hello_init(void){
+    int i;
+    
+    if(int_var == -9999 &amp;&amp; strcmp(str_var, &quot;Default&quot;) == 0 &amp;&amp; arrNum == 0){
+        printk(KERN_INFO &quot;No parameters input, exit.\n&quot;);
+        return 0;
+    }
+    
+    printk(KERN_INFO &quot;The parameters are:\n&quot;);
+    if(int_var != -9999){
+        printk(KERN_INFO &quot;Int: %d\n&quot;, int_var);
+    }
+    
+    if(strcmp(str_var, &quot;Default&quot;) != 0){
+        printk(KERN_INFO &quot;Str: %s\n&quot;, str_var);
+    }
+    
+    if(arrNum != 0){
+        for(i = 0; i &lt; arrNum; i++){
+            printk(KERN_INFO &quot;Int_array[%d]: %d\n&quot;, i, int_array[i]);
+        }
+    }
+}
+</code></pre>
+<p>编译成功后，使用如下的命令进行测试</p>
+<pre><code class="language-c">insmod module.ko int_var = 123 str_var=hello int_array=1,2,3,4,5
+</code></pre>
+<h3 id="只读文件">只读文件</h3>
+<p>​	需要创建<code>proc</code>文件，读取文件内容，返回信息。</p>
+<ul>
+<li><code>&lt;linux/proc_fs.h&gt;</code>, 包含了一些<code>proc</code>文件系统的读写、创建函数。</li>
+<li><code>&lt;linux/seq_file.h&gt;</code>, 包含了<code>seq_read</code>,<code>seq_lseek</code>等顺序文件处理函数。</li>
+<li><code>linux/sched.h&gt;</code>，任务调度相关，包含了系统时间的全局变量。</li>
+</ul>
+<pre><code class="language-c">static int __init hello_proc_init(void) {
+    printk(KERN_INFO &quot;Test for modules...\n&quot;);
+    proc_create(&quot;hello module&quot;, 0444, NULL, &amp;hello_proc_fops);
+    
+    return 0;
+}
+</code></pre>
+<p>​	在入口函数中，我们注册了一个<code>proc</code>伪文件。其中<code>hello_proc_fops</code>是一个结构体。</p>
+<pre><code class="language-c">static const struct proc_ops hello_proc_fops = {
+    .proc_open = hello_proc_open,
+    .proc_read = seq_read,
+    .proc_lseek = seq_lseek,
+    .proc_release = single_release,
+};
+</code></pre>
+<p>​	除了<code>proc_open</code>，全是已经封装好的函数。接下来我们的<code>hello_proc_open</code>如下：</p>
+<pre><code class="language-c">static int hello_proc_open(struct inode *inode, struct file *file){
+    return single_open(file, hello_proc_show, NULL);
+}
+</code></pre>
+<p>​	在<code>open</code>函数中调用了<code>single_open</code>，之后会调用<code>hello_proc_show</code></p>
+<pre><code class="language-c">static int hello_proc_show(struct seq_file *m, void *v){
+    seq_printf(m, &quot;Current kernel time is %ld\n&quot;, jiffies);
+}
+</code></pre>
+<h3 id="读写文件">读写文件</h3>
+<p>​	在上面模块的基础上，还要加入<code>linux/slab.h</code>和<code>linux/uaccess.h</code>,分别用于内存分配和<code>copy_from_user</code>函数的引入。</p>
+<p>​	这里初始化添加了目录的创建和删除，要先进行目录的创建：</p>
+<pre><code class="language-c">static int __init hello_init(void){
+    printk(KERN_INFO &quot;Test for module...\n&quot;);
+    
+    helloDir = proc_mkdir(&quot;helloDir&quot;, NULL);
+    if(!helloDir){
+        return -ENOMEM;
+    }
+    
+    hello = proc_create(&quot;hello&quot;, 0644, HelloDir, &amp;hello_proc_fops);
+}
+</code></pre>
+<pre><code class="language-c">static void __exit hello_exit(void){
+    remove_proc_entry(&quot;hello&quot;, helloDir);
+    remove_proc_entry(&quot;helloDir&quot;, NULL);
+}
+</code></pre>
+<p>​	下面是<code>hello_proc_show</code> 和上一板块中讲的一样，它将由<code>single_open</code>进行回调，输出我们<code>write</code>的信息。</p>
+<pre><code class="language-c">static char *message = NULL;
+struct proc_dir_entry *helloDir, *hello;
+
+static int hello_proc_show(struct seq_file *m, void *v){
+	seq_printf(m, &quot;Successfully read content from proc file!\n&quot;);
+    seq_printf(m, &quot;The message is:%s\n&quot;, message);
+    return 0;
+}
+</code></pre>
+<p>​	<code>write</code>使用<code>copy_from_user</code>将用户的数据拷贝到了内核的数组中进行输出。</p>
+<pre><code class="language-c">static ssize_t hello_proc_write(struct file *file, const char __user *buffer, size_t count, loff_t *f_pos){
+    char *userBuffer = kzalloc((count+1), GFP_KERNEL);
+    if(!userBuffer){
+        return -ENOMEM;
+    }
+    
+    if(copy_from_user(userBuffer, buffer, count)){
+        kfree(userBuffer);
+        return EFAULT;
+    }
+    
+    kfree(message);
+    message = userBuffer;
+    return count;
+}
+</code></pre>
+<p>​</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/risc-v-qing-liang-ji-an-quan-yin-dao-fang-an/" class="post-title gt-a-link">
+                    RISC-V轻量级安全引导方案
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

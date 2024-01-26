@@ -1,0 +1,237 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>虚拟机类型 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    虚拟机类型
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-04-15 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/Ml-Q-VwEq/" class="post-tags">
+                            # virtualization
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="虚拟机的类型">虚拟机的类型</h2>
+<h3 id="type-1-虚拟机监视器">Type-1 虚拟机监视器</h3>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/type-1_vmm.png" alt="" loading="lazy"></figure>
+<p>​	直接运行在硬件上，充当了操作系统的角色，像操作系统一样实现调度、内存管理、驱动硬件等，典型的有<code>Xen</code>。</p>
+<h3 id="type-2-虚拟机监视器">Type-2 虚拟机监视器</h3>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/type-2_vmm.png" alt="" loading="lazy"></figure>
+<p>​	依赖主机的操作系统，主机操作系统依旧管理物理资源，将虚拟机当作应用在运行，复用了主机上操作系统的大部分功能。</p>
+<h2 id="系统isa">系统ISA</h2>
+<p>​	系统<code>ISA</code>指的是读写敏感寄存器、控制处理器行为（如<code>WFI</code>）、控制虚拟或物理内存（打开、配置、安装页表）、控制外设（<code>DMA</code>和中断）。</p>
+<p>​	为此必须提供捕捉系统<code>ISA</code>, 内存虚拟化、设备虚拟化。</p>
+<h2 id="最直接的实现方法">最直接的实现方法</h2>
+<p>​	将虚拟机放在操作系统原本的特权级，这样客户操作系统和进程都运行在用户态，操作系统。当用户态的程序执行特权指令，会陷入到<code>VMM</code>进行模拟。但是不是所有的敏感指令都是特权指令，如何处理这些不会下陷的敏感指令：</p>
+<ul>
+<li>解释执行</li>
+<li>二进制翻译</li>
+<li>半虚拟化</li>
+<li>硬件虚拟化</li>
+</ul>
+<h2 id="解释执行">解释执行</h2>
+<p>​	使用软件的方法对于任何一条指令进行模拟，没有任何指令直接在硬件上运行，同时使用内存维护虚拟机的状态。</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/explain_execute.png" alt="" loading="lazy"></figure>
+<p>​	解决了敏感指令不下陷的问题，实现简单，但是效率非常低。</p>
+<h2 id="二进制翻译">二进制翻译</h2>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/binary_translation.png" alt="" loading="lazy">	通过翻译虚拟机指令，之后以基本块为单位进行执行。但是它不能处理自修改的代码，且中断插入的粒度较大，因为每次执行都是将翻译完的代码放到硬件上直接执行，所以<code>VMM</code>只能在边界进行检查。</p>
+<h2 id="半虚拟化">半虚拟化</h2>
+<p>​	提供<code>hypercall</code>，修改操作系统的源码，将所有的敏感指令替换为<code>vmm</code>的调用。</p>
+<p>​	提升了敏感指令不下陷的问题，提升<code>I/O</code>等场景的性能。缺点是需要修改操作系统。</p>
+<h2 id="硬件辅助虚拟化">硬件辅助虚拟化</h2>
+<p>​	<code>x86</code> 引入了全新的特权级 <code>root</code>模式和<code>non-root</code>模式，将<code>VMM</code>运行在<code>root</code>模式，虚拟机运行在非<code>root</code>模式。</p>
+<p>​	而在<code>ARM</code>中<code>VMM</code>运行在<code>EL2</code>，同时操作系统和应用程序分别运行在<code>EL1</code>和<code>EL0</code>。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/clepsydracache-preventing-cache-attacks-with-time-based-evictions/" class="post-title gt-a-link">
+                    CLEPSYDRACACHE – Preventing Cache Attacks with Time-Based Evictions 
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

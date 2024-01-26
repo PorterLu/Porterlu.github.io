@@ -1,0 +1,261 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>硬件辅助虚拟化 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    硬件辅助虚拟化
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-04-15 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/Ml-Q-VwEq/" class="post-tags">
+                            # virtualization
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="vt-x">VT-x</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/intel_vt-x.png" alt="" loading="lazy"></figure>
+<h3 id="vmcs">VMCS</h3>
+<p>​	使用<code>VMM(Virtual Machine Control Structure)</code>控制虚拟机的状态，它包含了6个部分的内容：</p>
+<ul>
+<li><code>Guest-state area</code>:  当发生一次<code>VM exit</code>， <code>CPU</code>现在的状态被自动保存到这个区域中; <code>VM Entry</code>时，又将这个区域的内容加载到<code>CPU</code>中。</li>
+<li><code>Host-state area</code>: 当发生<code>VM exit</code>时，可这个区域信息加载到CPU中; <code>VM entry</code>, 相反。</li>
+<li><code>VM-execution control field</code>: 可以控制<code>non-root</code>模式中虚拟机的行为。</li>
+<li><code>VM-exit control field</code>: 控制<code>VM exit</code>的行为。</li>
+<li><code>VM-entry control field</code>: 控制<code>VM entry</code>的行为。</li>
+<li><code>VM-exit information field</code>： <code>VM exit</code>的原因，方便<code>VMM</code>进行处理。</li>
+</ul>
+<h3 id="vm-entry-and-vm-exit">VM Entry and VM Exit</h3>
+<p>​	<code>VM Entry</code>会从<code>root</code>进入<code>Non-root</code>模式，第一次使用<code>VMLAUNCH</code>指令，之后会使用<code>VMRESUME</code>指令。</p>
+<p>​	<code>VM Exit</code>会回到<code>root</code>模式，用于敏感指令检测和中断陷入。</p>
+<h2 id="arm-虚拟化技术">ARM 虚拟化技术</h2>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/arm_virtualization.png" alt="" loading="lazy"></figure>
+<h3 id="vm-entry-and-vm-exit-2">VM Entry and VM Exit</h3>
+<p>​	对于<code>eret</code> 从<code>VMM</code>进入<code>VM</code>，这和操作系统进入用户态的操作是一样的。<code>VMM</code>虚拟化需要自己准备<code>VM</code>的上下文并加载，最后通过<code>eret</code>进入到<code>VM</code>中。</p>
+<p>​	同样地，在<code>vm exit</code>时，即执行敏感指令或者受到中断时，需要<code>VMM</code>保存所有的状态，然后再执行<code>VMM</code>相关的处理程序。</p>
+<h3 id="armv80-type-2-vmm架构">ARMv8.0 Type-2 VMM架构</h3>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ARMv8.0_type2_vmm.png" alt="" loading="lazy"></figure>
+<p>​	在<code>EL2</code>只能运行<code>VMM</code>, <code>host os</code>需要大量修改才能运行。这里的设计在<code>EL2</code>做了接受转发的<code>lowvisor</code>, 依靠原本<code>Host OS</code>的<code>VMM</code>模块进行处理。</p>
+<h3 id="armv81-type-2-vmm架构">ARMv8.1 Type-2 VMM架构</h3>
+<h2 id="qemukvm"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ARMv8.1_type2_vmm.png" alt="" loading="lazy">QEMU/KVM</h2>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/QEMU_kvm_arch.png" alt="" loading="lazy"></figure>
+<p>​	由<code>ARMv8.1</code>提出的特性，我们可以设计出如上的架构，<code>QEMU</code>运行在用户态，负责实际的处理。同时<code>KVM</code>作为<code>Linux</code>的一个模块运行在<code>EL2</code>，负责对于敏感事件的捕捉，同时直接使用<code>Linux</code>提供的一些功能。</p>
+<p>​	<code>qemu</code>使用<code>ioctl</code>向<code>KVM</code>传递命名，如<code>CREATE_VM</code>, <code>CREATE_VCPU</code>, <code>KVM_RUN</code>等。</p>
+<pre><code class="language-{">open(&quot;/dev/kvm&quot;);
+ioctl(KVM_CREATE_VM);
+ioctl(KVM_CREATE_VCPU);
+while(true) {
+	ioctl(KVM_RUN);
+	exit_reason = get_exit_reason();
+	switch (exit_reason) {
+		case KVM_EXIT_IO: 
+			//....
+			break;
+		case KVM_EXIT_MMIO:
+			//...
+			break;
+	}
+}
+</code></pre>
+<ul>
+<li>在<code>x86</code>架构中，需要从<code>VCPU</code>中找到<code>VMCS</code>结构，使用<code>CPU</code>指令加载<code>VMCS</code>，使用<code>VMLAUNCH</code>或者<code>VMRESUME</code>进入到<code>Non-root</code>,  硬件会自动加载<code>VMCS</code>状态，跳转到<code>GUEST_RIP</code>执行。</li>
+<li>对于<code>ARM</code>，<code>KVM</code>会主动加载<code>VCPU</code>的所有状态，之后使用<code>eret</code>跳到<code>guest</code>程序执行。</li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/qemu_kvm_procedure.png" alt="" loading="lazy"></figure>
+<p>​		上图中解释这个过程，<code>KVM</code>运行在高特权级充当媒介进行切换。下面是一个更加具体的例子</p>
+<figure data-type="image" tabindex="7"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/wfi_vm_exit.png" alt="" loading="lazy"></figure>
+<p>​		当一个<code>VM</code>中的程序执行了<code>WFI</code>时，就会被捕获<code>VM Exit</code> 到<code>KVM</code>，<code>KVM</code>处理程序主动将<code>VCPU</code>信息进行保留，根据<code>handler</code>执行相应的函数，它可以使用<code>Linux</code>中现有的一些机制，等待<code>Kernel</code>结果返回后，<code>KVM</code>还可以调度下一个<code>VM</code>程序。</p>
+<figure data-type="image" tabindex="8"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/kvm_io_vm_exit.png" alt="" loading="lazy"></figure>
+<p>​	对于一个<code>IO</code>类型的<code>VM Exit</code>的陷入还射击<code>QEMU</code>，<code>QEMU</code>运行在用户态，但是由于<code>v8.1</code>中提到的特性这是允许的，<code>QEMU</code>处理完<code>IO</code>可以通过系统调用返回。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/xu-ni-ji-lei-xing/" class="post-title gt-a-link">
+                    虚拟机类型
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

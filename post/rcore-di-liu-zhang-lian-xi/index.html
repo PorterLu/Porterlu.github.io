@@ -1,0 +1,445 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第六章练习   | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第六章练习  
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-16 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="实践作业">实践作业</h3>
+<h4 id="硬链接">硬链接</h4>
+<p>硬链接要求两个不同的目录项指向同一个文件，在我们的文件系统中也就是两个不同名称目录项指向同一个磁盘块。</p>
+<p>本节要求实现三个系统调用 <code>sys_linkat、sys_unlinkat、sys_stat</code> 。</p>
+<p><strong>linkat</strong>：</p>
+<blockquote>
+<ul>
+<li>
+<p>syscall ID: 37</p>
+</li>
+<li>
+<p>功能：创建一个文件的一个硬链接， <a href="https://linux.die.net/man/2/linkat">linkat标准接口</a> 。</p>
+</li>
+<li>
+<p>Ｃ接口： <code>int linkat(int olddirfd, char* oldpath, int newdirfd, char* newpath, unsigned int flags)</code></p>
+</li>
+<li>
+<p>Rust 接口： <code>fn linkat(olddirfd: i32, oldpath: *const u8, newdirfd: i32, newpath: *const u8, flags: u32) -&gt; i32</code></p>
+</li>
+<li>
+<ul>
+<li>
+<p>参数：</p>
+<p>olddirfd，newdirfd: 仅为了兼容性考虑，本次实验中始终为 AT_FDCWD (-100)，可以忽略。flags: 仅为了兼容性考虑，本次实验中始终为 0，可以忽略。oldpath：原有文件路径newpath: 新的链接文件路径。</p>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<p>说明：</p>
+<p>为了方便，不考虑新文件路径已经存在的情况（属于未定义行为），除非链接同名文件。返回值：如果出现了错误则返回 -1，否则返回 0。</p>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<p>可能的错误</p>
+<p>链接同名文件。</p>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p><strong>unlinkat</strong>:</p>
+<blockquote>
+<ul>
+<li>
+<p>syscall ID: 35</p>
+</li>
+<li>
+<p>功能：取消一个文件路径到文件的链接, <a href="https://linux.die.net/man/2/unlinkat">unlinkat标准接口</a> 。</p>
+</li>
+<li>
+<p>Ｃ接口： <code>int unlinkat(int dirfd, char* path, unsigned int flags)</code></p>
+</li>
+<li>
+<p>Rust 接口： <code>fn unlinkat(dirfd: i32, path: *const u8, flags: u32) -&gt; i32</code></p>
+</li>
+<li>
+<ul>
+<li>
+<p>参数：</p>
+<p>dirfd: 仅为了兼容性考虑，本次实验中始终为 AT_FDCWD (-100)，可以忽略。flags: 仅为了兼容性考虑，本次实验中始终为 0，可以忽略。path：文件路径。</p>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<p>说明：</p>
+<p>为了方便，不考虑使用 unlink 彻底删除文件的情况。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>返回值：如果出现了错误则返回 -1，否则返回 0。</p>
+</li>
+<li>
+<ul>
+<li>
+<p>可能的错误</p>
+<p>文件不存在。</p>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p><strong>fstat</strong>:</p>
+<blockquote>
+<ul>
+<li>
+<p>syscall ID: 80</p>
+</li>
+<li>
+<p>功能：获取文件状态。</p>
+</li>
+<li>
+<p>Ｃ接口： <code>int fstat(int fd, struct Stat* st)</code></p>
+</li>
+<li>
+<p>Rust 接口： <code>fn fstat(fd: i32, st: *mut Stat) -&gt; i32</code></p>
+</li>
+<li>
+<ul>
+<li>
+<p>参数：</p>
+<p>fd: 文件描述符st: 文件状态结构体</p>
+<pre><code class="language-rust">#[repr(C)] 
+#[derive(Debug)] 
+pub struct Stat {    
+    /// 文件所在磁盘驱动器号，该实验中写死为 0 即可    
+    pub dev: u64,    /// inode 文件所在 inode 编号    
+    pub ino: u64,    /// 文件类型    
+    pub mode: StatMode,    /// 硬链接数量，初始为1    
+    pub nlink: u32,    /// 无需考虑，为了兼容性设计    
+    pad: [u64; 7], } 
+/// StatMode 定义： 
+bitflags! {    
+    pub struct StatMode: u32 
+    {        
+        const NULL  = 0;        
+        /// directory        
+        const DIR   = 0o040000;        
+        /// ordinary regular file        
+        const FILE  = 0o100000;    
+    } 
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="实现">实现</h3>
+<h4 id="link">link</h4>
+<p>​	<code>link</code>的实现会调用<code>inode</code>模块中的<code>add_a_link</code>方法，它是<code>ROOT_NODE</code>的一个方法</p>
+<pre><code class="language-rust">pub fn add_a_link(&amp;self, oldpath: &amp;str, newpath:&amp;str) -&gt; isize {
+		let mut fs = self.fs.lock();
+		self.modify_disk_inode(|root_inode| {
+			let file_count = (root_inode.size as usize) / DIRENT_SZ;
+			let new_size = (file_count + 1) * DIRENT_SZ;
+			for i in 0..file_count {
+				let mut dirent = DirEntry::empty();
+				root_inode.read_at(i * DIRENT_SZ, dirent.as_bytes_mut(), &amp;self.block_device);
+				if dirent.name() == oldpath {
+					self.increase_size(new_size as u32, root_inode, &amp;mut fs);
+					root_inode.write_at(new_size * DIRENT_SZ, DirEntry::new(newpath, dirent.inode_number()).as_bytes(), &amp;self.block_device);
+				}
+			}
+		});			
+		0
+	}
+</code></pre>
+<p>​	首先，代码中会尝试获取锁，之后通过回调函数，对自己这个<code>inode</code>进行操作。由于是根<code>inode</code>，我们可以遍历其中的目录，遍历其中的文件名，如果发现文件名和<code>old_path</code>相同的，可以添加一个记录，由于是硬链接公用一个<code>inode</code>即可。</p>
+<h3 id="unlink">unlink</h3>
+<p>​	<code>unlink</code>的实现会稍微复杂一点，</p>
+<pre><code class="language-rust">pub fn rm_a_link(&amp;self, path: &amp;str) -&gt; isize {
+		let mut fs = self.fs.lock();
+		self.modify_disk_inode(|root_inode| {
+			let file_count = (root_inode.size as usize) / DIRENT_SZ;
+			for i in 0..file_count {
+				let mut dirent = DirEntry::empty();
+				root_inode.read_at(i * DIRENT_SZ, dirent.as_bytes_mut(), &amp;self.block_device);
+				if dirent.name() == path {
+					for j in i+1..file_count{
+						root_inode.read_at(i*DIRENT_SZ, dirent.as_bytes_mut(), &amp;self.block_device);
+						root_inode.write_at((i-1) * DIRENT_SZ, dirent.as_bytes(),  &amp;self.block_device);
+
+					}
+					root_inode.size -= 1;
+					break;
+				}
+			}	
+		});
+		0
+	}
+</code></pre>
+<p>​	我们仍然遍历根目录，如果找到一个和我们要找的文件名相同的项，我们就根据比较排序类似的方法， 将读到的后一项覆盖到前一项，这样目录中就不会出现空项。</p>
+<h3 id="fstat">fstat</h3>
+<p>​	我们需要在<code>File</code>中实现一个新的方法，用于获取这个实现<code>File Trait</code>的结构体的信息。</p>
+<pre><code class="language-rust">fn stat(&amp;self, st:&amp;mut Stat) -&gt; usize {
+		let inner = self.inner.exclusive_access();
+		inner.inode.stat(unsafe {
+				core::slice::from_raw_parts_mut(st as *mut Stat as usize as *mut u8,
+					core::mem::size_of::&lt;Stat&gt;(),
+				)	
+		});
+		1
+	}
+</code></pre>
+<p>​	我们实现了<code>fstat</code>方法，<code>Stat</code>结构体如下</p>
+<pre><code class="language-rust">pub struct Stat {
+	pub dev: u64,
+	pub ino: u64,
+	pub mode: StatMode,
+	pub nlink: u32,
+	pad: [u64; 7],
+}
+</code></pre>
+<p>​	由于要在这里没有在<code>easy-fs</code>实现<code>Stat</code>结构体，我选择将<code>Stat</code>转化为字节数组引用进行传递</p>
+<ul>
+<li>第一步，<code>&amp;mut Stat</code>可以转化为<code>* mut Stat</code>指针</li>
+<li>指针可以转化为<code>usize</code>地址</li>
+<li>再将<code>usize</code>转化为一个<code>*mut u8</code>的指针</li>
+</ul>
+<p>​	最后构造一个引用</p>
+<pre><code class="language-rust">pub fn stat(&amp;self, st: &amp;mut [u8]) -&gt; usize{
+    	let mut fs = self.fs.lock();
+		let st_trans:&amp;mut Stat = unsafe { ( st.as_mut_ptr() as usize as *mut Stat).as_mut().unwrap()};
+		let inode_id = ((self.block_id - self.fs.lock().inode_area_start_block as usize) * BLOCK_SZ + self.block_offset) / core::mem::size_of::&lt;Inode&gt;();
+		st_trans.ino = inode_id as u64;
+		let mut link_num = 0;
+		let mut _type = StatMode::FILE;
+		EasyFileSystem::root_inode(&amp;self.fs.read_disk_inode(|disk_inode| {
+			let file_count = (disk_inode.size as usize) / DIRENT_SZ;
+			for i in 0..file_count {
+				let mut dirent = DirEntry::empty();
+				if dirent.inode_number() == inode_id as u32 {
+					link_num += 1;
+				}
+			}
+
+			if(disk_inode.is_dir()){
+				_type = StatMode::DIR;
+			}
+		});
+		st_trans.nlink = link_num;
+		st_trans.mode = _type;
+		1
+	}
+</code></pre>
+<p>最后在<code>easy-fs</code>侧实现了这样一个函数</p>
+<ul>
+<li>第一步，首先根据自己的<code>inode</code>的结构体信息计算出自己在块设备中的位置</li>
+<li>遍历根目录中的文件，如果发现<code>inode</code>号相同，则将链接数加1</li>
+<li>最后设置文件类型</li>
+</ul>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-qi-zhang/" class="post-title gt-a-link">
+                    rCore 第七章
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

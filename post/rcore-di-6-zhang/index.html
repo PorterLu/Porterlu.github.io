@@ -1,0 +1,676 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore 第6章 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore 第6章
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-04 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="概述">概述</h2>
+<p>​	这一章节中我们要开发一个简易的文件系统，它结构层次如下图所示：</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/easy_filesystem.png" alt="" loading="lazy"></figure>
+<h2 id="设备接口">设备接口</h2>
+<p>​	在设备接口即图中的<code>BlockDevice Trait</code>处，我们只留下了接口，需要内核提供驱动。他的代码就是简单的带两个函数的<code>Trait</code>。</p>
+<pre><code class="language-rust">pub trait BlockDevice: Send + Sync + Any {
+    fn read_block(&amp;self, block_id: usize, buf: &amp;mut [u8]);
+    fn write_block(&amp;self, block_id: usize, buf: &amp;[u8]);
+}
+</code></pre>
+<p>​	这里都以缓冲区为单位和块设备进行交互，我们在内存中设置一段内存作为缓冲区，缓存块设备中的数据。</p>
+<h2 id="块缓存">块缓存</h2>
+<p>​	使用块缓存将所有的读写操作进行合并，如果在内存缓存区中命中，我们就不访问磁盘。同时我们使用一个数据结构将这些缓存块集中起来进行管理，</p>
+<pre><code class="language-rust">pub struct BlockCache {
+    cache: [u8; BLOCK_SZ],
+    block_id: usize,
+    block_device: Arc&lt;dyn BlockDevice&gt;,
+    modified: bool,
+}
+</code></pre>
+<p>​	其中一个块有512字节，同时使用<code>modified</code>表示这个块是否被修改过，如果被修改过，那么这个块在调出缓存时，将会将这个块写回块设备。</p>
+<p>​	我们为缓存块实现了<code>read</code>和<code>modify</code>方法，供上层调用。</p>
+<pre><code class="language-rust">pub fn read&lt;T, V&gt;(&amp;self, offset: usize, f: impl FnOnce(&amp;T) -&gt; V) -&gt; V {
+    f(self.get_ref(offset));
+}
+
+pub fn modify&lt;T, V&gt;(&amp;mut self, offset: usize, f: impl FnOnce(&amp;mut T) -&gt; V) -&gt; V{
+    f(self.get_mut(offset));
+}
+</code></pre>
+<p>​	这里传入了一个闭包类型<code>FnOnce</code>，它将对当前缓存块进行操作。</p>
+<p>​	我们设置了16个块缓存交给<code>BlockCacheManager</code>进行管理，我们获取一个块缓存需要调用<code>BlockCacheManager</code>的方法。</p>
+<pre><code class="language-rust">impl BlockCacheManager {
+    pub fn get_block_cache(
+    	&amp;mut self,
+        block_id: usize,
+        block_device: Arc&lt;dyn BlockDevice&gt;,
+    ) -&gt; Arc&lt;Mutex&lt;BlockCache&gt;&gt; {
+        if let Some(pair) = self.queue
+        	.iter()
+        	.find(|pair| pair.0 == block_id){
+                Arc::clone(&amp;pair.1)
+        } else {
+            if self.queue.len() == BLOCK_CACHE_SIZE {
+                if let Some((idx, _)) = self
+                	.queue
+                	.iter()
+                	.enumerate()
+                	.find(|(_, pair)| Arc::strong_count(&amp;pair.1) == 1){
+                        self.queue.drain(idx..=idx);
+                } else {
+                    panic!(&quot;Run out of BlockCache!&quot;);
+                }
+            }
+            let block_cache = Arc::new(Mutex::new(BlockCache::new(
+            	block_id,
+                Arc::clone(&amp;block_device),
+            )));
+            self.queue.push_back((block_id, Arc::clone(&amp;block_cache)));
+            block_cache
+        }
+    }
+}
+</code></pre>
+<p>​	代码中会遍历所有的缓存块，匹配块号相同的块缓存进行返回。如果不存块号相同的缓存块则会对队列进行遍历，找到引用计数为1的块，对这个块进行回收，同时读入新的块并加入队列。</p>
+<h2 id="bitmap结构">BitMap结构</h2>
+<p>​	这里所有的<code>inode</code>和数据块都通过<code>BitMap</code>进行管理，这里使用了两个类型对位图进行描述：</p>
+<pre><code class="language-rust">type BitmapBlock = [u64; 64];
+pub struct BitMap {
+    start_block_id: usize,
+    blocks: usize,
+}
+</code></pre>
+<p>​	这里我们子需要记录位图的起始块和总的大小，具体的块使用<code>BitmapBlock</code>进行描述。我们使用<code>get_block_cache</code>方法获取到块缓存后可以，设置了方法<code>alloc</code>和<code>dealloc</code>进行对位图中<code>bit</code>进行置位和消除。</p>
+<h2 id="layout">Layout</h2>
+<p>​	这个文件实现了一个文件的块设备布局结构，我们设置了多级索引，直接索引存在28个，一级索引存在1个，2级索引1个，每个索引是4字节，所以一个<code>block</code>中最多<code>128</code>个索引。</p>
+<p>​	<code>Layout</code>的读写都需要对直接索引、一级索引和二级索引进行讨论，</p>
+<h2 id="easy-file-system">Easy File System</h2>
+<p>​	<code>Easy File System</code>对于整个文件系统的磁盘布局进行了描述，它的结构如下：</p>
+<pre><code class="language-rust">pub struct EasyFileSystem {
+    pub block_device: Arc&lt;dyn BlockDevice&gt;,
+    pub inode_bitmap: Bitmap,
+    pub data_bitmap: Bitmap,
+    inode_area_start_block: u32,
+    data_area_start_block: u32,
+}
+</code></pre>
+<p>​	这里的代码实现了每个分区在磁盘的位置，块的回收和分配都将通过<code>Easy File System</code>进行分配和调度。创建一个这样的文件系统需要分为以下的几步。</p>
+<ol>
+<li>计算各个分区需要包含多少的块，先需要计算<code>inode</code>位图的大小，获取<code>inode</code>区域的大小。剩余的区域要留给数据区和数据位图。</li>
+<li>创建<code>Easy File System</code>的数据结构</li>
+<li>对我们使用的块进行全部的清零。</li>
+<li>对超级块根据文件系统的数据进行初始化。</li>
+<li>创建0号<code>iNode</code>进行初始化的根目录。</li>
+</ol>
+<h2 id="virtual-file-system">Virtual File System</h2>
+<p>​	在这一层提供暴露给用户的结构，对用户隐藏磁盘的操作。用户可以看见<code>iNode</code>的结构。</p>
+<pre><code class="language-rust">pub struct Inode {
+    block_id: usize,
+    block_offset: usize,
+    fs: Arc&lt;Mutex&lt;EasyFileSystem&gt;&gt;,
+    block_device: Arc&lt;dyn BlockDevice&gt;,
+}
+</code></pre>
+<p>​	这里实现的方法大多都采用了传入一个函数的方法进行回调。</p>
+<pre><code class="language-rust">impl Inode {
+    fn read_disk_inode&lt;V&gt;(&amp;self, f: impl FnOnce(&amp;DiskInode) -&gt; V) -&gt; V {
+        get_block_cache (
+        	self.block_id,
+            Arc::clone(&amp;self.block_device)
+        ).lock().read(self.block_offset, f)
+    }
+}
+</code></pre>
+<p>​	这个方法期待调用传入一个函数，这个函数的接受的参数为一个<code>DiskInode</code>的引用，起始就是<code>get_block_cache().lock().read()</code>之后自动换传给<code>f</code>进行回调的参数。</p>
+<p>​	如我们用它实现一个<code>find</code>方法。</p>
+<pre><code class="language-rust">impl Inode {
+    pub fn find(&amp;self, name:&amp;str) -&gt; Option&lt;Arc&lt;Inode&gt;&gt; {
+        let fs = self.fs.lock();
+        self.read_disk_inode(|disk_inode|{
+            self.find_inode_id(name, disk_inode)
+            .map(|inode_id|{
+                let (block_id, block_offset) = fs.get_disk_inode_pos(inode_id);
+                Arc::new(Self::new(
+                	block_id,
+                    block_offset,
+                    self.fs.clone(),
+                    self.block_device.clone(),
+                ))
+            })
+        })
+    }
+    
+    fn find_inode_id(
+    	&amp;self,
+        name: &amp;str,
+        disk_inode: &amp;DiskInode,
+    ) -&gt; Option&lt;u32&gt; {
+        assert!(disk_inode.is_dir());
+        let file_count = (disk_inode.size as usize) / DIRENT_SZ;
+        let mut dirent = DirEntry::empty();
+        for i in 0..file_count {
+            assert_eq!(
+            	disk_inode.read_at(
+                	DIRENT_SZ * i,
+                    dirent.as_bytes_mut(),
+                    &amp;self.block_device,
+                ),
+                DIRENT_SZ,
+            );
+            if dirent.name() == name {
+                return Some(dirent.inode_numer() as u32);
+            }
+        }
+    }
+}
+</code></pre>
+<p>​		这里我们先从<code>find_inode_id</code>开始解析，对这个<code>inode</code>从磁盘进行读取后，可以调用这个函数进行分析，对于文件的数据进行遍历，找到名字相同的想返回这个目录的<code>inode_id</code>。</p>
+<p>​	之后介绍<code>find</code>,  这里先获取了<code>Easy File System</code>的锁，所有对于文件系统的使用，全程都要持有互斥锁。获取完锁之后，会通过<code>read_disk_inode</code>方法调用匿名函数，通过名字获得<code>id</code>后生成一个<code>inode</code>进行返回。</p>
+<h2 id="测试">测试</h2>
+<p>​	在用户态测试<code>easy-fs</code>的功能，我们需要在用户态为<code>efs</code>实现<code>BlockDevice Trait</code>，这样就可以使用<code>Inode</code>操作文件系统了。我们使用<code>Linux</code>的文件系统来模拟底层的块设备。</p>
+<pre><code class="language-rust">use std::fs::File;
+use easy-fs::BlockDevice;
+
+const BLOCK_SZ: usize = 512;
+
+struct BlockFile(Mutex&lt;File&gt;);
+
+impl BlockDevice for BlockFile {
+    fn read_block(&amp;self, block_id: usize, buf: &amp;mut[u8]) {
+        let mut file = self.0.lock().unwrap();
+        file.seek(SeekFrom::Start((block_id * BLOCK_SZ) as u64))
+        	.expect(&quot;Error when seeking!&quot;);
+        assert_eq!(file.read(buf).unwrap(), BLOCK_SZ, &quot;Not a complete block!&quot;);
+    }
+    
+    fn write_block(&amp;self, block_id: usize, buf:&amp;[u8]) {
+        let mut file = self.0.lock().unwrap();
+        file.seek(SeekFrom::Start((block_id * BLOCK_SZ) as u64))
+        	.expect(&quot;Error when seeking&quot;);
+        assert_eq!(file.write(buf).unwrap, BLOCK_SZ, &quot;Not a complete block!&quot;);
+    }
+}
+</code></pre>
+<p>​	这样我们实际操作就是<code>Linux</code>的<code>File</code>, 我们通过在文件中<code>seek</code>并进行读写就可以模拟对块设备进行读写。</p>
+<p>​	之后我们需要创建文件镜像，实际上就是创建一个文件，内容是我们<code>Easy File System</code>的镜像内容。</p>
+<pre><code class="language-rust">use clap::{Arg, App}
+fn easy_fs_pack() -&gt; std::io::Result&lt;()&gt; {
+    let matches = App::new(&quot;EasyFileSystem packer&quot;)
+    	.arg(Arg::with_name(&quot;source&quot;)
+    		.short(&quot;s&quot;)
+        	.long(&quot;source&quot;)
+        	.takes_value(true)
+            .help(&quot;Executable source dir(with backslash)&quot;)
+    	)
+    	.arg(Arg::with_name(&quot;target&quot;)
+    		.short(&quot;t&quot;)
+            .long(&quot;target&quot;)
+            .takes_value(true)
+            .help(&quot;Executable target dir(with backslash)&quot;)
+    	)
+    	.get_matches();
+    let src_path = matches.value_of(&quot;source&quot;).unwrap();
+    let target_path = matches.value_of(&quot;target&quot;).unwrap();
+    println!(&quot;src_path = {}\ntarget_path = {}&quot;, src_path, target_path);
+    let block_file = Arc::new(BlockFile(Mutex::new({
+        let f = OpenOptions::new()
+        	.read(true)
+        	.write(true)
+        	.create(true)
+        	.open(format!(&quot;{}{}&quot;, target_path, &quot;fs.img&quot;))?;
+        f.set_len(8192 * 512).unwrap();
+        f
+    })));
+    let efs = EasyFileSystem::create(
+    	block_file.clone(),
+        8192,
+        1
+    );
+    let root_inode = Arc::new(EasyFileSystem::root_inode(&amp;efs));
+    let apps: Vec&lt;_&gt; = read_dir(src_path)
+    		.unwrap()
+    		.into_iter()
+    		.map(|dir_entry|{
+         		let mut name_with_ext = dir_entry.unwrap().file_name().into_string().unwrap();
+                name_with_ext.drain(name_with_ext.find('.').unwrap()..name_with_ext.len());
+                name_with_ext
+    	})
+    	.collect();
+    for app in apps {
+        let mut host_file = File::open(format!(&quot;{}{}&quot;, target_path, app)).unwrap();
+        let mut all_data: Vec&lt;u8&gt; = Vec::new();
+        host_file.read_to_end(&amp;mut all_data).unwrap();
+        let inode = root_inode.create(app.as_str()).unwrap();
+        inode.write_at(0, all_data.as_slice());3
+    }
+}
+</code></pre>
+<p>​	这里首先使用<code>clap</code> 对输入进行了分析，<code>-s</code>表示输入的源文件，<code>-t</code>表示目标文件。获取完这些参数后，通过<code>Linux</code>的文件系统创建一个可读可写的大小为<code>4MB</code>的<code>fs.img</code>文件。 之后将这个文件作为块设备，创建<code>Easy File System</code>，并读取这个文件系统根目录。紧接着读取我们的源文件目录下的源文件名进行读取，生成目录下的文件名列表，之后通过在文件系统中创建<code>inode</code>，设置文件名，并将<code>app</code>的二进制内容写入对应的<code>inode</code>中。</p>
+<h3 id="接入内核">接入内核</h3>
+<h3 id="userbuffer">UserBuffer</h3>
+<p>​	有了文件的抽象后，操作系统就可以将需要读写并持续存储的文件按文件来管理，并把文件分配给进程，让进程以很简洁的同一抽象接口<code>File</code>来读写文件。</p>
+<pre><code class="language-rust">pub trait File: Send + Sync {
+    fn read(&amp;self, buf: UserBuffer) -&gt; usize;
+    fn write(&amp;self, buf: UserBuffer) -&gt; usize;
+}
+</code></pre>
+<p>​	这个接口建立起了内存和存储设备之间的联系，其中<code>UserBuffer</code>是我们<code>mm</code>模块中定义的在应用地址空间中的一段缓冲区。我们为<code>OSInode</code>实现了<code>File Trait</code>,  这样<code>OSInode</code>就可以调用<code>read</code>或者<code>write</code>和<code>UserBuffer</code>进行交互。</p>
+<pre><code class="language-rust">impl File for OSInode {
+    //...
+    fn read(&amp;self, mut buf: UserBuffer) -&gt; usize {
+        let mut inner = self.inner.exclusive_access();
+        let mut total_read_size = 0usize;
+        for slice in buf.buffers.iter_mut() {
+            let read_size = inner.inode.read_at(inner.offset, *slice);
+            if read_size == 0 {
+                break;
+            }
+            inner.offset += read_size;
+            total_read_size += read_size;
+        }
+        total_read_size
+    }
+    
+    fn write(&amp;self, buf: UserBuffer) -&gt; usize {
+        let mut inner = self.inner.exclusive_access();
+        let mut total_write_size = 0usize;
+        for slice in buf.buffers.iter() {
+            let write_size = inner.inode.write_at(inner.offset, *slice);
+            assert_eq!(write_size, slice.len());
+            inner.offset += write_size;
+            total_write_size += write_size;
+        }
+        total_write_size += write_size;
+    }
+}
+</code></pre>
+<p>​	读写时，由于<code>UserBuffer</code>中的<code>buffers</code>是一个<code>Vec&lt;&amp;'static mut[u8]&gt;</code>, 所以<code>buf.buffers.iter()</code>就是遍历<code>vec</code>，对每一个<code>u8</code>数组进行读写。<code>read</code>和<code>write</code>完成对于<code>inode</code>进行<code>buffers</code>的读和写，返回值是读写的字节数。</p>
+<h3 id="块设备">块设备</h3>
+<p>​	在<code>qemu</code>中我们使用了<code>virtio</code>设备。</p>
+<pre><code class="language-rust">#[cfg(feature = &quot;board_qemu&quot;)]
+type BlockDeviceImpl = virtio_blk::VirtIOBlock;
+
+#[cfg(feature = &quot;board_k210&quot;)]
+type BlockDeviceImpl = sdcard::SDCardWrapper;
+
+lazy_static!  {
+	pub static ref BLOCK_DEVICE: Arc&lt;dyn BlockDevice&gt; = Arc::new(BlockDeviceImpl::new());
+}
+</code></pre>
+<p>​	这里<code>virtio_blk::VirtIOBlock</code>实现了<code>BlockDevice Trait</code>，所以我们根据编译选项，确定使用哪一个实现。</p>
+<p>​	同时在<code>qemu</code>启动时，我们要将我们的磁盘镜像挂载到<code>qemu</code>的<code>mmio</code>接口上。</p>
+<pre><code class="language-makefile">-drive file=fs.img,if=none,format=raw,id=x0 \
+-device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+</code></pre>
+<p>​	将我们的<code>fs.img</code>命名为<code>x0</code>，之后，将<code>x0</code>作为<code>virtio</code>总线上的一个块设备接入，之后再设定通过<code>mmio</code>进行控制。</p>
+<p>​	在<code>qemu</code>的代码中，我们可以代码，<code>qemu</code>的<code>riscv</code>版本，<code>virtio</code>的<code>mmio</code>地址空间为从<code>0x10001000</code>开始的<code>4KB</code>，于是我们必须进行如下的映射。</p>
+<pre><code class="language-rust">#[cfg(feature = &quot;board_qemu&quot;)]
+pub const MMIO: &amp;[(usize, usize)] = &amp;[
+  (0x10001000, 0x1000),  
+];
+</code></pre>
+<p>在内核初始化时，这段内存已经被映射。</p>
+<pre><code class="language-rust">impl MemorySet {
+    pub fn new_kernel() -&gt; Self {
+        //...
+        println!(&quot;mapping memory-mapped registers&quot;);
+        for pair in MMIO {
+            memory_set.push(MapArea::new(
+            	(*pair).0.into(),
+                ((*pair).0 + (*pair).1).into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::W,
+            ), None);
+        }
+        memory_set
+    }
+}
+</code></pre>
+<p>​	对这对区间进行恒等映射，并开放了读写权限。</p>
+<pre><code class="language-rust">pub struct VirtIOBlock(Mutex&lt;VirtIOBlk&lt;'static'&gt;&gt;);
+
+impl VirtIOBlock {
+    pub fn new() -&gt; Self {
+        Self(Mutex::new(VirtIOBlk::new(
+            	unsafe { &amp;mut *(VIRTIO0 as *mut VirtIOHeader) }
+            ).unwrap()))
+    }
+}
+
+impl BlockDevice for VirtIOBlock {
+    fn read_block(&amp;self, block_id: usize, buf: &amp;mut [u8]) {
+        self.0.lock().read_block(block_id, buf).expect(&quot;Error when reading VirtIOBlk&quot;);
+    }
+    
+    fn write_block(&amp;self, block_id: usize, buf: &amp;[u8]) {
+        self.0.lock().write_block(block_id, buf).expect(&quot;Error when writing VirtIOBlk&quot;);
+    }
+}
+</code></pre>
+<p>​	我们在<code>VirtIOBlk</code>进行进一步的封装，加上一层互斥锁变为我们的<code>VirtIOBlk</code>，传入的<code>VirtIOHeader</code>起始就是以<code>mmio</code>进行访问的<code>VirtIO</code>需要的一组寄存器。之后为<code>VirtIOBlk</code>实现<code>BlockDevice</code>的<code>Trait</code>即可。<code>VirtIO</code>设备需要占用部分内存，放置一个数据结构<code>VirtQueue</code>，<code>CPU</code>可以向<code>VirtIO</code>发送请求，也可以从队列中获取结构。</p>
+<p>​	<code>qemu</code>为我们暴露的接口如下：</p>
+<pre><code class="language-rust">extern &quot;C&quot; {
+    fn virtio_dma_alloc(pages: usize) -&gt; PhysAddr;
+    fn virtio_dma_dealloc(paddr: usize, pages: usize) -&gt; i32;
+    fn virtio_phys_to_virt(paddr: PhysAddr) -&gt; VirtAddr;
+    fn virtio_virt_to_phys(vaddr: VirtAddr) -&gt; PhysAddr;
+}
+</code></pre>
+<p>​	我们使用<code>rCore</code>中的相关方法进行实现。</p>
+<pre><code class="language-rust">lazy_static! {
+    static ref QUEUE_FRAMES: Mutex&lt;Vec&lt;FrameTracker&gt;&gt; = Mutex::new(Vec::new());
+}
+
+#[no_mangle]
+pub extern &quot;C&quot; fn virtio_dma_alloc(pages: usize) -&gt; PhysAddr {
+    let mut ppn_base = PhysPageNum(0);
+    for i in 0..pages {
+        let frame = frame_alloc().unwrap();
+        if i == 0 { ppn_base = frame.ppn; }
+        assert_eq!(frame.ppn.0, ppn_base.0 + i);
+        QUEUE_FRAMES.lock().push(frame);
+    }
+    ppn_base.into()
+}
+</code></pre>
+<p>​	这里连续地申请了<code>pages</code>个页帧，之后将这些页帧加入到了队列中，之后返回申请到的物理地址。之后几个方法也用<code>rCore</code>中的方法实现。</p>
+<h3 id="内核中的inode">内核中的Inode</h3>
+<p>​	内核中需要控制<code>Inode</code>的访问方式，这里进行进一步的封装。</p>
+<pre><code class="language-rust">pub struct OSInode {
+    readable: bool,
+    writable: bool,
+    inner: Mutex&lt;OSInodeInner&gt;,
+}
+
+pub struct OSInodeInner {
+    offset: usize,
+    inode: Arc&lt;Inode&gt;,
+}
+
+impl OSInode {
+    pub fn new(
+    	readable: bool,
+        writable: bool,
+        inode: Arc&lt;Inode&gt;,
+    ) -&gt; Self {
+        readable,
+        writable,
+        inner: Mutex::new(OSInodeInner {
+        	offset:0,
+            inode,
+        })
+    }
+}
+</code></pre>
+<p>​	<code>offset</code>和我们在<code>C</code>中的文件语义类似，不过这个<code>offset</code>这里不是一个每次打开就有一个。</p>
+<h3 id="文件描述符表">文件描述符表</h3>
+<p>​	文件打开和关闭都是以进程为单位在进行，我们这里需要在进程控制块中加入文件描述符表</p>
+<pre><code class="language-rust">pub struct TaskControlBlock {
+    //...
+    pub fd_table: Vec&lt;Option&lt;Arc&lt;dyn File + Send + Sync&gt;&gt;&gt;,
+}
+</code></pre>
+<p>​	这里的<code>dyn</code>表示实现了<code>File + Send + Sync</code>三个<code>Trait</code>的类型，我们调用其<code>read</code>等方法时，可以在运行时动态确定调用的函数。我们要添加入的文件类型，<code>OSInode</code>、<code>Stdout</code>、<code>Stdin</code>都实现了这三个方法。</p>
+<h3 id="为内核实现文件访问机制">为内核实现文件访问机制</h3>
+<p>​	应用程序访问文件前需要对文件系统进行初始化，可以通过应用程序发出系统调用如<code>mount</code>实现，也可以操作系统直接实现。我们这里只需要在初始化时进行实现即可。</p>
+<pre><code class="language-rust">lazy_static! {
+    pub static ref ROOT_INODE: Arc&lt;Inode&gt; = {
+        let efs = EasyFileSystem::open(BLOCK_DEVICE.clone());
+        Arc::new(EasyFileSystem::root_inode(&amp;efs))
+    };
+}
+</code></pre>
+<p>​	之后我们实现四个系统调用。</p>
+<pre><code class="language-rust">pub fn open_file(name: &amp;str, flags: OpenFlags) -&gt; Option&lt;Arc&lt;OSInode&gt;&gt; {
+    let (readable, writable) = flags.read_write();
+    if flags.contains(OpenFlags::CREATE) {
+        if let Some(inode) = ROOT_INODE.find(name) {
+            // clear size
+            inode.clear();
+            Some(Arc::new(OSInode::new(
+                readable,
+                writable,
+                inode,
+            )))
+        } else {
+            // create file
+            ROOT_INODE.create(name)
+                .map(|inode| {
+                    Arc::new(OSInode::new(
+                        readable,
+                        writable,
+                        inode,
+                    ))
+                })
+        }
+    } else {
+        ROOT_INODE.find(name)
+            .map(|inode| {
+                if flags.contains(OpenFlags::TRUNC) {
+                    inode.clear();
+                }
+                Arc::new(OSInode::new(
+                    readable,
+                    writable,
+                    inode
+                ))
+            })
+    }
+}
+</code></pre>
+<p>​	这里通过创建时的参数，判断是否要创建一个文件，是否要清空原本的文件。有了这个函数我们就可以很方便的实现<code>sys_open</code>。</p>
+<pre><code class="language-rust">pub fn sys_open(path: *const u8, flags: u32) -&gt; isize {
+    let task = current_task().unwrap();
+    let token = current_user_token();
+    let path = translated_str(token, path);
+    if let Some(inode) = open_file(
+        path.as_str(),
+        OpenFlags::from_bits(flags).unwrap()
+    ) {
+        let mut inner = task.acquire_inner_lock();
+        let fd = inner.alloc_fd();
+        inner.fd_table[fd] = Some(inode);
+        fd as isize
+    } else {
+        -1
+    }
+}
+</code></pre>
+<p>​</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-5-zhang-lian-xi/" class="post-title gt-a-link">
+                    rCore第5章练习
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

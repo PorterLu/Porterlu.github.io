@@ -1,0 +1,359 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Revisit rCore 第一章  | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Revisit rCore 第一章 
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-14 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="入口">入口</h2>
+<p>​	我们要在裸机上进行编程，所以在<code>main.rs</code>中要加入<code>#![no_std]</code>，表示我们不适用标准库，其中<code>!</code>表示编译器内置相关的特性，需要加载文件的一开始。在编写<code>main</code>之前，先介绍这里的链接文件，我们不适用默认的链接模式，因为这时我们编程是要考虑操作系统不存在的情况。</p>
+<pre><code class="language-link">OUTPUT_ARCH(riscv)
+ENTRY_ADDRESS(_start)
+BASE_ADDRESS = 0x80200000;
+</code></pre>
+<p>​	这里设置一个变量<code>BASE_ADDRESS</code>, 将我们的<code>kernel</code>加载的位置设置为0x80200000。下面是我们空间分布：</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/linker_rcore.png" alt="" loading="lazy"></figure>
+<p>​</p>
+<p>​	这里每一个<code>segment</code>都是4k对齐的，通过导出设置在<code>linker</code>中的变量，我们可以知道各个<code>segment</code>的大小和偏移。由于我们在裸机上启动程序，并没有运行时为我们设置堆栈，随意我们需要自己设置。</p>
+<pre><code class="language-assembly">	.section .text.entry
+    .global _start
+_start:
+	la sp, boot_stack_top
+	call rust_main
+	
+	.section .bss.stack
+	.global boot_stack_lower_bound
+boot_stack_lower_bound:
+	.space 4096*16
+	.global boot_stack_top
+boot_stack_top:
+</code></pre>
+<p>​	设置完<code>sp</code>后，就可以跳转到<code>main</code>中。在<code>main.rs</code>中，我们引入这段代码：</p>
+<pre><code class="language-rust">#![no_std]
+#![no_main]
+//...
+
+use core::arch::global_asm;
+global_asm!(include_str!(&quot;entry.asm&quot;));
+
+#[no_mangle]
+pub fn rust_main() -&gt; !{
+    extern &quot;C&quot; {
+        fn stext();
+        fn etext();
+        fn srodata();
+        fn erodata();
+        fn sdata();
+        fn edata();
+        fn boot_stack_lower_bound();
+        fn boot_stack_top()
+    }
+    //...
+}
+</code></pre>
+<p>​	通过<code>core::arch::global_asm</code>引入这段汇编代码。在<code>rust_main</code>之前有个<code>#[no_mangle]</code>是为了防止编译器对函数名进行一个再命令，之后通过调用的形式，将我们需要的地址引入。</p>
+<h2 id="输出">输出</h2>
+<p>​	这里我们通过<code>opensbi</code>进行输出，<code>sbi</code>是通过对<code>ecall</code>进行封装，这样我们就可以通过函数请求<code>opensbi</code>进行字符输出。</p>
+<pre><code class="language-rust">use core::arch::asm;
+#[inline(always)]
+fn sbi_call(which:usize, arg0:usize, arg1:usize, arg2:usize) -&gt; usize {
+    let mut ret: usize;
+    unsafe {
+        asm!(
+        	&quot;ecall&quot;,
+            inlateout(&quot;x10&quot;) arg0 =&gt; ret,
+            in(&quot;x11&quot;) arg1,
+            in(&quot;x12&quot;) arg2,
+            in(&quot;x17&quot;) which,
+        );
+    }
+    ret
+}
+</code></pre>
+<p>​	于是通过<code>sbi_call</code>进一步我们封装具体的功能。</p>
+<pre><code class="language-rust">pub fn console_putchar(c: usize) {
+    sbi_call(SBI_CONSOLE_PUTCHAR, c, 0, 0);
+}
+</code></pre>
+<p>​	我们需要对<code>print</code>宏进行编写，这样我们才能通过<code>print</code>进行输出。</p>
+<pre><code class="language-rust">use crate::sbi::console_putchar;
+use core::fmt::{self, Write};
+
+struct Stdout;
+
+impl Write for Stdout {
+    fn write_str(&amp;mut self, s:&amp;str) -&gt; fmt::Result {
+        for c in s.chars() {
+            console_putchar(c as usize);
+        }
+        Ok(())
+    }
+}
+
+pub fn print(args: fmt::Arguments) {
+    Stdout.write_fmt(args).unwrap();
+}
+</code></pre>
+<p>​	这里的<code>Write</code>作为一个<code>Trait</code>只有一个方法<code>write_str</code>，编译器会帮我们解析格式化字符，我们只要进行输出就可以了。</p>
+<p>​	在<code>rust</code>中，我们调用的<code>println</code>实际是一个宏，再去除了标准库后，我们需要自己编写<code>println</code>。</p>
+<pre><code class="language-rust">#[macro_export]
+macro_rules! print{
+    ($fmt:literal $(, $($(arg:tt)+)?)) =&gt; {
+        $crate:console::print(format_args!($fmt $(, $($arg:tt)+)?));
+    }
+}
+</code></pre>
+<p>​	这里我们匹配的意思是，前面一个字面量作为格式化字符，后面是一串的<code>token</code>用<code>,</code>进行隔开，之后将需要格式化输出的内容放入<code>print</code>中。</p>
+<h2 id="panic">panic</h2>
+<p>​	我们还需要编写<code>panic</code>相关的信息。</p>
+<pre><code class="language-rust">use core::panic::PanicInfo;
+use crate::sbi::shutdown;
+
+#[panic_handler]
+fn panic(info: &amp;PanicInfo) -&gt; !{
+    if let Some(location: &amp;Location) = info.location(){
+        println!(
+        	&quot;Panicked at {}:{} {}&quot;,
+            location.file(),
+            location.line(),
+            info.message().unwrap()
+        )
+    } else {
+        println!(&quot;Panicked: {}&quot;, info.message().unwrap());
+    }
+    shutdown()
+}
+</code></pre>
+<p>​		发生<code>panic</code>时我们这里进行输出，通过<code>#[panic_handler]</code>说明这时<code>panic</code>发生时进行处理的办法，之后通过<code>sbi</code>进行关机</p>
+<h2 id="revisit-main">revisit main</h2>
+<pre><code class="language-rust">#![feature(panic_info_message)]
+//...
+
+#[macro_use]
+mod console;
+mod land_item;
+mod sbi;
+
+#[no_managle]
+pub fn rust_main() -&gt; !{
+    //...
+    
+    clear_bss();
+    println!(&quot;Hello OS&quot;);
+    println!(&quot;.text [{:#x}, {:#x})&quot;, stext as usize, etext as usize);
+    //...
+    
+    shutdown()
+}
+
+fn clear_bss(){
+    extern &quot;C&quot; {
+        fn sbss();
+        fn ebss();
+    }
+    
+    (sbss as usize ..ebss as usize).foreach|x:size| {
+        unsafe{ (x as *mut u8).write_volatile(0)}
+    };
+}
+</code></pre>
+<p>​	<code>#![feature(panic_info_message)]</code>说明如果我们发生<code>panic</code>可以输出信息。之后添加<code>#[macro_use]</code>导入宏，之后清空<code>bss</code>段，之后输出我们的段信息，最后关机。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/linux-vm-shi-yan/" class="post-title gt-a-link">
+                    Linux VM实验
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

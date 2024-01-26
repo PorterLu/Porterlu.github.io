@@ -1,0 +1,246 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>可信执行环境的安全启动和远程认证 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    可信执行环境的安全启动和远程认证
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-06-21 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/jN8FVGalh/" class="post-tags">
+                            # paper
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="sanctum-bootloader">Sanctum Bootloader</h2>
+<p>​	在可信执行环境中，如SGX，提供了向远程用户证明用户的程序被安全启动的功能。这里主要分为两个步骤：</p>
+<ul>
+<li>证明平台是可信的</li>
+<li>证明用户的程序被安全启动了</li>
+</ul>
+<p>​	第一个步骤主要涉及安全启动，第二个主要涉及远程证明。在RISC-V平台上，Sanctum处理器提出了Sanctum Bootloader，被之后许多RISC-V可信执行环境采用。完整的Sanctum的Bootloader具有比SGX的安全引导更高的安全性，它甚至将芯片厂商作为一个半诚信的存在，即相信硬件厂商会诚信地制造安全硬件但会试图获取私钥信息，而传统的SGX需要我们完全相信Intel。</p>
+<h2 id="背景">背景</h2>
+<p>​		为了向远程证明一个程序已经被安全地执行，需要验证程序的宿主系统的信息。远程的用户总是希望他们的计算可以跑在安全的设备上，如Intel SGX和Sanctum处理器，它们都为计算提供了机密性和完整性的保证。如果用户想确保它的计算应用可以跑在一个这样的系统上，那么就需要为硬件创造一个独一无二并且不可改变的密码学身份。使用这种硬件的系统可以向它的用户证明其身份，具体是通过和硬件厂商提供的认证平台列表进行比对就可以确认。</p>
+<p>​	为了保证真实性，处理器需要证明自己被正确地启动了，特别是涉及到之后远程证明地代码不能修改，于是需要一个安全引导来做这个保证。这个Bootloader需要保证系统已经配置到远程用户想要的状态，并且启动之后，处理器也需要向用户证明执行程序的安全容器Enclave被设置为正确的状态。为了完成后面一点，处理器需要提供这个容器的测量值证书来供远程用户进行验证。</p>
+<p>​	在一个通用的设置中，处理器硬件中写死在Bootrom中的固件会对Bootloader和Bootloader加载的软件进行一次密码学测量，之后处理器使用私钥对这个测量值进行签名，就有了一份证书。那么远程或者本地的用户就可以使用处理器厂商提供的公钥对于这个签名进行验证，并对于这个测量值进行验证来保证系统的代码没有被修改。</p>
+<p>​	为了生成如上的一份证书，处理器需要有一对公私钥。通常来说，处理器厂商会为每一个芯片生成一对公私钥并且将私钥嵌入到处理器中，通常来说会将其存入到一处安全的非易失性处理器中。在这个场景中，这个硬件制造商会知道这个芯片的私钥，所以生产阶段就从某种程度上说泄露了。取而代之的是，Sanctum处理会用一个硬件随机数生成器（TRNG）来生成一个随机数种子存储到安全的非易失性存储器中，之后用于生成处理器的公私钥。这时候硬件提供者对生成的公钥进行签名，之后将其存储一个可以被读取到非易失性存储器中，但是私钥本身不会离开处理器，所以即使是硬件提供商也不知道这个私钥。因此，这里的硬件提供者是诚实的，但是他会试图获取机密信息。</p>
+<p>​	Sanctum处理器使用开源的RISC-V Rocket chip架构作为基础，这个处理器不需要处理器厂商显式地赋予一个私钥。取而代之的是，处理器从PUF（物理不可克隆单元，可以当作一个PRF）中提取自己的密码学身份。这个生成的密钥可以用于签名引导的可信软件，之后就会被马上销毁。这个签名过的可信Payload程序负责向远程进行证明。一个远程用户可以通过Diffie-Hellman来建立安全通信同时要求获取Payload程序的签名。我们可以通过验证签名来保证这个系统的真实性和完整性。之后一旦接收到用户的代码，就需要证明用户的程序已经被正确地设置了。</p>
+<h2 id="威胁模型">威胁模型</h2>
+<p>​	我们的目标就是使用PUF结合生产者生产的信根来生成提升密钥生成的安全性。在这个过程中生产者不再存储密钥，所以不会存在多个系统使用同一个密钥。我们考虑这个厂商会诚实地构造PUF和CPU不会去留后门。厂商必须为生产可信根做背书。但是这个厂商可以是“好奇的”，提可以试图获取更多的信息。具体例子就是，一个厂商可以通过多次运行PUF生产密钥来获取信息。</p>
+<p>​	信根（Boot ROM中的代码）可以正确从PUF的输出来生成密钥，并且测量之后的Payload代码。我们假设系统内存是可信的，只能通过Processor访问，并且可以在初始时清空，保护密钥和其他机密信息不被访问。如果DRAM内存在TCB可信基之外，我们可以使用内存加密，就像XOM和Aegis处理器一样。</p>
+<h2 id="信根">信根</h2>
+<p>​	在启动时，处理器会执行可信的&quot;ROM&quot;中的一系列代码。这个过程被称为一阶段引导，是我们的可信根，之后将加载Payload，是从不可信的存储设备进行读取，所以要进行验证Payload的哈希值；这个过程还会对Payload使用处理器的私钥进行签名。</p>
+<p>​	如果处理器拥有多个核，我们可以使用Core 0来执行可信的引导代码。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/sign_trusted_system.png" alt="" loading="lazy"></figure>
+<p>​	因为内存在Boot阶段内存是未定义的，所以通过传统的使用内存来实现的锁来进行同步是不可行的；取而代之的是，这时需要依赖等待中断。Core 0通核间中断会唤醒其他的处理器。所有的核心会清空处理器状态来防止攻击者获取一些机密信息。同时，信根会清除为初始化的内存。在信根的实现过程中，我们依赖一个SHA3哈希和ed25519椭圆曲线加密。这一节将介绍我们如何实现信根来生成密钥。</p>
+<p>​	考虑云FPGA的场景，这个平台是多个客户分时共享的。在这个场景下，云服务的操作员就可以视为那个硬件厂商，非易失性存储的密钥在这个场景就没有意义也不容易实现。如图Fig.2.  <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>D</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>D</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_D,SK_D)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 是从一个哈希随机值生成的安全处理器的密码学实体，重启之后就会消失。处理器在Boot阶段就会将生成一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><msub><mi>K</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">PK_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, 厂商这里就是云FPGA连接的服务器主机就会对这个公钥进行签名。于是这个签名在厂商的保证下就可以得到远程用户的信任。处理器最终会使用设备私钥生成一个签名证书，并且提供<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>i</mi><mi>g</mi><msub><mi>n</mi><mi>M</mi></msub><mo>(</mo><mi>P</mi><msub><mi>K</mi><mrow><mi>D</mi><mi>E</mi><mi>V</mi></mrow></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">Sign_M(PK_{DEV})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 来使得远程用户信任这个平台，而不是有人恶意对验证协议进行模拟。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SD_DEV_derivation_from_entropy.png" alt="" loading="lazy"></figure>
+<p>​	在某些场景下，不存在可信的一方可以在处理器启动时进行本地验证，机器部署在一个不可信的环境中，远程验证建立一个可信的公钥上。同时这个密钥必须重启后仍然能够保持，但是这个密钥不能被攻击者获得。为了解决如上 的威胁模型，如图3中所示，P256和P512会使用Identical Ring Oscillator Pair和一个Trapdoor Fuzzy Extractor来生成一个可以重复的M-bit机密信息e，即M可以是256或者512位。</p>
+<p>​	1）使用PUF来初始化预分配密钥：一旦安全处理器被生产了，可信根中就会有一个私密的128bits信息。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi><mo>=</mo><mi>A</mi><mi>s</mi><mo>+</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">b = As + e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">A</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">e</span></span></span></span> 。为了防止这个厂商重复生成这个密钥，信根需要一次性非易失性存储fuse实现。但是在FPGA平台上，在选择s之前，程序会确定fuse并没有被设置，程序会阻塞直到这个值被设置。如果这个fuse被设置，信根就不会再设置一个新的s，之后会试图通过辅助数据<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span>将其从不可信存储中复原。</p>
+<p>​	2）密钥复原过程：在每一次的重启过程中，图4中展示复原的过程。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/PUF_backed_device_key.png" alt="" loading="lazy"></figure>
+<p>​	信根会根据Payload生成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>P</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_P, SK_P)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, 并且是设备私钥进行签名，这样就可以作为一个证书。处理器会使用PUF生成的对称密钥对<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>S</mi><msub><mi>K</mi><mi>D</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mrow><mi>P</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(SK_D,SK_{Payload})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>进行加密，将其存储在不可信的非易失性存储器上。</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/key_drivation_by_payload.png" alt="" loading="lazy"></figure>
+<h2 id="远程验证">远程验证</h2>
+<p>​	一个不可变的硬件可信根可以进行远程证明。使用PUF来生成平台的密钥，这样密钥就绝对不会被第三方知道。</p>
+<h3 id="通过payload进行远程验证">通过Payload进行远程验证</h3>
+<p>​	这个系统阶段的Payload将负责远程验证，Payload的状态在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>P</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_P,SK_P)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>生成阶段也将被验证。远程的客户首先需要发起一次Diffe-Hellman协议，来建立和平台之间的安全通信，一旦接收到了安全参数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mi mathvariant="normal">、</mi><msup><mi>g</mi><mi>A</mi></msup><mi mathvariant="normal">、</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">g、g^A、p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord cjk_fallback">、</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">A</span></span></span></span></span></span></span></span><span class="mord cjk_fallback">、</span><span class="mord mathdefault">p</span></span></span></span> , 那么Payload就会选择一个随机数B，并且计算<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>g</mi><mi>B</mi></msup></mrow><annotation encoding="application/x-tex">g^B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05017em;">B</span></span></span></span></span></span></span></span></span></span></span>。之后这个Payload会发送<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>i</mi><mi>g</mi><msub><mi>n</mi><mrow><mi>S</mi><msub><mi>K</mi><mrow><mi>D</mi><mi>E</mi><mi>V</mi></mrow></msub></mrow></msub><mo>(</mo><mi>P</mi><msub><mi>K</mi><mrow><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub><mo separator="true">,</mo><mi>H</mi><mo>(</mo><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi><mo>)</mo><mo separator="true">,</mo><mi>D</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>e</mi><mo>−</mo><mi>H</mi><mi>e</mi><mi>l</mi><mi>l</mi><mi>m</mi><mi>a</mi><mi>n</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">Sign_{SK_{DEV}}(PK_{payload},H(payload),Diffe-Hellman参数)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567071428571427em;margin-left:-0.07153em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.14329285714285717em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.250305em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mclose">)</span></span></span></span>返回给远程客户。用户根据其中的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><msub><mi>K</mi><mrow><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">PK_{payload}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo>(</mo><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">H(payload)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mclose">)</span></span></span></span>来验证这正是想要的机器。建立好Diffe-Hellman的可信通道后，就可以传输想要执行的代码和其数据，服务器平台会返回一个程序哈希的签名。这样就可以建立远程客户对于服务器平台的信任。</p>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sanctum_attestation.png" alt="" loading="lazy"></figure>
+<h3 id="sanctum处理器的远程验证">Sanctum处理器的远程验证</h3>
+<p>​	图7就是一个具体的例子，它实现在Sanctum处理器上。和上面中介绍的不同就是，这里Payload是Security Monitor可信软件，它负责进行Client Enclaves之间的隔离，同时有一个特殊的“Signing Enclave”。只有“Signing Enclave”可以访问Payload生成的密钥，在初始化一个Client Enclave后，它的哈希值会被传送到“Signing Enclave”，使用<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">SK_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>进行签名。我们依赖Sanctum处理器提供的隔离来保证签名的机密性。在Enclaves之间传送消息并不需要密码学操作，Sanctum实现了消息传送机制。</p>
+<h3 id="匿名验证">匿名验证</h3>
+<p>​	之前介绍的协议都不支持匿名认证，但是现在的构造并不能兼容匿名认证。为了将现在的方案转化为匿名认证方案，需要一个诚信放来处理组成员认证和撤回。这个诚信方往往指的就是硬件厂商，它负责管理公钥组进行设备认证。厂商还需要跟踪已经被攻陷的平台，来保证这些公钥已经被撤回。举个例子就是，为了实现直接证明验证，一个平台应该是可以被证明是真实的，但是厂商应该对于公钥对应的私钥应该是零知识的。可以对于加密的消息进行签名，允许厂商去验证这个平台是真实的，但是并不知道是哪个平台。验证时，平台会发送一个签名和厂商给予的证书，客户会验证基于厂商的证书。</p>
+<h2 id="risc-v-keystone">RISC-V Keystone</h2>
+<p>​	Sanctum的Bootloader也在RISC-V keystone上实现，但是它没有具体的硬件实现。和上面介绍的相似它的Payload验证包含Security Monitor和Security Monitor Public Key的签名报告。而Enclave的验证需要Enclave本身哈希值和Enclave数据的签名报告。前者使用处理器私钥签名，后者使用Security Monitor私钥签名。这样远程用户可以验证处理器本身和程序是否被正确启动。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/sokhardware-supported-trusted-execution-environment/" class="post-title gt-a-link">
+                    Sok：Hardware-supported Trusted Execution Environment
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

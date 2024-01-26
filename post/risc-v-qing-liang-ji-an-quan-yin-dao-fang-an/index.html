@@ -1,0 +1,282 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>RISC-V轻量级安全引导方案 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    RISC-V轻量级安全引导方案
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-07 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/jN8FVGalh/" class="post-tags">
+                            # paper
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id=""><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/title.png" alt="" loading="lazy"></h1>
+<p>​	现在的安全boot方案要么太过复杂，要么被攻击者攻破。在这种情况下，开源的安全boot架构对于设计者和白帽攻击者就很重要了。这篇文章中提出了一种轻量级的安全boot架构，这种架构高效地使用了<code>ECDSA</code>算法、<code>SHA3</code>算法和DMA。另外，架构中包含一个密钥管理单元，其中包含了一个优化的PUF为密钥在SoC上提供安全的模块。这个架构在RISC-V的SoC上得到了验证。</p>
+<p>​	Boot是一个安全系统的生命周期中关键的一环，很多攻击发生在这个阶段，比如可以将内核替换为一个已经被污染的内核，使得这个系统变得脆弱。所以安全系统中的一个重要准则就是，为从第一阶段引导到安全应用程序建立信任链。本篇文章提出的安全boot架构，这是第一个为RISC-V SoC构建的以硬件为基础的安全boot架构。本篇文章的架构定义了一个中心化的代码认证单元(<code>CAU</code>)，用于验证信任链的完整性，<code>CAU</code>使用了<code>ECDSA</code>和<code>SHA3</code>。高效利用ECDSA使得PUF可以轻松地对生成的非对称密钥并对其进行更管理，同时<code>CAU</code>使用DMA来进行代码的快速读取和认证。它整体框架如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/CAU_framework.png" alt="" loading="lazy"></figure>
+<p>​	这篇文章主要做出了如下贡献：</p>
+<ul>
+<li>提出了一种轻量级的安全boot架构来保证系统完整性和对软件提供商进行验证。</li>
+<li>框架中包含了一个密钥管理单元，管理单元中实现了物理不可克隆功能(PUF)。</li>
+<li>将代码认证单元整合进了RISC-V SoC。</li>
+</ul>
+<p>接下来文章介绍了前人做的工作，RISC-V SoC的整体框架，安全boot的整体框架，安全性分析，性能分析。</p>
+<h2 id="背景和基本概念">背景和基本概念</h2>
+<p>​	这里列举提升<code>RISC-V</code>硬件安全的工作，如<code>Shakti-T</code>利用了基地址和界限的概念保证指针只访问合法的区域，<code>SMARTS</code>实现了一个内存保护单元<code>PMU</code>，这些工作保证了<code>DRAM</code>的安全；<code>Keystone</code>是第一个开源的利用<code>RISC-V</code>架构构架的<code>TEE</code>项目；<code>Sanctum</code>介绍了一种基于软件的安全boot和远程认证方式。然而，这些工作都是使用了基于软件的安全boot方式，相较于硬件实现的方式有很多缺点。</p>
+<h3 id="什么是secure-boot">什么是Secure boot</h3>
+<p>​	在<code>W. A. Arbaugh, D. J. Farber, and J. M. Smith, “A secure and reliable bootstrap architecture,” in Security and Privacy, 1997. Proceedings., 1997 IEEE Symposium on. IEEE, 1997, pp. 65–71.</code>这一篇的paper中提出了构建信任链的概念，即启动过程中每一个阶段都要验证下一个阶段的完整性。在<code>UEFI 2.2</code>版本以后都有安全boot的介绍，<code>UEFI</code>通过在boot的每一个阶段都会计算一个哈希值，然后就可以验证签名。如果这个检查失败了，那么boot就会失败；反之，boot的安全性就得到了保证。</p>
+<p>​	当然安全boot有很多变种，如Intel处理器支持安全boot的两种模式，<code>measured mode</code>和<code>verified mode</code>，两种模式的信根都是微代码。在<code>measured mode</code>下<code>TPM</code>负责签注密钥，<code>verified mode</code>下前一阶段对于后一阶段的验证。另外一种模式，就是通过专门安全处理器，例如AMD将信根置于ROM中。ROM验证安全引导密钥，之后这个密钥将用于验证更大处理器固件代码（在flash中）。</p>
+<h3 id="数字签名">数字签名</h3>
+<p>​	数字签名技术是广泛应用的技术，它应用于浏览器和邮件等服务。几乎所有的公钥加密系统都有涉及很难解决的数学问题。如，RSA基于大素数分解难题，而ECC基于椭圆曲线离散对数问题。最流行的签名方案是基于椭圆曲线的ECDSA，最受欢迎的加密方案叫ECIES，最受欢迎的密钥协议叫ECDH。</p>
+<h3 id="puf">PUF</h3>
+<p>​	<code>PUF</code> 可以利用开机时的状态生产密钥，在商用的产品中，<code>PUF</code>可以用于生成和用户共享的对称密钥，也可以用于生成非对称密钥的随机种子。</p>
+<h2 id="risc-v-soc">RISC-V SoC</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/RISC-V%20SoC.png" alt="" loading="lazy"></figure>
+<p>​	这个SoC是利用<code>lowRISC</code> 来构建的，这个SoC集成了安全boot、加密、片外内存验证、密钥管理、密码学运算加速等功能。当然，一个安全的SoC应该从硬件和软件上都是可靠的，构建一个安全的RISC-V安全系统需要利用各种特性去防御针对硬件的攻击和来自运行在其之上的软件的威胁。</p>
+<ul>
+<li>密钥管理单元，管理密钥同时将其放置到各个安全模块上。</li>
+<li>代码认证单元，用于防御镜像修改、僵尸攻击等，和<code>Boot-Sequencer</code>模块一起用于实现安全boot。</li>
+<li>安全Debug，用于抵御一些密钥窃取，非法的debug，probe等测信道攻击。</li>
+<li>可信执行环境，就是图中标为4的单元，为应用创造隔离的执行环境。</li>
+<li>可信片外存储，抵御测信道攻击的必要模块，同时为可信执行环境提供使用的存储空间。</li>
+</ul>
+<h2 id="安全boot的框架">安全Boot的框架</h2>
+<p>​	一个安全的SoC要保证从boot一开始就建立信根，并在OS运行之后一直保持。第一阶段的不变的<code>bootloader</code>位于只读的ROM上，这个阶段的引导将从密码学上验证第二阶段<code>bootloader</code>的签名，之后这个第二阶段的<code>bootloader</code>也会验证下一个阶段软件的签名，以此类推。到了直接链的末尾，一个可信的应用就被建立到SoC的可信执行环境上。</p>
+<h3 id="berkeley-boot-loader">Berkeley Boot Loader</h3>
+<p>​	RISC-V主要的引导过程指令都被定义在<code>Berkeley Boot Loader</code>中，<code>BBL</code>将执行初始化硬件，建立页表，加载内核，启动内核等任务。整个过程是分多阶段执行的。</p>
+<ul>
+<li>第一步，在RISC-V SoC中的ROM中包含了一个裸机程序，这个程序用于加载<code>BBL</code>，首先运行这个程序。</li>
+<li>第二步，将<code>BBL</code>加载到<code>DDR</code>内存，实际上BBL的大小是大于ROM的，所以在RISC-V中实际上，有两个选项
+<ul>
+<li><code>SD-Boot</code>: <code>BBL</code> 实际上位于外部的SD卡中。</li>
+<li>网络启动：这个裸机程序向外发送请求。</li>
+</ul>
+</li>
+</ul>
+<p>​		加载进来的程序，将会是一个ELF文件包含<code>BBL</code> 也可能包含内核。</p>
+<ul>
+<li>第三步，<code>BBL</code>运行在最高权限，执行一系列的初始化后，加载并执行内核。</li>
+</ul>
+<h3 id="信根">信根</h3>
+<p>​	boot的过程起始在ROM中的固定指令，然后跳转到BRAM中。这个过程需要使用<code>CAU</code>单元进行认证。</p>
+<h3 id="cau">CAU</h3>
+<p>​	代码认证单元用于验证程序的签名，通过验证每一个即将被执行的程序，就可以阻止没有被认证或者被修改过的代码的运行。将ROM中的代码可以直接放置在<code>0x100000</code>的位置，这个位置将直接触发<code>CAU</code>的检查，如果失败，则会直接挂起。</p>
+<h3 id="risc-v上的linux">RISC-V上的linux</h3>
+<p>​	这里使用linux版本为<code>4.2</code>，一个裸机程序已经直接被预先初始化到BRAM中，ROM的程序会直接跳转到BRAM的位置，开始执行将<code>BBL</code>的代码从SD卡拷贝到DDR。就像前面介绍的一样，Linux不是直接启动的，它是通过<code>BBL</code>启动的，ROM在设置完外设的其实地址后，将跳转到BRAM，这样就不需要<code>BIOS</code>来决定或者计算这些地址。</p>
+<p>​	接下来，在S模式启动linux，当然<code>BBL</code>仍然运行在更高的特权级来服务外设的终端请求。</p>
+<h3 id="boot-sequencer和密钥管理单元">Boot Sequencer和密钥管理单元</h3>
+<p>​	<code>Boot Sequencer</code> 实际上是一个有限状态机，在每个<code>boot stage</code>的时候进行状态切换，<code>Boot Sequencer</code>会调度密钥管理单元将相关的密钥发送给<code>CAU</code>，这样<code>CAU</code>就可以通过<code>ECDSA</code>进行验证签名。现在这里的实现只是一个有限状态机，但是可以优化为一个微控制器。</p>
+<p>​	密钥管理单元实际上负责密钥的生产和传发。<code>TRNG</code>是随机数生成器，<code>PUF</code>前面已经做了介绍，<code>OTP</code> 是一次性存储模块。它们的协作过程如下，首先随机数生产单元生产对称密钥。并放置在存储单元。<code>PUF</code>取出这个密钥，并将其发送到需要的安全模块。<code>CAU</code>的一次性存储单元中存储了一个非对称加密算法中的私钥。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/secure_boot_framework.png" alt="" loading="lazy"></figure>
+<h2 id="安全性分析">安全性分析</h2>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ECDSA_analysis.png" alt="" loading="lazy"></figure>
+<p>​	对比传统的安全boot方式，这篇文章的工作的优势如下：</p>
+<ul>
+<li>硬件实现的验证方式，性能更高更加节能。</li>
+<li>在RISC-V核心上进行<code>SHA3</code>和<code>ECDSA</code>运算假设了RISC-V处理器本身是可信的，如果将处理器本身考虑为<code>TCB</code>的一部分，那么随之而来的就是<code>TCB</code>过大的问题，那么就给<code>Meltdown</code>和<code>Spectre</code>等漏洞创造了攻击面。另一方面来说，这篇工作中假设<code>CAU</code>和<code>Boot Sequencer</code>是可信的，但是RISC-V处理器本身是不可信的。</li>
+<li>这篇文章中安全boot的过程是有中心化的<code>CAU</code>进行控制的，所以可以地控制整个引导过程。</li>
+</ul>
+<h2 id="性能分析">性能分析</h2>
+<h3 id="cau-2">CAU</h3>
+<p>​	<code>CAU</code>主要包含三个模块，1）DMA; 2)<code>SHA1</code>处理单元；3）<code>ECDSA</code>验证单元。DMA由<code>Boot Sequencer</code>进行配置，从内存中读取代码，同使用<code>SHA3</code>单元进行计算，密钥管理单元将公钥发送到<code>CAU</code>，之后有了代码的哈希，签名还有公钥，就可以进行签名的验证。</p>
+<ol>
+<li><code>ECDSA</code>的性能分析，性能优势非常明显：</li>
+<li>通过只存储非0的RC和流水化，提升SHA3执行单元的频率和并减小面积。</li>
+<li>特殊的线性反馈寄存器为随机数的生产提高稳定性。</li>
+</ol>
+<h2 id="结论">结论</h2>
+<p>​	这个框架利用对于<code>ECDSA</code>,<code> SHA3</code>, <code>PUF</code>等单元的优化，实现了一个轻量级的RISC-V安全boot架构，未来可以做的工作还有，1.支持远程验证，2.将可信执行环境整合进SoC。这篇论文是在看<code>Sanctum</code>时看到的，可以看到对于前人的工作做了很多整合，具体的最大的贡献是提出了<code>CAU</code>和<code>Boot Sequencer</code>来进行验证的操作，有两个最大的优势，第一可以避免处理器漏洞对于验证过程本身可信度的威胁；第二是专门的密码学计算单元肯定是可以加速的，但是只是boot加速；可能还有没有体现出来的一点是中心化，可以配置，论文中提出这是未来可以做的点，最后的最后DMA在在这里的意义是否被体现出来，也是值得思考的问题。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/spectre-shi-yan/" class="post-title gt-a-link">
+                    Spectre实验
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

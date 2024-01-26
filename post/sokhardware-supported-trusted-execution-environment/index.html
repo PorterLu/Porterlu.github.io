@@ -1,0 +1,328 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Sok：Hardware-supported Trusted Execution Environment | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Sok：Hardware-supported Trusted Execution Environment
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-06-13 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/jN8FVGalh/" class="post-tags">
+                            # paper
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="概述">概述</h3>
+<p>​	现代计算模型日益复杂还有软件对于强隔离机制的需求使得越来越多的系统采用了可信执行环境。近几年，已经出现了许多工业界和学术界的可信执行框架，它们仍然很难进行比较对比。更普遍地说，现有的可信执行环境架构没有被全面系统化，不能很好理解各个可信执行环境之间不同和优缺点。</p>
+<p>​	因此，本篇工作中，我们分析了现有可信执行环境的设计并且系统化了可信执行环境中用实现它们安全目标的机制，包括可验证的启动、运行时隔离、可信IO和安全存储。更确切地说，我们分析了在可信执行环境方案下的典型体系结构构建模块，和各个组件可供的选择及其之间的权衡。我们专注于硬件辅助可信执行环境，并且覆盖了一系列工业界和学术界的可信执行环境。我们的分析显示即使各种可信执行环境的安全目标、使用模型和指令集体系结构不同，但是它们在设计中使用很多相同的构件。</p>
+<p>​	（可信执行环境后文中称为TEE)</p>
+<h3 id="介绍">介绍</h3>
+<p>​	今天的计算平台有各种各样的架构，软件模型和支持的应用类型。从云计算中的大规模服务器到智能家居设备。这些设备逐渐需要存储和处理一些安全敏感的数据来完成一些诸如医疗服务、金融服务领域的工作。因此，现代计算平台一定会实现一些机制来保护安全敏感数据来防止非授权访问和修改。</p>
+<p>​	在当今计算系统中，数据的机密性和完整性不仅需要防御来自网络的攻击，还需要防御那些来自同一平台下软硬件的攻击或者直接的物理攻击。这是因为在系统上存在多个不可信的软件组件。例子包括在相同的云计算平台上有来自不同客户的数据，在一部手机上为网络提供商和用户的数据。于是，如今的计算平台需要将敏感数据和一些潜在的软件攻击还有硬件攻击者相隔离。实际上，这个需求会扩展到任何涉及到敏感数据的应用中。</p>
+<p>​	而面对这些需要保护敏感数据计算的解决方案就是TEE，现在不同TEE的安全目标会有不同</p>
+<p>但是大部分有如下四个安全目标：1）机密数据和代码的可验证启动，这样远程就可以确认应用被安全并且正确地启动了。2）运行时对于数据和代码机密性和完整性的保护。3）可信IO，这样就可以安全地访问外设或者加速器。4）TEE数据的安全存储。</p>
+<p>​	现在存在一系列工业界和学术界的TEE，它们底层的安全假设、指令集架构以及使用模型会有不同。在这篇工作中，我们分析了现有TEE的设计，并且系统化地分析了这些TEE中的通性和独特之处。即使许多TEE对于底层的机制使用不同名字和描述，但是这些机制是十分相似的，我们将底层的机制进行分组并且强调一些例外。</p>
+<p>​	在我们开始学习这些TEE解决方案之前，我们先定义通常大部分TEE所考虑的敌手。我们专注于硬件辅助TEE并且覆盖了验证启动、运行时隔离、安全IO和安全存储。分析不用TEE所支持的这些特性，以及不同TEE是如何实现这些特性的，并分析这些TEE所考虑的攻击者。</p>
+<p>​	第一个分析的TEE安全目标就是可验证的启动，就是提供TEE初始状态的正确性证明。这个典型地，是通过建立可信根的测量值完成的，之后通过它建立TEE中代码和数据的测量值。之后在一个叫做attestation的过程中进行验证。标准的测量和attestation过程是由可信平台模块（TPM）完成的。从很大程度上，今天的attestation方案包含了相似的机制和协议，但是根据不同架构又做了很多的演变。例如，在一些TEE中，attestation密钥和测量值存储在芯片内部的模块，但是也很多存在芯片外的模块。密钥的层次涉及了需要现代attestation协议，可能和标准的TPM-based协议不同，一些需要引入对称密钥来解决性能问题。</p>
+<p>​	之后我们将关注TEE如何实现运行时的隔离来保证数据的机密性和完整性。我们对于隔离机制进行了分类，分类从资源分区和强制隔离两个维度进行分析。我们之后使用这些维度对于不同TEE使用的技术进行分析。即使每一种策略对于每一种资源都有相应的优缺点，但是我们分析对于各种攻击者的攻击下，CPU和内存的隔离在哪种策略有更好的适应性。之后通过描述架构上的隔离组件来总结不同TEE如何使用这些策略。相比之下，内存的保护机制是多样的，一些TEE会采用机制来对应不同的攻击者。</p>
+<p>​	安全IO或者说可信IO从支持用户IO到各种加速器。大多数的可信IO方案都包含两个主要组件：一条到设备的可信路径和可信设备用于像CPU一样提供敏感数据的保护。我们分析两种TEE使用的可信路径，分别是逻辑上的和密码学上的。之后，我们介绍不同方法去实现可信路径，包括它们在不同场景下的适用性还有架构上的支持。最后我们使用在上一节中的分配策略去理解不同可信设备架构。</p>
+<p>​	安全存储就是保证持久存储的敏感数据只能被可信实体获取。这个概念涉及到sealing。和测量和attestation相似，早期的sealing机制依赖于TPM。我们发现sealing机制为了适应需求已经演进了好几代，现在只依赖芯片内的组件。我们揭示了现在TEE只有三分之一有sealing支持，并且大都采用了相似机制。</p>
+<p>​	综上所述，这篇文章对于理解现在的TEE架构做出了如下的贡献：</p>
+<ul>
+<li>这篇文章介绍了各种攻击模型，包括软件的、硬件的和它们对应的能力。我们认为对于攻击者的分类，我们认为这样的分类在设计TEE时，对于选择怎么样选择机制并分析其安全性是很大的意义的。因为这根源于TEE的设计不仅要考虑到保护的是什么资源，还要考虑攻击者的能力。</li>
+<li>据我们了解，我们这篇文章是第一篇对于TEE为了达到安全目标时选择的机制进行分析分类的文章。我们认为这种系统化的分析可以作为设计新的TEE时的基础。</li>
+<li>基于调查的TEE架构，我们总结出了四个安全目标的设计空间是相对小的，新的设计往往利用之前的设计选择，总是在统一组件下做出很小的修改。</li>
+</ul>
+<h3 id="研究范围">研究范围</h3>
+<p>​	近年来提出了各种TEE架构，奇怪的是，即使出现了大量的TEE解决方案，并没一个被广泛接受的TEE定义。在这篇文章中，我们不准备去寻找这样一个统一的定义。取而代之的是，我们调研了现在的一系列方案并系统化的根据四个安全目标进行分析。根据现有TEE设计的不同，我们试图找到底层设计决策来连接这些相似的方案。因为TEE的性能往往是否处理器本身决定的，我并不调研各种TEE之间的性能差异。</p>
+<ul>
+<li>我们专注于硬件辅助TEE，并且不调研更加复杂的软件方法，比如基于可信虚拟机。</li>
+<li>我们考虑不同架构上的TEE，我们选择了四种处理器架构：x86、ARM、POWER和RISC-V。同时我们也分析在SPARC和OpenRISC上方案。</li>
+<li>一些提案有时候不被视为TEE(如ARM Trustzone)，我们会将这些尽可能放到TEE的框架中。</li>
+<li>我们故意地不考虑一些基于协处理器的方案如Google Titan和Apple's Secure Enclaves，或者基于硬件安全模块。我们专注于通用处理器上的方案。</li>
+</ul>
+<p>术语：</p>
+<p>​	在学术界和工业界，下列几个名字往往用于指代TEE。</p>
+<ul>
+<li>Intel SGX，TEE实体叫做Enclave</li>
+<li>TDX和AMD SEV-SNP，实体叫做安全虚拟机</li>
+<li>ARM CCA</li>
+</ul>
+<p>​	这篇文章中使用enclave指代TEE实体，使用TCB指代底层的可信组件。我们使用TEE指代整个用于创建Enclave的架构。</p>
+<h3 id="系统和敌手模型">系统和敌手模型</h3>
+<p>A. 系统模型</p>
+<p>​	大多数TEE都是定位在一个通用处理器上，并且包含了一个SoC，SoC中会有片外存储，外设等等。SoC上可以包含一个或者多个核，同时共享一个Cache，这个Cache下连接到一个内存控制器，同时也有一个IO多选器用于连接外设到SoC中。典型的软件栈包含操作系统，多个用户程序。如果实现了虚拟化，还会有一个hypervisor，其上会运行一个或者多个虚拟机。用于完成完成TEE安全保护机制的软硬件称为TCB。</p>
+<p>B. 敌手模型</p>
+<p>​	TEE用于在同一平台对一系列攻击者进行防御。这些不可信的软硬件包括其他enclave，操作系统，不可信的IO设备，物理攻击者等等。</p>
+<p>​	Enclave攻击者：这种攻击发生一个平台支持同时运行多个Enclave的情况。这种情况十分常见，例如，在多用户的云服务平台，在同一硬件平台上，不同用户可以在之上运行Enclave。在移动平台上也有这种情况，多个服务提供商也会同时运行Enclave。</p>
+<p>​	来自非特权软件的攻击：例子有，在云服务平台上，控制客户虚拟机启动和Enclave运行在同一特权级的程序。</p>
+<p>​	特权软件的攻击：这里的攻击者指的是具有系统管理功能的软件，如OS。同样这里的攻击者也包括云服务平台上的hypervisor，移动平台上的OS。</p>
+<p>​	启动阶段的攻击：这种攻击指的是控制系统的启动阶段，之后就可以控制TEE。这种攻击者通过例如内存或者IO的错误配置，来导致整个TEE的错误。这种攻击者可以是一个恶意的BIOS。</p>
+<p>​	外设攻击：很多外设并在Enclave的TCB内。这些外设可以是在SoC内的，也可以是通过外部总线接入的。这些外设通常都假设为不可信。</p>
+<p>​	来自总线的攻击。</p>
+<p>​	侵略性的攻击：攻击可以发动侵略性的攻击，诸如探测底层芯片、操纵时钟和发动电压攻击来窃取密钥或者控制执行路径。</p>
+<p>C. 侧信道攻击</p>
+<p>​	多个基于物理的、微结构的侧信道攻击已经可以在TEE平台上发起。这种攻击是是因为Enclave使用一些没有专门分配给Enclave的共享的计算资源。TEE往往依赖专门的对策来应对这类攻击。例如，专门的软件对抗方法包括消除机密信息的内存访问或消除依赖机密信息的分支。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sok_TEE_adversary.png" alt="" loading="lazy"></figure>
+<h3 id="可验证的启动">可验证的启动</h3>
+<p>​	Enclave安全执行的第一步就是安全的设置过程，这样才能保证Enclave的执行环境被正确配置。流行的验证方法就是Enclave测量和attestation。从直觉上讲，对于一个Enclave的测量就是记录一个初始状态，更加具体地讲，就是一系列密码学的哈希操作。这个测量过程本身必须是可信的。这个过程必须开始于可信测量根RTM，最终用于测量Enclave。这个Enclave测量值之后也将用于数字签名报告交给一个验证器进行验证。</p>
+<p>A. RTM</p>
+<p>​	可信启动的核心就是RTM，目前的TEE存在三种方案，静态的、动态的、硬件的。</p>
+<p>​	静态的，即SRTM。这个可信链条，要从系统启动到enclave运行保持住。这种方案进行时各种不可信部分往往还未启动，除了基于总线的攻击者，所以这种启动方式要做到不使用片外的设备。典型的SRTM仅仅依赖硬件或者不可变的BootROM中的软件。</p>
+<p>​	相对的，DRTM可以不信任在它之前的代码，建立一个新的RTM。这种实现必须实现体系结构上的拓展，使得Enclave启动时有办法对抗一些不可信的组件。这个通过特殊的指令挂起其他的不可信的软件同时disable所有的IO设备和中断。之后，硬件会加载、测量、验证经过签名的代码模块来作为Enclave的可信基。</p>
+<p>B.测量</p>
+<p>​	在STRM和DRTM的过程中，每一个在信任链上的实体都是Enclave的可信基，在转移到下一个组件前都会对其进行测量，同时还会进行进行完整性检查。几乎所有的TEE都采用了类似的方式。一旦一个组件的测量完毕，必须将这个测量存储到一个攻击者无法访问到的地方。</p>
+<p>C. Attestation</p>
+<p>​	这是可验证启动的最后一个环节，验证器会验证一个Enclave的初始状态是否正确。就是一个Enclave的Hash值和可信基是否符合预期的值。有两种attestation，一种是本地的，就是enclave和验证器在同一个平台上。相反，如果是远程的attestation，enclave和验证器将不在一个平台上。远程attestation依赖非对称加密，会引发更大的检查开销。相反，本地的attestation会使用对称加密，这会更加高效。事实上，大对数TEE都支持远程attestation，只有少数TEE同时支持两个。</p>
+<h3 id="运行时隔离">运行时隔离</h3>
+<p>​	在正确设置完Enclave后，就可以开始执行。为了防止攻击者干扰Enclave的执行，所有Enclave拥有的资源如CPU和内存，不能被未授权的软件访问。这种保护机制我们称之为运行时隔离。接下来，我们将介绍一系列的隔离策略分类，之后介绍如何将这种策略应用到CPU和内存的隔离上。最后，我们调研了现有的TEE使用的隔离策略。</p>
+<p>A. 隔离策略的分类</p>
+<p>​	总的来说，隔离机制是为了实现受保护资源的机密性和完整性。</p>
+<p>​	资源分区：大体分为时间、空间上的隔离。</p>
+<p>​	对时间上的隔离，往往是将资源分配到一个时间域上，随着时间将资源分给不同的执行上下文。在任何一个时间点，只有一个执行上下文能够访问对应的资源。时间上的分区隔离需要一个机制去安全切换上下文。这个安全切换需要较快，这样才不会影响系统的整体性能。时间上的隔离往往用于那些空间上进行隔离很困难，多个上下文同时进行访问是不必要的情况。</p>
+<p>​	对空间上的隔离，资源往往分为可信上下文和非可信上下文的部分，使用独立的分区。这用于同一资源有多个或者一个资源可以细分为多个的情况。同时一个上下文可能被给与多个资源实体。从结果上，空间隔离技术往往用于那些相对容易复制或者分离的设备上。</p>
+<p>​	时空隔离：提供了更多灵活性和性能优化。</p>
+<p>​	另外一种就是强制隔离：分为逻辑上的和基于密码学的</p>
+<p>​	逻辑上的隔离利用了一些访问控制机制来实现强制隔离，这些机制会防止攻击者访问受保护的数据。例如，在一个可信的上下文切换中，这个机制将保证下一个执行的线程不能任何受保护的数据。另一方面，许多隔离机制会拦截访问请求并且检查访问控制信息。这里的访问控制信息，必须由系统的可信组件进行生成和管理。如果要实现灵活的管理，会需要在运行时修改控制信息，用于实现灵活的再分配。对于这些资源的访问控制信息需要根据访问的粒度和资源的类型进行变化。更进一步地，这些访问控制信息本身需要被保护。</p>
+<p>​	另外一种是基于密码学方法的隔离，通过机密可以实现机密性，只有经过认证过的下文可以得到密钥解密数据。而完整性认证可以通过消息认证码的方式实现。这样就可以阻止恶意的程序去修改密文发起攻击。对于完整性的保护需要对抗重放攻击。</p>
+<p>B. CPU隔离</p>
+<p>​	在本篇文章的讨论中，专注于保护CPU中架构相关的寄存器状态。</p>
+<p>​	CPU隔离策略的选择，往往使用时间上的隔离，因为这样不用添加任何运行时的检查。</p>
+<p>​	而密码学的隔离方法有很大的性能开销。</p>
+<p>​	对于CPU隔离的架构支持，就像之前提到的那样，实现安全的上下文切换的方法就是利用分时复用，对于上下文中的寄存器进行存储、清除、恢复。这个切换过程必须保证Enclave中的数据不被泄露。另外，这个CPU恢复Enclave执行状态的过程也不能被干扰。为了保证TCB可以充分协调每一次上下文切换，TEE利用多个特权级来完成这件事。</p>
+<p>​	除了上下文切换，CPU模式和特权级是TCB组件和安全运行Enclave所必要的，这允许运行在高特权级的TCB可以实现一些安全机制例如测量，attestation，内存隔离，可信IO，安全存储等等。</p>
+<p>C. 内存隔离</p>
+<p>​	TEE设计需要保证Enclave使用的内存在运行时不被未授权地访问或者修改。这种保护不仅仅覆盖了off-chip的保护，也包括片内的一些指令或者Cache。于此同时，大多数TEE支持虚拟存储，这个地址转化过程的可信是内存隔离的关键。同时对于处理器Cache，TLB存有最近的地址翻译，一定得保护其不被误用或者错误配置。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SoK_industry_tee.png" alt="" loading="lazy"></figure>
+<p>​	对于内存隔离策略的选择：</p>
+<p>​	所有之前讨论的隔离策略都可以用到内存隔离中，但是TEE使用的内存隔离策略会更加灵活。对于采用内存完全分区的策略，有专门的内存区域划分给TCB和Enclave。这种策略在只用支持有限数量的Enclave的系统中可以很好地工作。这种内存资源要求相对静态并且预先已经知道，同时对于隔离粒度不高的应用很适合这种策略。</p>
+<p>​	完全分时隔离需要允许内存只能被当前活跃的Enclave访问，并且在上下文进行切换时需要能安全地存储和恢复寄存器。这种隔离策略适用的场景十分有限，需要无论何时只有一个执行上下文是有效的情况。因此在需要并行运行Enclave的情况不是很搞笑。另外，同时将内存的内存存入磁盘需要耗费大量的时间。所以，这种策略很少被使用。</p>
+<p>​	时空同时隔离的策略，也是更为常用，更为灵活的。内存区域可以被不同Enclave分时复用。</p>
+<p>​	对于逻辑强制隔离依赖访问控制信息，来使得只有经过授权的访问才能访问enclave的资源。这种隔离需要对于每一次访问都进行检查，比如通过MMU就可以实现。</p>
+<p>​	对于密码学的强制隔离机密性通过加密实现，通过MAC来完成完整性的保证。为了防御重放攻击还需要记录一些刷新的信息，比如counter，我们常常使用merkle-tree来进行具体的实现。和上面的隔离策略形成对比的是，基于密码学的隔离可以对抗总线攻击者。但是，基于密码学的隔离很难进行扩展，特别是在不同的上下文需要使用不同的密钥的时候，因为它需要在SoC上存储大量密钥。</p>
+<p>​	在调研TEE的过程中，我们发现了一系列的策略。许多的TEE会同时使用多种策略。比如Intel SGX会使用时空隔离加上逻辑隔离保护Enclave Memory。但是它用了空间隔离隔离的方法保护TCB，同时使用加密的方法对抗总线攻击者。</p>
+<p>​	对于内存隔离的架构支持：通过一个访存控制检查可以进行一次检查，在调研的TEE中，它们有两个选项，一个是内存保护单元，另外一个是MMU。两者主要的不同就是，前者直接操作物理地址，而后者会基于虚拟地址。同时，MPU往往只会支持有限的规则，而MMU则更加得灵活。我们发现使用MMU的TEE会更加复杂，需要更加深入的安全性分析。另一方面，MPU则相对简单，因此可以简化安全性分析。许多的现代学术界TEE依赖MPU进行隔离。另一方面，许多商业TEE会更加倾向于使用复杂的MMU。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sok_isolation_strategies.png" alt="" loading="lazy"></figure>
+<p>​	我们也发现这些访问控制信息，如可信页表、MPU的访问控制规则，其他的辅助元数据需要自己防御未授权访问。这种情况往往是同启动时配置MPU实现的。</p>
+<p>​	Caches: Cache中会保存有最近访问过的数据来提升软件性能。通常，CPU中包含多个cache层次，有一些是专门属于一个核，也有的共享的。在一些TEE架构中，（SGX中可信实体的Cache数据不被不可信部分访问）？，Arm TrustZone会添加额外的保护机制来使得Enclave的Cache数据不被访问。</p>
+<p>​	基于空间的Cache隔离，将一部分Cache变成一个Enclave的专属Cache，这会降低资源的利用率，同时降低系统的性能。但是这样的作法可以用于消除侧信道。分时复用Cache也不是十分高效，因为这需要在切换上下文时刷新整个Cache，因此，写TEE会将一小部分专属于一个Core。并且密码学操作并不适合于Cache这类微架构，因为密码学硬件会带来的面积开销和延迟。</p>
+<h3 id="可信io">可信IO</h3>
+<p>​	早期的TEE设计专注于CPU，最近也将兴趣转移到如何和外设进行可信的交互。可信IO分为两个部分：1）建立一条可信路径，Enclave对于设备进行访问的机密性和完整性；2）在可信外设上保护Enclave的数据。</p>
+<p>A. 建立可信路径</p>
+<p>​	这条可信路径用于建立enclave和外设之间的通信。通过逻辑上的和密码学上的操作可以建立一条可信路径。如果这个可信路径有多跳，那么可以在每一跳可以实现一种隔离。注意在每一跳都可以使用逻辑上的或者密码学上的方法，除了基于总线的攻击，只能使用密码学的方法。</p>
+<p>​	一种构建逻辑上可信路径的方法就是建立访问控制过滤器，这样就可以过滤一些MMIO请求。这个过滤可以是静态的，也可以是可编程的。许多依赖trustZone Protection Controller进行过滤。另外一种选项就是通过MPU配置，来保证Enclave访问时只有其能进行访问。</p>
+<p>​	体系结构上对于密码学安全路径的支持：对于在两个端点之间实现密码学安全路径，这种方法会造成一些难以避免的开销。为了建立这个安全路径，Enclave和外设之间要预分配证书和密钥。</p>
+<p>B.可信设备架构</p>
+<p>​	对于任何一种可信IO用途，都可以建立一条从enclave到设备的路径。但是新出现的设备可能需要计算处理用户的数据，所以这种设备可能也需要像CPU一样保护用户数据的机密性和完整性。</p>
+<p>​	今天，一系列的加速器，如专用AI处理加速芯片、FPGA、GPGPU等等。这些系统底层架构有很大的不同，因此需要分别实现特定的机制来实现enclave数据。但是这些机制并不在本篇文章的讨论范围内。可是仍然有一些更为统一的策略。</p>
+<p>​	空间隔离：为每一个Enclave使用专门的加速器。但是这种在办法需要为Enclave一个整个生命周期中分配一个设备，这样开销是很大的。因此，这种策略并不是很实用。只能说在有专门的设备存在的情况，可以建立一条达到设备的路径。</p>
+<p>​	时间隔离：直到最近，加速器仍然假设在任何一个时刻，只有单个上下文正在执行。因此可以对设备进行分时共享。这种策略需要一个安全上下文切换机制，这可以通过软件实现，也可以通过加速器硬件实现。</p>
+<p>​	时空隔离和逻辑强制隔离：这种策略用于多个enclave需要并行地访问加速器。这种策略需要硬件的支持，即硬件支持多用户运行。这里的策略是设备定制的，但是它是包含保持记录资源所有权的访问控制信息。</p>
+<p>​	基于密码学的隔离：这个不适用于于保护片上加速器资源。</p>
+<h3 id="安全存储">安全存储</h3>
+<p>​	在许多引用场景下，enclave需要在不断启动后，维持一个持久的状态。这个过程需要将数据进行加密。这个过程叫做sealing，反过来进行解密的过程称之为unsealing。</p>
+<p>​	即使安全存储是一个很常见的需求，但是现在大多数TEE并没有描述地很确切。一些TEE提供了原语来支持安全存储，但没有完整描述一整套方案。因此我们在这里就不再过多描述这些TEE。所以接下来的小节中，我们将专注于那些提供了一整套机密方案的TEE：Flicker、SEA、IBM-PEF、Intel SGX、TIMBERV、Keystone和Sanctuary。</p>
+<p>A. Sealing方案及其权衡</p>
+<p>​	所有调研TEE中的sealing方案都基于TPM。Flicker，SEA和IB,-PEF都直接依赖TPM的原始sealing机制。这包括生成一对非对称密钥，并且使用它们进行加密一个机密信息，这样只有系统被指和加密时一致才能正确进行解密。这里sealing和unsealing过程中使用的系统配置信息使用的是记录在TPM's Platform Configuaration寄存器中的测量值。因为TPMs的存储空间十分有限，一个典型的保护大量数据的方法就是生成一个对称密钥，使用对称密钥对大量的数据进行加密，seal这个密钥到TPM中。</p>
+<p>​	现在存在很多方法可以unseal之前seal的数据，一些TEE只允许有相同TCB下且拥有相同测量值的Enclave对数据进行unseal。其他方法，有的允许所有被同一个开发者签名过的Enclave对数据进行unseal。还有一些以云为场景的TEE允许enclave迁移seal的数据到不同host上。</p>
+<p>B. 对于Sealing架构上的支持</p>
+<p>​	像OP-TEE、Keystone、TIMBERV和Sanctury使用了软件TCB为每一个Enclave提供了sealing支持。这里，TCB会暴露一个接口用于Enclave创建Sealing密钥。这种方案不需要二外的硬件或者架构支持，可以部署到任何运行时软件TCB中。对于TPM-based的解决方案，需要一个TPM芯片来支持sealing。因为TPM往往是片外的组件，Intel SGX使用特殊的硬件指令来进行sealing，通过绑定的方法进行sealing密钥的使用。</p>
+<h3 id="tcb">TCB</h3>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SoK_tee_tcb.png" alt="" loading="lazy"></figure>
+<p>​		这一节将概述现存TEE设计的TCB。通用的做法是使用代码行数作为TCB衡量的尺度，但是并不是所有的TCB组件都能这么做。论文中还讨论了TCB可变的情况，因为有一些组件可能是可变的，并且改变会在attestation阶段反应出来。总的来说可变的部分往往实现在软件，而硬件的部分不可变。这不是绝对的，比如ROM中的代码，CPU中的微代码等等。</p>
+<p>​	如上表中所示，所有TEE的RTM都是不可变的。在安全引导的过程中，它会测量下一阶段的TCB组件，并且由这个TCB组件测量enclave。而运行时隔离组件的TCB使用一般是一个可变的软件TCB，用于管理上下文的切换和内存隔离。Secure IO的TCB，大多数的TEE并不支持可信IO，诸如cure、Trustlite都依赖了可变的软件TCB。安全存储的TCB，上表中10个TEE显示地支持了这个特性，如SEA和IBM PEF使用了TPM来完成这些工作，而Timber-V、Keystone和Trustlie使用了软件来完成。即使SGX完成了这个功能，但是还不清楚它的这部分是否是可变的。</p>
+<p>​	通常来说TEE会试图减小TCB，来减小存在安全漏洞的风险，如果想从理论上保证安全就得依靠形式化证明。然而，在实践过程中，更好的做法是可以实现对TCB的更新，而不是期待TCB是bug-free的。</p>
+<h2 id="总结">总结</h2>
+<p>​	这边文章分析了工业界和学术界的TEE底层设计，来完成：1）可验证启动，2）运行时隔离，3）安全IO，4）安全存储。即使不同的机器上看起很不同，但大都采用相似的设计选择。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/io-xu-ni-hua/" class="post-title gt-a-link">
+                    IO虚拟化
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

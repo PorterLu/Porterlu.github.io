@@ -1,0 +1,736 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第四章 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第四章
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-11 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="在内存中支持动态分配">在内存中支持动态分配</h2>
+<p>​	<code>Rust</code>中已经为我们提供了接口，<code>alloc</code>库需要我们为其提供一个全局动态内存分配器，它可以通过该分配器管理堆空间。具体地说，我们的内存分配器需要实现<code>GlobalAlloc Trait</code>, 它有两个接口。</p>
+<pre><code class="language-rust">pub unsafe fn alloc(&amp;self, layout: Layout) -&gt; *mut u8;
+pub unsafe fn dealloc(&amp;self, ptr: *mut u8, layout: Layout);
+</code></pre>
+<p>​	这里使用现成的<code>buddy</code>分配器库，我们只需要为其提供可供分配的空间即可。这里<code>bss</code>段分配这个空间</p>
+<pre><code class="language-rust">static mut HEAP_SPACE: [u8; KERNEL_HEAP_SIZE] = [0; KERNEL_HEAP_SIZE];
+</code></pre>
+<p>​	然后说明我们的堆空间分配器为这个引入的<code>buddy</code>分配器</p>
+<pre><code class="language-rust">#[global_allocator]
+static HEAP_ALLOCATOR: LockedHeap = LockedHeap::empty();
+</code></pre>
+<p>​	初始化时将<code>HEAP_SPACE</code>分配给分配器，之后我们就可以使用<code>Vec</code>这种使用堆空间的数据结构了。</p>
+<h2 id="页帧分配器">页帧分配器</h2>
+<p>​	这里实现了一个栈式分配器，结构如下</p>
+<pre><code class="language-rust">pub struct StackFrameAllocator {
+    current: usize,
+    end: usize,
+    recycled: Vec&lt;usize&gt;,
+}
+
+pub fn init_frame_allocator() {
+    extern &quot;C&quot; {
+        fn ekernel();
+    }
+    FRAME_ALLOCATOR.exclusive_access().init(
+    	PhysAddr::from(ekernel as usize).ceil(),
+        PhysAddr::from(MEMORY_END).floor(),
+    )
+}
+</code></pre>
+<p>​	这个栈分配器将从内核结束的地址到内存最后作为分配的空间，使用<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo separator="true">,</mo><mi>e</mi><mi>n</mi><mi>d</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">[current, end)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathdefault">c</span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mclose">)</span></span></span></span>记录当前仍然未分配的空间，使用<code>recyclede</code>用于回收已经分配的页。分配时是以<code>ppn</code>作为单位。</p>
+<pre><code class="language-rust">impl FrameAllocator for StackFrameAllocator {
+    fn alloc(&amp;mut self) -&gt; Option&lt;PhysPageNum&gt; {
+        if let Some(ppn) = self.recycled.pop() {
+            Some(ppn.into())
+        } else if self.current == self.end {
+            None
+        } else {
+            self.current += 1;
+            Some((self.current - 1).into())
+        }
+    }
+    fn dealloc(&amp;mut self, ppn: PhysPageNum) {
+        let ppn = ppn.0;
+        if ppn &gt;= self.current || self.recycled.iter().any(|&amp;v| v == ppn) {
+            panic!(&quot;Frame ppn={:#x} has not been allocated!&quot;, ppn);
+        }
+        self.recycled.push(ppn);
+    }
+}
+</code></pre>
+<p>​	每次分配首先判断<code>recycled</code>队列中是否已经有已经回收的页，有的话可以直接使用；否则，当帧空间没有分配，就可以让<code>current</code>往后面移动一个单位，将分配的空间地址转化为<code>ppn</code>进行返回。回收就是回收到<code>recycled</code>中。</p>
+<p>​	最后使用一个<code>FrameTracker</code>对于得到的物理页帧进行包裹，将一个物理页帧的生命周期绑定到<code>FrameTracker</code>上。</p>
+<pre><code class="language-rust">impl FrameTracker {
+    pub fn new(ppn: PhysPageNum) -&gt; Self {
+        let bytes_array = ppn.get_bytes_array();
+        for i in bytes_array {
+            *i = 0;
+        }
+        Self { ppn }
+    }
+}
+impl Drop for FrameTracker {
+    fn drop(&amp;mut self) {
+        frame_alloc(self.ppn);
+    }
+}
+</code></pre>
+<h2 id="页表管理">页表管理</h2>
+<p>​	我们的页表中需要存储页目录的<code>ppn</code>和所有用于映射的页表的<code>FrameTracker</code>结构，初始化时只用申请一个页目录结构并将其加入到页帧管理的<code>vec</code>中。之后要为<code>PageTable</code>实现页表映射的方法，</p>
+<pre><code class="language-rust">impl VirtPageNum {
+    pub fn indexes(&amp;self) -&gt; [usize; 3] {
+        let mut vpn = self.0;
+        let mut idx = [0usize; 3];
+        for i in (0..3).rev() {
+            idx[i] = vpn &amp; 511;
+            vpn &gt;&gt;= 9;
+        }
+        idx
+    }
+}
+</code></pre>
+<p>​	这里由于一次地址翻译需要将虚拟地址分为3份，所以这里将<code>VirtPageNum</code>转化为了一个<code>[usize; 3]</code>类型。同时为页表创建两个映射相关的函数。</p>
+<pre><code class="language-rust">impl PageTable {
+    fn find_pte_create(&amp;mut self, vpn: VirtPageNum) -&gt; Option&lt;&amp;mut PageTableEntry&gt; {
+        let idxs = vpn.indexes();
+        let mut ppn = self.root_ppn;
+        let mut result: Option&lt;&amp;mut PageTableEntry&gt; = None;
+        for i in 0..3 {
+            let pte = &amp;mut ppn.get_pte_array()[idxs[i]];
+            if i == 2 {
+                result = Some(pte);
+                break;
+            }
+            if !pte.is_valid() {
+                let frame = frame_alloc().unwrap();
+                *pte = PageTableEntry::new(frame.ppn, PTEFlags::V);
+                self.frames.push(frame);
+            }
+            ppn = pte.ppn();
+        }
+        result
+    }
+    fn find_pte(&amp;self, vpn: VirtPageNum) -&gt; Option&lt;&amp;mut PageTableEntry&gt; {
+        let idxs = vpn.indexes();
+        let mut ppn == self.root_ppn();
+        let mut result: Option&lt;&amp;mut PageTableEntry&gt; = None;
+        for i in 0..3 {
+            let pte = &amp;mut ppn.get_pte_array()[idxs[i]];
+            if i == 2 {
+                result = Some(pte);
+                break;
+            }
+            if !pte.is_valid() {
+                return None;
+            }
+            ppn = pte.ppn();
+        }
+        result
+    }
+}
+</code></pre>
+<p>​	这两个函数<code>find_pte_create</code>和<code>find_pte</code>分别用于映射虚拟地址并创建映射页表和映射虚拟地址。在<code>find_pte_create</code>中可以发现这样一段代码：</p>
+<pre><code class="language-rust">if !pte.is_valid() {
+    let frame = frame_alloc().unwrap();
+    *pte = PageTableEntry::new(frame.ppn, PTEFlags::V);
+    self.frames.push(frame);
+}
+</code></pre>
+<p>​	如果发现页表项中并没有映射的页帧，则需要申请一个页帧作为页表，同时将这个页表<code>ppn</code>加入到页帧管理器中。有了者两个结构就很好实现<code>map</code>和<code>unmap</code>了。</p>
+<pre><code class="language-rust">impl PageTable {
+    pub fn map(&amp;mut self, vpn: VirtPageNum, ppn: PhysPageNum, flags: PTEFlags) {
+        let pte = self.find_pte_create(ppn).unwrap();
+        assert!(!pte.is_valid(), &quot;vpn {:?} is mapped before mapping&quot;, vpn);
+        *pte = PageTableEntry::new(ppn, flags | PTEFlags::V);
+    }
+    pub fn unmap(&amp;mut self, vpn: VirtPageNum) {
+        let pte = self.find_pte(vpn).unwrap();
+        assert!(pte.is_valid(), &quot;vpn {:?} is in valid before unmapping&quot;, vpn);
+        *pte = PageTableEntry::empty();
+    }
+}
+</code></pre>
+<p>​	<code>map</code>中创建一个页表项，之后将得到的页表项填入一个物理页号。如果<code>unmap</code>的话，直接将对应的表项置空。</p>
+<pre><code class="language-rust">impl PageTable {
+    pub fn from_token(satp: usize) -&gt; Self {
+        Self {
+            root_ppn: PhysPageNum::from(satp &amp; ((1usize &lt;&lt; 44) - 1)),
+            frames: Vec::new(),
+        }
+    }
+    pub fn translate(&amp;self, vpn: VirtPageNum) -&gt; Option&lt;PageTableEntry&gt; {
+        self.find_pte(vpn).map(|pte| {pte.clone()})
+    }
+}
+</code></pre>
+<p>​	这样<code>PageTable</code>的结构就介绍完毕了。</p>
+<h2 id="地址空间">地址空间</h2>
+<p>​	有了页表的结构，我们需要创建一些数据结构来管理程序的虚拟地址空间。对于一段连续的虚拟地址空间使用<code>MapArea</code>进行描述，结构如下</p>
+<pre><code class="language-rust">pub struct MapArea {
+    vpn_range: VPNRange,
+    data_frames: BTreeMap&lt;VirtPageNum, FrameTracker&gt;,
+    map_type: MapType,
+    map_perm: MapPermission,
+}
+</code></pre>
+<p>​	这里的<code>VPNRange</code>可以描述一段连续的虚拟地址空间，<code>data_frames</code>用于描述从虚拟地址到物理地址的映射，<code>map_type</code>用于描述是否时恒等映射，<code>map_perm</code>用于描述这个页的访问类型。其中可以使用页表的映射方法，来构造<code>MapArea</code>中的映射，映射又分为恒等映射和非恒等映射，对于恒等映射虚拟地址和物理地址相同。</p>
+<pre><code class="language-rust">impl MemoryArea {
+    pub fn map_one(&amp;mut self, page_table: &amp;mut PageTable, vpn:VirtPageNum) {
+        let ppn: PhysPageNum;
+        match self.map_type {
+            MapType::Identical =&gt; {
+                ppn = PhysPageNum(vpn.0);
+            }
+            MapType::Framed =&gt; {
+                let frame = frame_alloc().unwrap();
+                ppn = frame.ppn;
+                self.data_frames.insert(vpn, frames);
+            }
+        }
+        let pte_flags = PTEFlags::from_bits(self.map_perm.bits).unwrap();
+        page_table.map(vpn, ppn, pte_flags);
+    }
+    pub fn unmap_one(&amp;mut self, page_table: &amp;mut PageTable, vpn: VirtPageNum) {
+        match self.map_type {
+            MapType::Framed =&gt; {
+                self.data_frames.remove(&amp;vpn);
+            }
+            _ =&gt; {}
+        }
+        page_table.unmap(vpn);
+    }
+}
+</code></pre>
+<p>​	对于<code>map_one</code>方法，根据<code>map_type</code>进行不同的映射，<code>Identical</code>表示恒等映射，<code>Frame</code>表示非恒等映射，对于非恒等映射我们需要申请一个页帧，由这个页帧的地址决定映射的<code>ppn</code>，最后将<code>vpn</code>和<code>ppn</code>进行联系。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/rCore_page.png" alt="" loading="lazy"></figure>
+<p>​	接着我们对于这些连续的虚拟地址空间进行进一步的封装，于是有了<code>MemorySet</code>的结构。上图中<code>MapArea</code>中<code>vpn_range</code>并不是一个数组，这里有绘图错误。</p>
+<pre><code class="language-rust">pub struct MemorySet {
+    page_table: PageTable,
+    areas: Vec&lt;MapArea&gt;,
+}
+
+impl MemorySet {
+    pub fn new_bare() -&gt; Self {
+        Self {
+            page_table: PageTable::new(),
+            areas: Vec::new(),
+        }
+    }
+    fn push(&amp;mut self, mut map_area: MapArea, data: Option&lt;&amp;[u8]&gt;) {
+        map_area.map(&amp;mut self.page_table);
+        if let Some(data) = data {
+            map_area.copy_data(&amp;mut self.page_table, data);
+        }
+        self.areas.push(map_area);
+    }
+    pub fn insert_framed_area(
+    	&amp;mut self,
+        start_va: VirtAddr, end_va: VirtAddr, permission: MapPermission
+    ) {
+        self.push(MapArea::new(
+        	start_va,
+            end_va,
+            MapType::Framed,
+            permission,
+        ), None);
+    }
+    //...
+}
+
+impl MemoryArea{
+    pub fn copy_data(&amp;mut self, page_table:&amp;mut PageTable, data: &amp;[u8]) {
+        assert_eq!(self.map_type, MapType::Framed);
+        let mut start: usize = 0;
+        let mut current_vpn = self.vpn_range.get_start();
+        let len = data.len();
+        loop {
+            let src = &amp;data[start..len.min(start + PAGE_SIZE)];
+            let dst = &amp;mut page_table
+            	.translate(current_vpn)
+            	.unwrap()
+            	.ppn()
+            	.get_bytes_array()[..src.len()];
+            dst.copy_from_slice(src);
+            start += PAGE_SIZE;
+            if start &gt;= len {
+                break;
+            }
+            current_vpn.step();
+        }
+    }
+}
+</code></pre>
+<p>​	首先说明这里的<code>copy_data</code>方法，这个方法用将一个字节数组中的数据拷贝到当前<code>MemoryArea</code>的区域。<code>current_vpn</code>是这个<code>Area</code>的起始地址，将<code>vpn</code>经过页表的翻译就可以获得<code>dst</code>，于是就可以将<code>src</code>转移到<code>dst</code>中，每次将<code>start</code>一个<code>PAGE_SIZE</code>， 以<code>PAGE_SIZE</code>为单位进行拷贝。</p>
+<p>​	于是<code>MemorySet</code>中的<code>push</code>方法将这个<code>MemoryArea</code>加入到自己的页表映射中，并通过<code>copy_data</code>进行数据拷贝。</p>
+<h2 id="内核地址空间和用户地址空间">内核地址空间和用户地址空间</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/kernel-as-high.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/kernel-as-low.png" alt="" loading="lazy"></figure>
+<p>这里使用<code>rCore-Tutorial</code>中的图片进行说明，内核的代码本身是进行恒等映射的。</p>
+<pre><code class="language-rust">pub fn new_kernel() -&gt; Self {
+    let mut memory_set = Self::new_bare();
+    memory_set.map_trampoline();
+    // ... println!(&quot;.text &quot;)
+    memory_set.push(
+    	MapArea::new(
+        	(stext as usize).into(),
+            (etext as usize).into(),
+            MapType: Identical,
+            MapPermission::R | MapPermission::X, 
+        ),
+        None,
+    );
+    //...
+    memory_set.push(
+    	MapArea::new(
+        	(ekernel as usize).into(),
+            MEMORY_END.into(),
+            MapType::Identical,
+            MapPermission::R | MapPermission::W,
+        ),
+        None,
+    );
+    for pair in MMIO {
+        memory_set.push(
+        	MapArea::new(
+            	(*pair).0.into(),
+                ((*pair).0 + (*pair).1).into(),
+                MapType::Identical,
+                MapPermission::R | MapPermission::w,
+            ),
+            None,
+        )
+    }
+    memory_set
+}
+</code></pre>
+<p>​	这里对内核的各个部分进行了映射，同时映射的还有内核的剩下所有内存部分进行恒等映射，<code>MMIO</code>部分同样进行了恒等映射。同时开头对于<code>trampoline</code>这个部分映射在了内核高位地址的最后。</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/app-as-full.png" alt="" loading="lazy"></figure>
+<p>​	用户进程的初始化，由于有<code>lazy_static</code>所以会在运行时进行初始化：</p>
+<pre><code class="language-rust">lazy_static! {
+    pub static ref TASK_MANAGER: TaskManager = {
+        println!(&quot;init TASK_MANAGER&quot;);
+        let num_app = get_num_app();
+        println!(&quot;num_app = {}&quot;, num_app);
+        let mut tasks: Vec&lt;TaskControlBlock&gt; = Vec::new();
+        for i in 0..num_app {
+            tasks.push(TaskControlBlock::new(get_app_data(i), i));
+        }
+        TaskManager {
+            num_app, 
+            inner: unsafe {
+                UPSafeCell::new(TaskManagerInner {
+                    tasks,
+                    current_task: 0,
+                })
+            },
+        }
+    };
+}
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/newTaskControlBlock.png" alt="" loading="lazy"></figure>
+<p>为了生成这样一个结构，我们需要关注<code>TaskControlBlock</code>，这个结构会将<code>elf</code>文件的信息传入，调用<code>new</code>。</p>
+<pre><code class="language-rust">impl TaskControlBlock {
+    //...
+    pub fn new(elf_data:&amp;[u8], add_id:usize) -&gt; Self {
+        let (memory_set, user_sp, entry) = MemorySet::from_elf(elf_data);
+        let trap_cx_ppn = memory_set
+        					.translate(VirtAddr::from(TRAP_CONTEXT).into())
+        					.unwrap()
+        					.ppn();
+        let task_status = TaskStatus::Ready;
+        let (kernel_stack_bottom, kernel_stack_top) = kernel_stack_position(app_id);
+        KERNEL_SPACE.exclusive_access().insert_framed_area(
+        	kernel_stack_bottom.into(),
+            kernel_stack_top.into(),
+            MapPermission::R | MapPermission::W,
+        );
+        let task_control_block = Self {
+            task_status,
+            task_cx: TaskContext::goto_trap_return(kernel_stack_top),
+            memory_set,
+            trap_cx_ppn,
+            base_size: user_sp,
+        };
+        let trap_cx = task_control_block.get_trap_cx();
+        *trap_cx = TrapContext::app_init_context(
+        	entry_point,
+            user_sp,
+            KERNEL_SPACE.exclusive_access().token(),
+            kernel_stack_top,
+            trap_handler as usize,
+        );
+        task_control_block
+    }
+}
+</code></pre>
+<p>​	1. 这里会解析用户<code>elf</code>文件格式，得到已经用户的虚拟地址空间结构的<code>memory_set</code>,  用户栈的虚拟地址，用户程序的入口地址。</p>
+<pre><code>2. 设置用户空间倒数第二个页作为`Trap`上下文的地址。
+2. 设置用户程序在内核空间中的内核栈。
+2. 生成用户程序的`TaskControlBlock`。
+2. 设置在内核上下文中的初始上下文。
+</code></pre>
+<p><code>elf</code>文件的解析也是常规的解析方式将可以<code>Load</code>的段加载到内存。</p>
+<pre><code class="language-rust">impl MemorySet {
+    pub fn from_elf(elf_data: &amp;[u8]) -&gt; (Self, usize, usize) {
+        let mut memory_set = Self::new_bare();
+        memory_set.map_trampoline();
+        let elf = xmas_elf::ElfFile::new(elf_data).unwrap();
+        lef elf_header = elf.header;
+        let magic = elf_header.pt1.magic;
+        assert_eq!(magic, [0x7f, 0x45, 0x4c, 0x46], &quot;invalid elf!&quot;);
+        let ph_count = elf_header.pt2.ph_count();
+        let mut max_end_vpn = VirtPageNum(0);
+        for i in 0..ph_count {
+            let ph = elf.program_header(i).unwrap();
+            if ph.get_type().unwrap() == xmas_elf::program::Type::Load {
+                let start_va: VirtAddr = (ph.virtual_addr() as usize).into();
+                let end_va: VirtAddr = (ph.virtual_addr() + ph.mem_size() as usize).into();
+                let mut map_perm = MapPermission::U;
+                let ph_flags = ph.flags();
+                if ph_flags.is_read() { map_perm |= MapPermission::R; }
+                if ph_flags.is_write() { map_perm |= MapPermission::W; }
+                if ph_flags.is_execute() { map_perm |= MapPermission::X; }
+                let map_area = MapArea::new(
+                	start_va,
+                    end_va,
+                    MapType::Framed,
+                    map_perm,
+                );
+                max_end_vpn = map_area.vpn_range.get_end();
+                memory_set.push(
+                	map_area,
+                    Some(&amp;self.input[ph.offset() as usize..(ph.offset() + ph.file_size()) as usize])
+                );
+            }
+        }
+        let max_end_va: VirtAddr = max_end_vpn.into();
+        let mut user_stack_bottom: usize = max_end_va.into();
+        user_stack_bottom += PAGE_SIZE;
+        let user_stack_top = user_stack_bottom + USER_STACK_SIZE;
+       	memory_set.push(MapArea::new(
+        	user_stack_bottom.into(),
+            user_stack_top.into(),
+            MapType::Framed,
+            MapPermission::R | MapPermission::W | MapPermission::U,
+        ), None);
+        memory_set.push(MapArea::new(
+        	TRAP_CONTEXT.into(),
+            TRAMPOLINE.into(),
+            MapType::Framed,
+            MapPermission::R | MapPermission::W,
+        ), None);
+        (memory_set, user_stack_top, elf.header.pt2.entry_point() as usize)
+    }
+}
+</code></pre>
+<p>​	<code>from_elf</code>的任务就是根据一个<code>elf</code>文件生成一个<code>memory_set</code>。具体来说要做以下几件事</p>
+<ol>
+<li>在用户地址空间的最后一项映射到<code>trampoline</code>。</li>
+<li>分析每个需要加载的段的地址范围和执行权限，使用<code>memory_set</code>的<code>push</code>方法将这些地址进行映射和内容加载。</li>
+<li>设置<code>guard_page</code>和<code>user_stack</code>，最后<code>trap</code>上下文从虚拟地址的倒数第二个页映射到一个页帧。</li>
+<li>返回<code>memory_set</code>，用户栈地址，用户程序入口。</li>
+</ol>
+<h2 id="执行用户程序">执行用户程序</h2>
+<h3 id="第一次执行程序">第一次执行程序</h3>
+<figure data-type="image" tabindex="6"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/run_task_ch4.png" alt="" loading="lazy"></figure>
+<pre><code class="language-rust">fn run_first_task(&amp;self) -&gt; !{
+    let mut inner = self.inner.exclusive_access();
+    let next_task = &amp;mut inner.tasks[0]l
+    next_task.task_status = TaskStatus::Running;
+    let next_task_cx_ptr = &amp;next_task.task_cx as *const TaskContext;
+    drop(inner);
+    let mut __unused = TaskContext::zero_init();
+    unsafe {
+        __switch(&amp;mut _unused as *mut, next_task_cx_ptr);
+    }
+    panic!(&quot;Unreachable in run_first_task!&quot;);
+}
+</code></pre>
+<p>​	这里首先会调用<code>__switch</code>函数，这个函数如下：</p>
+<pre><code class="language-assembly">__switch:
+	sd sp, 8(a0)
+	sd ra, 0(a0)
+	.set n, 0
+	.rept 12
+		SAVE_SN %n
+		.set n, n+1
+	.endr
+	ld ra, 0(a1)
+	.set n, 0
+	.rept 12
+		LOAD_SN %n
+		.set n, n+1
+	.endr
+	ld sp, 8(a1)
+	ret
+</code></pre>
+<p>对于第一个任务，这里的<code>sd sp, 8(a0)</code>和<code>sd ra, 0(a0)</code>是没有意义的，我们直接看<code>load</code>相关的部分。将<code>trap_return</code>放入到<code>ra</code>，同时加载<code>kernel stack</code>的虚拟地址。</p>
+<pre><code class="language-rust">pub fn trap_return() -&gt; !{
+    set_user_trap_entry();
+    let trap_cx_ptr = TRAP_CONTEXT;
+    let user_satp = current_user_token();
+    extern &quot;C&quot; {
+        fn __alltraps();
+        fn __restore();
+    }
+    let restore_va = __restore as usize - __alltraps as usize + TRAMPOLINE;
+    unsafe {
+        asm!(
+        	&quot;fence.i&quot;,
+            &quot;jr {restore_va}&quot;,
+            restore_va = in(reg) restore_va,
+            in(&quot;a0&quot;) trap_cx_ptr,
+            in(&quot;a1&quot;) user_satp,
+            options(noreturn)
+        );
+    }
+}
+</code></pre>
+<p>​	这里<code>a0</code>是我们提前构造好的进入用户态所需要的上下文，<code>a1</code>中是我们需要的用户程序的<code>root_ppn</code>。之后进行跳转即可, 由于跳转的虚拟地址是我们自己构造的，我们将这个地址设在最后一个页，如果直接<code>call __restore</code>，会错误地进行跳转，因为<code>__restore</code>由编译器生成的地址不是我们在页表中设定的。</p>
+<pre><code class="language-assembly">__restore:
+	csrw satp, a1
+	sfence.vma
+	csrw sscratch, a0
+	mv sp, a0
+	ld t0, 32*8(sp)
+	ld t1, 33*8(sp)
+	csrw sstatus, t0
+	csrw sepc, t1
+	ld x1, 1*8(sp)
+	ld x3, 3*8(sp)
+	.set n, 5
+	.rept 27
+		LOAD_GP %n
+		.set n, n+1
+	.endr
+	ld sp, 2*8(sp)
+	sret
+</code></pre>
+<p>​	这里首先将用户的<code>root_ppn</code>加载到<code>satp</code>, 由于<code>TLB</code>的表项无效了，需要使用<code>sfence.vma</code>进行刷新。<code>a0</code>中是用户上下文的地址，它位于用户空间的倒数第二个页帧。根据其中的上下文进行恢复，这里最后一步将用户空间的用户栈的地址赋给<code>sp</code>, <code>sret</code>进入到用户程序的入口地址。</p>
+<h3 id="执行系统调用">执行系统调用</h3>
+<p>​	我们执行开始程序的时候已经将<code>stvec</code>设置为了<code>trampoline</code>的地址，于是一旦系统调用发生，我们就会跳转到<code>trampoline</code>处代码如下。</p>
+<pre><code class="language-assembly">	.section .text.trampoline
+	.global __alltraps
+	.global __restore
+	.align 2
+__alltraps:
+	csrrw sp, sscratch, sp
+	sd x1, 1*8(sp)
+	sd x3, 3*8(sp)
+	.set n, 5
+	.rept 27
+		SAVE_GP %n
+		.set n, n+1
+	.endr
+	csrr t0, sstatus
+	csrr t1, sepc
+	sd t0, 32*8(sp)
+	sd t1, 33*8(sp)
+	csrr t2, sscratch
+	sd t2, 2*8(sp)
+	ld t0, 34*8(sp)
+	ld t1, 36*8(sp)
+	ld sp, 35*8(sp)
+	csrw satp, t0
+	sfence.vma
+	jr t1
+</code></pre>
+<p>​	这里<code>sscratch</code>中是用户空间中<code>trap</code>上下文的地址，由于现在只能访问用户空间，所以我们在用户空间的倒数第二个页专门设置了这样一个位置，用户存储上下文。<code>t0</code>、<code>t1</code>、<code>sp</code>中分别加载<code>kernel_satp</code>、<code>trap_handler</code>、<code>kernel_stack</code>。于是加载<code>t0</code>到<code>satp</code>就可以切换地址空间，之后跳转到<code>trap_handler</code>处。<code>trap_handler</code>结束，又会调用<code>trap_return</code>就和一开始一样了。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rust-suo-you-quan-he-nei-cun-mo-xing/" class="post-title gt-a-link">
+                    RUST所有权和内存模型 
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

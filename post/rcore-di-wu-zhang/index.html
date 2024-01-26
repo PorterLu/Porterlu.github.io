@@ -1,0 +1,292 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第五章 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第五章
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-15 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>在这一章中将进一步解释进程的动态的概念，提供创建、销毁、等待、信息等系统调用，并开发一个<code>shell</code>作为<code>user_app</code>之一。我们会重新设计<code>TaskControlBlock</code>的结构，来满足我们对于进程创建，销毁的一系列需求。</p>
+<h2 id="进程id">进程ID</h2>
+<p>​	进程<code>ID</code>的分配采用了和前面一样的栈式分配，不断向后移动<code>current</code>标志，表示最大已分配<code>id</code>号。如果要进行回收，则直接回收到<code>recycled</code>中，同时如果<code>recycled</code>中如果存在已经回收的<code>id</code>，则不会向后移动<code>current</code>。最后在这个模块还要说明如何获取<code>kernel stack</code>，和之前保持一致，不过<code>app_id</code>换成了<code>pid</code>。</p>
+<h2 id="进程控制块及其操作">进程控制块及其操作</h2>
+<p>​	对于进程控制块，分成初始化后不变和可变的两部分。结构如下：</p>
+<pre><code class="language-rust">pub struct TaskControlBlock {
+    pub pid: PidHandle,
+    pub kernel_stack: KernelStack,
+    inner UPSafeCell&lt;TaskControlBlockInner&gt;,
+}
+
+pub struct TaskControlBlockInner {
+    pub trap_cx_ppn: PhysPageNum,
+    pub base_size: usize,
+    pub task_cx: TaskContext,
+    pub task_status: TaskStatus,
+    pub memory_set: MemorySet,
+    pub parent: Option&lt;Weak&lt;TaskControlBlock&gt;&gt;,
+    pub children: Vec&lt;Arc&lt;TaskControlBlock&gt;&gt;,
+    pub exit_code: i32,
+}
+</code></pre>
+<p>​	<code>new</code>方法增加了<code>pid</code>的申请。同时增加了<code>fork</code>和<code>exec</code>方法，用于拷贝和替换上下文，达到再创建一个进程和执行一个程序的效果。</p>
+<pre><code class="language-rust">pub fn exec(&amp;self, elf_data: &amp;[u8]) {
+    let (memory_set, user_sp, entry_point) = MemorySet::from_elf(elf_data);
+    let trap_cx_ppn = memory_set
+    	.translate(VirtAddr::from(TRAP_CONTEXT).into())
+    	.unwrap()
+    	.ppn();
+    
+    let mut inner = self.inner_exclusive_access();
+    inner.memory_set = memory_set;
+    inner.trap_cx_ppn = trap_cx_ppn;
+    inner.base_size = user_sp;
+    let trap_cx = inner.get_trap_cx();
+    *trap_cx = TrapContext::app_init_context(
+    	entry_point,
+        user_sp,
+        KERNEL_SPACE.exclusive_access().token(),
+        self.kernel_stack.get_top(),
+        trap_handler as usize,
+    );
+}
+</code></pre>
+<p>​	这里直接将<code>trap</code>上下文和<code>memory_set</code>即映射空间进行替换，这样返回时会直接<code>restore</code>我们刚刚放入的上下文，达到执行一个程序的目的。</p>
+<pre><code class="language-rust">pub fn fork(self: &amp;Arc&lt;Self&gt;) -&gt; Arc&lt;Self&gt; {
+	let mut parrent_inner = self.inner_exclusive_access();
+	let memory_set = MemorySet::from_existed_user(&amp;parent_inner.memory_set);
+    let trap_cx_ppn = memory_set
+    	.translate(VirtAddr::from(TRAP_CONTEXT).into())
+    	.unwrap()
+    	.ppn()
+   	let pid_handle = pid_alloc();
+    let kernel_stack = KernelStack::new(&amp;pid_handle);
+    let kernel_stack_top = kernel_stack.get_top();
+    let task_control_block = Arc::new(TaskControlBlock{
+        pid: pid_handle,
+        kernel_stack,
+        inner: unsafe {
+            UPSafeCell::new(TaskControlBlockInner {
+                trap_cx_ppn,
+                base_size: parent_inner.base_size,
+                task_cx: TaskContext::goto_trap_return(kernel_stack_top),
+                task_status: TaskStatus::Ready,
+                memory_set,
+                parent: Some(Arc::downgrade(self)),
+                children: Vec::new(),
+                exit_code: 0,
+            })
+        },
+    });
+    parent_inner.children.push(task_control_block.clone());
+    let trap_cx  = task_control_block.inner_exclusive_access().get_trap_cx();
+    trap_cx.kernel_sp = kernel_stack_top;
+    task_control_block
+}
+</code></pre>
+<p>​	这里调用了<code>from_existed_user</code>函数对于父进程的地址空间进行拷贝，同时获取新获取空间的<code>root_ppn</code>分配的物理帧，非陪内核占空间，重新申请一个<code>task_control_block</code>。同时设置父子进程关系，更换<code>fork</code>生成的<code>trap</code>上下文中的内核栈指针位置，这个指针的位置应该由新生成的<code>pid</code>决定。</p>
+<h2 id="数据结构关系">数据结构关系</h2>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/processor_arch_ch5.png" alt="" loading="lazy"></figure>
+<p>​		如上图所示，这是进程调度时的框架图，处理结构体内部只会维护一个<code>idle_task_cx</code>和<code>current</code>。<code>idle_task_cx</code>会不断循环让后只是调度下一个程序，<code>schedule</code>函数本身运行在操作系统的启动栈，切换的进程各自运行在自己的内核栈，进行切换时的调度对于两个进程的<code>trap</code>执行流就是不可知的。处理器结构体的任务就是维护当前正在运行的任务，</p>
+<p>​	<code>TaskManager</code>内部就是一个<code>VecDeque</code>一个双向队列，可以从末尾加入一个进程控制块，从队首去取出进程控制块。</p>
+<h2 id="运行过程">运行过程</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/process_flow_ch5.png" alt="" loading="lazy"></figure>
+<p>​	这里起始于右上角的<code>find_app_data_by_name</code>，这个函数会根据<code>app</code>的名字来获取<code>app</code>在整个存储队列中的位置，<code>TaskControlBlock</code>的<code>new</code>方法中会调用<code>from_elf</code>解析数据，生成控制块后将这个结构压入<code>Manager</code>的队列。<code>processor</code>中会调度<code>schedule</code>启动这个进程控制块，执行<code>initproc</code>后，会执行<code>fork</code>系统调用，根据<code>from_existed_user</code>拷贝一份地址映射，并生成新的进程控制块，这个控制块也会被加入队列。<code>initproc</code>返回后会执行<code>yield</code>，这是<code>idle</code>会被用于调度下一个进程，<code>user_shell</code>会被调度执行，<code>get_char</code>会不断获取字符，如果已经键入一个命令，会先进行一次<code>fork</code>，根据结果，主进程进行<code>wait</code>，子进程执行结束后将状态设置为<code>zombie</code>，并设置<code>exit_code</code>。<code>wait</code>系统调用在检查到子进程执行完毕后，会结束<code>loop</code>。</p>
+<p>​</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rust-bao-guan-li/" class="post-title gt-a-link">
+                    Rust包管理
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

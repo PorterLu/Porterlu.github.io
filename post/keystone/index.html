@@ -1,0 +1,252 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Keystone | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Keystone
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-08 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/jN8FVGalh/" class="post-tags">
+                            # paper
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Keystone_tee.png" alt="" loading="lazy"></figure>
+<h2 id="概述">概述</h2>
+<p>今天分享的论文是UCB团队在2019年发表的Keystone Enclave，它的卖点在于可以定制化，Keystone设计了一套流程，让硬件制造商，平台提供者，开发人员可以进行协作开发可信执行程序。只要硬件提供了最基础的隔离原语，就可以通过Keystone定义一套软件自定义的可信执行环境。它在论文中提出自己有这几点贡献，可定制、模块化、开源、低开销。</p>
+<h2 id="威胁模型">威胁模型</h2>
+<p>​	这里假设攻击者分为几种类型：基于硬件的攻击者，他可以修改、重发、拦截离开SoC的信号；基于软件方法的攻击者，它可以控制Host端的User Mode程序，不可信的操作系统，网络通信，不受TEE保护的内存和发送给Enclave的消息；使用侧信道漏洞的攻击者可以观测到可信组件和不可信组件通信过程中泄露的信息。但是不考虑拒绝服务攻击。</p>
+<p>​	这里再一次提出，Keystone是一个可以定制的TEE框架，它可以基于平台的特性和应用的场景开启或者关闭一些特性，来达到想要的安全性和性能。</p>
+<h2 id="设计">设计</h2>
+<h3 id="接口">接口</h3>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/sm_api.png" alt="" loading="lazy"><br>
+​	在可信组件中，Keystone介绍了Security Monitor和Runtime。Security Monitor负责将不可信的组件和我们所执行的tee环境隔开，而runtime负责代表我们开发的可信App和Security Monitor通信。如上是我们的security monitor接口，下面三个由于我们Runtime分则发起，而上面三个有我们的Linux内核发起用于撤销Enclave在内核中申请的资源。</p>
+<h3 id="隔离">隔离</h3>
+<p>​	尽管keystone不限于RISC-V平台，但是这里实现在RISC-V平台之上，所以使用的是PMP进行隔离。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/PMP_KEYSTONE.png" alt="" loading="lazy"></figure>
+<p>​	如上就是论文中的配图，最左边是PMP配置寄存器和PMP寄存器用于可信区域的隔离，Keystone将Security Monitor、Enclave和不可信的OS通过PMP隔离开。而执行时又将PMP进行翻转，那么就可执行User Mode中的Enclave程序，Security Monitor连接起了可信区和不可信的区域。</p>
+<p>​	同时Keystone在进行隔离域的建立和释放时还进行了核间同步，和之前的工作一样，Keystone也支持Secure Boot、安全随机源（目前没有）、可信时钟、远程验证、异常委托。</p>
+<h3 id="组件">组件</h3>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/keystone_framework.png" alt="" loading="lazy"><br>
+​	如上图所示，这里构想了一种工作模式就是一旦硬件制造好了，平台的提供者可以根据已有的硬件对于Security Monitor继续配置，然后软件开发者可以根据SDK跟腱自己的程序。</p>
+<p>​	而组件就是平台提供者可以自定的东西，但是虽然是组件，其实很多的组件基本是必须有的。</p>
+<ul>
+<li>
+<p>Free Memory，可以申请一段空间空间，供之后动态申请。</p>
+</li>
+<li>
+<p>Dynamic Resizing，可能地的话，扩大region的大小。</p>
+</li>
+<li>
+<p>Edge Call，由于可信App和Host之间无法之间访问，Keystone中构建了一个缓冲区，通过偏移信息。</p>
+</li>
+<li>
+<p>Syscall，和Edge Call相似可以向Linux内核发送一些IO请求。</p>
+</li>
+<li>
+<p>多线程，在一个核上一个Enclave内跑多核线程。</p>
+</li>
+<li>
+<p>Cache分区，和以前的TEE论文中采用相同方法，可以根据平台而定。</p>
+</li>
+</ul>
+<h3 id="实现和测试">实现和测试</h3>
+<p>​	SM的TCB自己写的部分只有不到2000行，Runtime最小只用3000行，加上一些Security Monitor的库大概10000行代码。</p>
+<p>​	测了RV8、Beebs、CoreMark、IOZone。<br>
+<img src="https://raw.githubusercontent.com/PorterLu/picgo/main/IOZone.png" alt="" loading="lazy"></p>
+<p>​	上图是IOZone的结果，并不是很好。但是在其他计算密集型任务中效果不错, 论文中说明只有10%的开销，毕竟Keystone并不用修改App原本的代码。</p>
+<h3 id="总结">总结</h3>
+<p>​	论文中提到卖点，在今天看来可能不是Keystone受到重视的原因。模块化还是可定制，从设计层面Keystone并没有走的很远，但它是MIT的Sanctum的续作，第一个开源RISC-V TEE，它可以真正的运行，文档也较为详实。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-6-zhang/" class="post-title gt-a-link">
+                    rCore 第6章
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第四章练习 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第四章练习
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-17 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="mmap-和-munmap-匿名映射">mmap 和 munmap 匿名映射</h2>
+<p><a href="https://man7.org/linux/man-pages/man2/mmap.2.html">mmap</a> 在 Linux 中主要用于在内存中映射文件，本次实验简化它的功能，仅用于申请内存。</p>
+<p>请实现 mmap 和 munmap 系统调用，mmap 定义如下：</p>
+<pre><code>fn sys_mmap(start: usize, len: usize, prot: usize) -&gt; isize
+</code></pre>
+<ul>
+<li>
+<p>syscall ID：222</p>
+</li>
+<li>
+<p>申请长度为 <code>len</code> 字节的物理内存（不要求实际物理内存位置，可以随便找一块），将其映射到 <code>start</code> 开始的虚存，内存页属性为 <code>prot</code></p>
+</li>
+<li>
+<p>参数：</p>
+<p><code>start</code> 需要映射的虚存起始地址，要求按页对齐len 映射字节长度，可以为 0。<code>prot</code>：第 0 位表示是否可读，第 1 位表示是否可写，第 2 位表示是否可执行。其他位无效且必须为 0</p>
+</li>
+<li>
+<p>返回值：执行成功则返回 0，错误返回 -1</p>
+</li>
+<li>
+<p>说明：</p>
+<p>为了简单，目标虚存区间要求按页对齐，<code>len</code> 可直接按页向上取整，不考虑分配失败时的页回收。</p>
+</li>
+<li>
+<p>可能的错误：</p>
+<p><code>start</code> 没有按页大小对齐<code>prot</code> &amp; !0x7 != 0 (<code>prot</code> 其余位必须为0) <code>prot</code> &amp; 0x7 = 0 (这样的内存无意义)<code>[start, start + len)</code> 中存在已经被映射的页物理内存不足</p>
+</li>
+</ul>
+<p><code>munmap</code> 定义如下：</p>
+<pre><code>fn sys_munmap(start: usize, len: usize) -&gt; isize
+</code></pre>
+<ul>
+<li>
+<p><code>syscall ID</code>：215</p>
+</li>
+<li>
+<p>取消到 [<code>start</code>,<code>start + len</code>) 虚存的映射</p>
+</li>
+<li>
+<p>参数和返回值请参考 <code>mmap</code></p>
+</li>
+<li>
+<p>说明：</p>
+<p>为了简单，参数错误时不考虑内存的恢复和回收。</p>
+</li>
+<li>
+<p>可能的错误：</p>
+<p><code>[start, start + len)</code> 中存在未被映射的虚存。</p>
+</li>
+</ul>
+<p><code>TIPS</code>：注意 <code>prot</code> 参数的语义，它与内核定义的 <code>MapPermission</code> 有明显不同！</p>
+<h2 id="我的实现">我的实现</h2>
+<h3 id="简述">简述</h3>
+<p>​		这里需要实现两个系统调用<code>mmap</code>和<code>munmap</code>，其中<code>munmap</code>传入的参数不用考虑页表访问限制，直接将相关的映射删除即可。这里我在<code>os</code>的<code>syscall</code>下添加了<code>memory</code>模块，模块中会直接调用<code>task</code>模块中的接口函数，接口中使用<code>TaskManager</code>的方法，这些方法主要的原理是通过调用当前执行的控制块中的<code>memory_set</code>进行映射和拆除映射。映射的实现较为简单，因为已经检查了这个连续区间内没有已经被映射的虚拟页号，直接调用<code>memory_set</code>中的<code>insert_framed_area</code>即可。但是拆除映射会比较复杂，因为拆除映射需要考虑要移除几个<code>area</code>，是否需要将原本的<code>area</code>分为两个等问题。这里我记录最左<code>area</code>和最右<code>area</code>，将其中的所有区域释放，如果最边上的<code>area</code> 并不是<code>[start, start+len)</code>中的区域，则再<code>insert</code>刚才删除过多的部分。</p>
+<h3 id="具体代码">具体代码</h3>
+<pre><code class="language-rust">impl TaskManager {
+    //...
+    fn map(&amp;self, start: usize, len: usize, prot: usize) -&gt; isize {
+        let mut inner = self.inner.exclusive_access();
+        let cur = inner.current_task;
+        let mut map_perm = MapPermission::U;
+        if (prot &amp; 1) != 0 {
+            map_perm |= MapPermission::R;
+        }
+        if (prot &amp; 2) != 0 {
+            map_perm |= MapPermission::W;
+        }
+        if (prot &amp; 4) != 0 {
+            map_perm |= MapPermission::X;
+        }
+        inner.tasks[cur].memory_set.insert_framed_area(start.into(), (start+len).into(), map_perm);
+        0
+    }
+}
+</code></pre>
+<p>​	这里直接根据<code>prot</code>生成<code>MapPermission</code>，调用<code>insert_framed_area</code>方法就完成了<code>map</code>，当然之前需要进行是否已经<code>map</code>过的检查。</p>
+<pre><code class="language-rust">impl for memory_set {
+    //...
+    pub fn unmap(&amp;mut self, start: usize, len: usize) -&gt; isize {
+        let length = (len + PAGE_SIZE - 1) / PAGE_SIZE;
+        if length == 0 {
+            return 0;
+        }
+        
+        let start_vaddr: VirtAddr = start.into();
+        let end_vaddr: VirtAddr = (start+len).into();
+        let mut left_area_index = 0;
+        let mut right_area_index = 0;
+        //获取左右边界
+        for i in 0..self.areas.len() {
+            if self.areas[i].vpn_range.get_start() &lt;= end_vaddr.into() &amp;&amp;
+                self.areas[i].vpn_range.get_end() &gt; end_vaddr.into() {
+                right_area_index = i; 
+            }
+
+            if self.areas[i].vpn_range.get_start() &lt;= start_vaddr.into() &amp;&amp;
+                self.areas[i].vpn_range.get_end() &gt; start_vaddr.into() {
+                    left_area_index = i;
+            }
+        }
+
+        let del_region_left = self.areas[left_area_index].vpn_range.get_start();
+        let del_region_right = self.areas[right_area_index].vpn_range.get_end(); 
+        let del_region_left_permission = self.areas[left_area_index].map_perm;
+        let del_region_right_permission = self.areas[right_area_index].map_perm;
+
+        //删除区域判断
+        for j in 0..self.areas.len() {
+                if (self.areas[j].vpn_range.get_start() &lt;= del_region_left &amp;&amp; del_region_left &lt; self.areas[j].vpn_range.get_end()) ||
+                    (self.areas[j].vpn_range.get_start() &lt;= del_region_right &amp;&amp; del_region_right &lt; self.areas[j].vpn_range.get_end()) ||
+                    (self.areas[j].vpn_range.get_start() &gt;= del_region_left &amp;&amp; self.areas[j].vpn_range.get_end() &lt;= del_region_right) {
+                        self.areas[j].unmap(&amp;mut self.page_table)
+                    }
+            }
+
+        //多删部分补回
+        if del_region_left &lt; start.into() {
+            self.insert_framed_area(del_region_left.into(), start_vaddr.into(), del_region_left_permission);
+        }
+
+        if del_region_right &gt; (start+len).into() {
+            self.insert_framed_area(end_vaddr.into(), del_region_right.into(),  del_region_right_permission); 
+        }
+
+        return 0;
+    }
+}
+</code></pre>
+<p>​	这里要考虑<code>unmap</code>的区域是否会包括多个<code>area</code>，是否会删除一个完整的一个<code>area</code>的问题，我的方法是考虑最左能到哪个<code>area</code>, 最右到哪个<code>area</code>，删除之间所有<code>area</code>，最后判断左右的<code>area</code>是否应该完全取出，否的话则进行补回。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-san-zhang-lian-xi/" class="post-title gt-a-link">
+                    rCore第三章练习
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

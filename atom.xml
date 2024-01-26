@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://porterlu.github.io</id>
+    <title>Porterlu Personal Blog</title>
+    <updated>2024-01-26T12:25:43.797Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://porterlu.github.io"/>
+    <link rel="self" href="https://porterlu.github.io/atom.xml"/>
+    <subtitle>Note Records</subtitle>
+    <logo>https://porterlu.github.io/images/avatar.png</logo>
+    <icon>https://porterlu.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2024, Porterlu Personal Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[8月21日]]></title>
+        <id>https://porterlu.github.io/post/8-yue-21-ri/</id>
+        <link href="https://porterlu.github.io/post/8-yue-21-ri/">
+        </link>
+        <updated>2023-08-20T15:02:15.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>明天是田中井律的生日，看轻音少女时会关注她和澪，澪是超人气角色，但是看番时还是希望大家能多关注律，狗门！
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[记录]]></title>
+        <id>https://porterlu.github.io/post/ji-lu/</id>
+        <link href="https://porterlu.github.io/post/ji-lu/">
+        </link>
+        <updated>2023-08-04T14:44:45.000Z</updated>
+        <content type="html"><![CDATA[<ol>
+<li>Life is not about finding yourself, but creating yourself.</li>
+<li>荔园有一种日本街道的美感。</li>
+</ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[29夜]]></title>
+        <id>https://porterlu.github.io/post/29-ye/</id>
+        <link href="https://porterlu.github.io/post/29-ye/">
+        </link>
+        <updated>2023-07-29T14:47:15.000Z</updated>
+        <content type="html"><![CDATA[<p>又看了《提问的智慧》，多一点思考而不是无头苍蝇似地乱蹦，我不知道什么时候已经开始下意思忽略这一点了，和志同道合的人做一点喜欢的事总是好的，接下来希望能够持续输出一些东西。<br>
+狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门狗门...</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[7月28夜有感]]></title>
+        <id>https://porterlu.github.io/post/7-yue-28-ye-you-gan/</id>
+        <link href="https://porterlu.github.io/post/7-yue-28-ye-you-gan/">
+        </link>
+        <updated>2023-07-28T15:03:27.000Z</updated>
+        <content type="html"><![CDATA[<p>低血压和低血糖的问题愈加严重了，少熬夜，进入低功耗模式，狗门</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[暑期思考]]></title>
+        <id>https://porterlu.github.io/post/shu-qi-si-kao/</id>
+        <link href="https://porterlu.github.io/post/shu-qi-si-kao/">
+        </link>
+        <updated>2023-07-27T15:10:33.000Z</updated>
+        <content type="html"><![CDATA[<ol>
+<li>科研的本质是否在于炼丹</li>
+<li>世界上只有一种英雄注意</li>
+</ol>
+<p>狗门。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[VIRTIO Debug感想]]></title>
+        <id>https://porterlu.github.io/post/virtio-debug-gan-xiang/</id>
+        <link href="https://porterlu.github.io/post/virtio-debug-gan-xiang/">
+        </link>
+        <updated>2023-07-26T14:12:29.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>已经Debug好几天了，抓耳挠腮，自我折磨，将Virtio换成非legacy就成功了。还是得多看spec，抓紧科研板砖，要不要办个港澳通行证呢，找学姐买个打折的iphone。狗门！！！！！！！！！！！！！！！
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[可信执行环境的安全启动和远程认证]]></title>
+        <id>https://porterlu.github.io/post/ke-xin-zhi-xing-huan-jing-de-an-quan-qi-dong-he-yuan-cheng-ren-zheng/</id>
+        <link href="https://porterlu.github.io/post/ke-xin-zhi-xing-huan-jing-de-an-quan-qi-dong-he-yuan-cheng-ren-zheng/">
+        </link>
+        <updated>2023-06-21T13:43:32.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="sanctum-bootloader">Sanctum Bootloader</h2>
+<p>​	在可信执行环境中，如SGX，提供了向远程用户证明用户的程序被安全启动的功能。这里主要分为两个步骤：</p>
+<ul>
+<li>证明平台是可信的</li>
+<li>证明用户的程序被安全启动了</li>
+</ul>
+<p>​	第一个步骤主要涉及安全启动，第二个主要涉及远程证明。在RISC-V平台上，Sanctum处理器提出了Sanctum Bootloader，被之后许多RISC-V可信执行环境采用。完整的Sanctum的Bootloader具有比SGX的安全引导更高的安全性，它甚至将芯片厂商作为一个半诚信的存在，即相信硬件厂商会诚信地制造安全硬件但会试图获取私钥信息，而传统的SGX需要我们完全相信Intel。</p>
+<h2 id="背景">背景</h2>
+<p>​		为了向远程证明一个程序已经被安全地执行，需要验证程序的宿主系统的信息。远程的用户总是希望他们的计算可以跑在安全的设备上，如Intel SGX和Sanctum处理器，它们都为计算提供了机密性和完整性的保证。如果用户想确保它的计算应用可以跑在一个这样的系统上，那么就需要为硬件创造一个独一无二并且不可改变的密码学身份。使用这种硬件的系统可以向它的用户证明其身份，具体是通过和硬件厂商提供的认证平台列表进行比对就可以确认。</p>
+<p>​	为了保证真实性，处理器需要证明自己被正确地启动了，特别是涉及到之后远程证明地代码不能修改，于是需要一个安全引导来做这个保证。这个Bootloader需要保证系统已经配置到远程用户想要的状态，并且启动之后，处理器也需要向用户证明执行程序的安全容器Enclave被设置为正确的状态。为了完成后面一点，处理器需要提供这个容器的测量值证书来供远程用户进行验证。</p>
+<p>​	在一个通用的设置中，处理器硬件中写死在Bootrom中的固件会对Bootloader和Bootloader加载的软件进行一次密码学测量，之后处理器使用私钥对这个测量值进行签名，就有了一份证书。那么远程或者本地的用户就可以使用处理器厂商提供的公钥对于这个签名进行验证，并对于这个测量值进行验证来保证系统的代码没有被修改。</p>
+<p>​	为了生成如上的一份证书，处理器需要有一对公私钥。通常来说，处理器厂商会为每一个芯片生成一对公私钥并且将私钥嵌入到处理器中，通常来说会将其存入到一处安全的非易失性处理器中。在这个场景中，这个硬件制造商会知道这个芯片的私钥，所以生产阶段就从某种程度上说泄露了。取而代之的是，Sanctum处理会用一个硬件随机数生成器（TRNG）来生成一个随机数种子存储到安全的非易失性存储器中，之后用于生成处理器的公私钥。这时候硬件提供者对生成的公钥进行签名，之后将其存储一个可以被读取到非易失性存储器中，但是私钥本身不会离开处理器，所以即使是硬件提供商也不知道这个私钥。因此，这里的硬件提供者是诚实的，但是他会试图获取机密信息。</p>
+<p>​	Sanctum处理器使用开源的RISC-V Rocket chip架构作为基础，这个处理器不需要处理器厂商显式地赋予一个私钥。取而代之的是，处理器从PUF（物理不可克隆单元，可以当作一个PRF）中提取自己的密码学身份。这个生成的密钥可以用于签名引导的可信软件，之后就会被马上销毁。这个签名过的可信Payload程序负责向远程进行证明。一个远程用户可以通过Diffie-Hellman来建立安全通信同时要求获取Payload程序的签名。我们可以通过验证签名来保证这个系统的真实性和完整性。之后一旦接收到用户的代码，就需要证明用户的程序已经被正确地设置了。</p>
+<h2 id="威胁模型">威胁模型</h2>
+<p>​	我们的目标就是使用PUF结合生产者生产的信根来生成提升密钥生成的安全性。在这个过程中生产者不再存储密钥，所以不会存在多个系统使用同一个密钥。我们考虑这个厂商会诚实地构造PUF和CPU不会去留后门。厂商必须为生产可信根做背书。但是这个厂商可以是“好奇的”，提可以试图获取更多的信息。具体例子就是，一个厂商可以通过多次运行PUF生产密钥来获取信息。</p>
+<p>​	信根（Boot ROM中的代码）可以正确从PUF的输出来生成密钥，并且测量之后的Payload代码。我们假设系统内存是可信的，只能通过Processor访问，并且可以在初始时清空，保护密钥和其他机密信息不被访问。如果DRAM内存在TCB可信基之外，我们可以使用内存加密，就像XOM和Aegis处理器一样。</p>
+<h2 id="信根">信根</h2>
+<p>​	在启动时，处理器会执行可信的&quot;ROM&quot;中的一系列代码。这个过程被称为一阶段引导，是我们的可信根，之后将加载Payload，是从不可信的存储设备进行读取，所以要进行验证Payload的哈希值；这个过程还会对Payload使用处理器的私钥进行签名。</p>
+<p>​	如果处理器拥有多个核，我们可以使用Core 0来执行可信的引导代码。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/sign_trusted_system.png" alt="" loading="lazy"></figure>
+<p>​	因为内存在Boot阶段内存是未定义的，所以通过传统的使用内存来实现的锁来进行同步是不可行的；取而代之的是，这时需要依赖等待中断。Core 0通核间中断会唤醒其他的处理器。所有的核心会清空处理器状态来防止攻击者获取一些机密信息。同时，信根会清除为初始化的内存。在信根的实现过程中，我们依赖一个SHA3哈希和ed25519椭圆曲线加密。这一节将介绍我们如何实现信根来生成密钥。</p>
+<p>​	考虑云FPGA的场景，这个平台是多个客户分时共享的。在这个场景下，云服务的操作员就可以视为那个硬件厂商，非易失性存储的密钥在这个场景就没有意义也不容易实现。如图Fig.2.  <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>D</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>D</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_D,SK_D)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 是从一个哈希随机值生成的安全处理器的密码学实体，重启之后就会消失。处理器在Boot阶段就会将生成一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><msub><mi>K</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">PK_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, 厂商这里就是云FPGA连接的服务器主机就会对这个公钥进行签名。于是这个签名在厂商的保证下就可以得到远程用户的信任。处理器最终会使用设备私钥生成一个签名证书，并且提供<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>i</mi><mi>g</mi><msub><mi>n</mi><mi>M</mi></msub><mo>(</mo><mi>P</mi><msub><mi>K</mi><mrow><mi>D</mi><mi>E</mi><mi>V</mi></mrow></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">Sign_M(PK_{DEV})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 来使得远程用户信任这个平台，而不是有人恶意对验证协议进行模拟。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SD_DEV_derivation_from_entropy.png" alt="" loading="lazy"></figure>
+<p>​	在某些场景下，不存在可信的一方可以在处理器启动时进行本地验证，机器部署在一个不可信的环境中，远程验证建立一个可信的公钥上。同时这个密钥必须重启后仍然能够保持，但是这个密钥不能被攻击者获得。为了解决如上 的威胁模型，如图3中所示，P256和P512会使用Identical Ring Oscillator Pair和一个Trapdoor Fuzzy Extractor来生成一个可以重复的M-bit机密信息e，即M可以是256或者512位。</p>
+<p>​	1）使用PUF来初始化预分配密钥：一旦安全处理器被生产了，可信根中就会有一个私密的128bits信息。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi><mo>=</mo><mi>A</mi><mi>s</mi><mo>+</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">b = As + e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">A</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">e</span></span></span></span> 。为了防止这个厂商重复生成这个密钥，信根需要一次性非易失性存储fuse实现。但是在FPGA平台上，在选择s之前，程序会确定fuse并没有被设置，程序会阻塞直到这个值被设置。如果这个fuse被设置，信根就不会再设置一个新的s，之后会试图通过辅助数据<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span>将其从不可信存储中复原。</p>
+<p>​	2）密钥复原过程：在每一次的重启过程中，图4中展示复原的过程。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/PUF_backed_device_key.png" alt="" loading="lazy"></figure>
+<p>​	信根会根据Payload生成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>P</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_P, SK_P)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, 并且是设备私钥进行签名，这样就可以作为一个证书。处理器会使用PUF生成的对称密钥对<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>S</mi><msub><mi>K</mi><mi>D</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mrow><mi>P</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(SK_D,SK_{Payload})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>进行加密，将其存储在不可信的非易失性存储器上。</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/key_drivation_by_payload.png" alt="" loading="lazy"></figure>
+<h2 id="远程验证">远程验证</h2>
+<p>​	一个不可变的硬件可信根可以进行远程证明。使用PUF来生成平台的密钥，这样密钥就绝对不会被第三方知道。</p>
+<h3 id="通过payload进行远程验证">通过Payload进行远程验证</h3>
+<p>​	这个系统阶段的Payload将负责远程验证，Payload的状态在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>P</mi><msub><mi>K</mi><mi>P</mi></msub><mo separator="true">,</mo><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">(PK_P,SK_P)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>生成阶段也将被验证。远程的客户首先需要发起一次Diffe-Hellman协议，来建立和平台之间的安全通信，一旦接收到了安全参数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mi mathvariant="normal">、</mi><msup><mi>g</mi><mi>A</mi></msup><mi mathvariant="normal">、</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">g、g^A、p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord cjk_fallback">、</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">A</span></span></span></span></span></span></span></span><span class="mord cjk_fallback">、</span><span class="mord mathdefault">p</span></span></span></span> , 那么Payload就会选择一个随机数B，并且计算<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>g</mi><mi>B</mi></msup></mrow><annotation encoding="application/x-tex">g^B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05017em;">B</span></span></span></span></span></span></span></span></span></span></span>。之后这个Payload会发送<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>i</mi><mi>g</mi><msub><mi>n</mi><mrow><mi>S</mi><msub><mi>K</mi><mrow><mi>D</mi><mi>E</mi><mi>V</mi></mrow></msub></mrow></msub><mo>(</mo><mi>P</mi><msub><mi>K</mi><mrow><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub><mo separator="true">,</mo><mi>H</mi><mo>(</mo><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi><mo>)</mo><mo separator="true">,</mo><mi>D</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>e</mi><mo>−</mo><mi>H</mi><mi>e</mi><mi>l</mi><mi>l</mi><mi>m</mi><mi>a</mi><mi>n</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">Sign_{SK_{DEV}}(PK_{payload},H(payload),Diffe-Hellman参数)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567071428571427em;margin-left:-0.07153em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.14329285714285717em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.250305em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mclose">)</span></span></span></span>返回给远程客户。用户根据其中的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><msub><mi>K</mi><mrow><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">PK_{payload}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo>(</mo><mi>p</mi><mi>a</mi><mi>y</mi><mi>l</mi><mi>o</mi><mi>a</mi><mi>d</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">H(payload)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mclose">)</span></span></span></span>来验证这正是想要的机器。建立好Diffe-Hellman的可信通道后，就可以传输想要执行的代码和其数据，服务器平台会返回一个程序哈希的签名。这样就可以建立远程客户对于服务器平台的信任。</p>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sanctum_attestation.png" alt="" loading="lazy"></figure>
+<h3 id="sanctum处理器的远程验证">Sanctum处理器的远程验证</h3>
+<p>​	图7就是一个具体的例子，它实现在Sanctum处理器上。和上面中介绍的不同就是，这里Payload是Security Monitor可信软件，它负责进行Client Enclaves之间的隔离，同时有一个特殊的“Signing Enclave”。只有“Signing Enclave”可以访问Payload生成的密钥，在初始化一个Client Enclave后，它的哈希值会被传送到“Signing Enclave”，使用<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><msub><mi>K</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">SK_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>进行签名。我们依赖Sanctum处理器提供的隔离来保证签名的机密性。在Enclaves之间传送消息并不需要密码学操作，Sanctum实现了消息传送机制。</p>
+<h3 id="匿名验证">匿名验证</h3>
+<p>​	之前介绍的协议都不支持匿名认证，但是现在的构造并不能兼容匿名认证。为了将现在的方案转化为匿名认证方案，需要一个诚信放来处理组成员认证和撤回。这个诚信方往往指的就是硬件厂商，它负责管理公钥组进行设备认证。厂商还需要跟踪已经被攻陷的平台，来保证这些公钥已经被撤回。举个例子就是，为了实现直接证明验证，一个平台应该是可以被证明是真实的，但是厂商应该对于公钥对应的私钥应该是零知识的。可以对于加密的消息进行签名，允许厂商去验证这个平台是真实的，但是并不知道是哪个平台。验证时，平台会发送一个签名和厂商给予的证书，客户会验证基于厂商的证书。</p>
+<h2 id="risc-v-keystone">RISC-V Keystone</h2>
+<p>​	Sanctum的Bootloader也在RISC-V keystone上实现，但是它没有具体的硬件实现。和上面介绍的相似它的Payload验证包含Security Monitor和Security Monitor Public Key的签名报告。而Enclave的验证需要Enclave本身哈希值和Enclave数据的签名报告。前者使用处理器私钥签名，后者使用Security Monitor私钥签名。这样远程用户可以验证处理器本身和程序是否被正确启动。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Sok：Hardware-supported Trusted Execution Environment]]></title>
+        <id>https://porterlu.github.io/post/sokhardware-supported-trusted-execution-environment/</id>
+        <link href="https://porterlu.github.io/post/sokhardware-supported-trusted-execution-environment/">
+        </link>
+        <updated>2023-06-13T13:47:08.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="概述">概述</h3>
+<p>​	现代计算模型日益复杂还有软件对于强隔离机制的需求使得越来越多的系统采用了可信执行环境。近几年，已经出现了许多工业界和学术界的可信执行框架，它们仍然很难进行比较对比。更普遍地说，现有的可信执行环境架构没有被全面系统化，不能很好理解各个可信执行环境之间不同和优缺点。</p>
+<p>​	因此，本篇工作中，我们分析了现有可信执行环境的设计并且系统化了可信执行环境中用实现它们安全目标的机制，包括可验证的启动、运行时隔离、可信IO和安全存储。更确切地说，我们分析了在可信执行环境方案下的典型体系结构构建模块，和各个组件可供的选择及其之间的权衡。我们专注于硬件辅助可信执行环境，并且覆盖了一系列工业界和学术界的可信执行环境。我们的分析显示即使各种可信执行环境的安全目标、使用模型和指令集体系结构不同，但是它们在设计中使用很多相同的构件。</p>
+<p>​	（可信执行环境后文中称为TEE)</p>
+<h3 id="介绍">介绍</h3>
+<p>​	今天的计算平台有各种各样的架构，软件模型和支持的应用类型。从云计算中的大规模服务器到智能家居设备。这些设备逐渐需要存储和处理一些安全敏感的数据来完成一些诸如医疗服务、金融服务领域的工作。因此，现代计算平台一定会实现一些机制来保护安全敏感数据来防止非授权访问和修改。</p>
+<p>​	在当今计算系统中，数据的机密性和完整性不仅需要防御来自网络的攻击，还需要防御那些来自同一平台下软硬件的攻击或者直接的物理攻击。这是因为在系统上存在多个不可信的软件组件。例子包括在相同的云计算平台上有来自不同客户的数据，在一部手机上为网络提供商和用户的数据。于是，如今的计算平台需要将敏感数据和一些潜在的软件攻击还有硬件攻击者相隔离。实际上，这个需求会扩展到任何涉及到敏感数据的应用中。</p>
+<p>​	而面对这些需要保护敏感数据计算的解决方案就是TEE，现在不同TEE的安全目标会有不同</p>
+<p>但是大部分有如下四个安全目标：1）机密数据和代码的可验证启动，这样远程就可以确认应用被安全并且正确地启动了。2）运行时对于数据和代码机密性和完整性的保护。3）可信IO，这样就可以安全地访问外设或者加速器。4）TEE数据的安全存储。</p>
+<p>​	现在存在一系列工业界和学术界的TEE，它们底层的安全假设、指令集架构以及使用模型会有不同。在这篇工作中，我们分析了现有TEE的设计，并且系统化地分析了这些TEE中的通性和独特之处。即使许多TEE对于底层的机制使用不同名字和描述，但是这些机制是十分相似的，我们将底层的机制进行分组并且强调一些例外。</p>
+<p>​	在我们开始学习这些TEE解决方案之前，我们先定义通常大部分TEE所考虑的敌手。我们专注于硬件辅助TEE并且覆盖了验证启动、运行时隔离、安全IO和安全存储。分析不用TEE所支持的这些特性，以及不同TEE是如何实现这些特性的，并分析这些TEE所考虑的攻击者。</p>
+<p>​	第一个分析的TEE安全目标就是可验证的启动，就是提供TEE初始状态的正确性证明。这个典型地，是通过建立可信根的测量值完成的，之后通过它建立TEE中代码和数据的测量值。之后在一个叫做attestation的过程中进行验证。标准的测量和attestation过程是由可信平台模块（TPM）完成的。从很大程度上，今天的attestation方案包含了相似的机制和协议，但是根据不同架构又做了很多的演变。例如，在一些TEE中，attestation密钥和测量值存储在芯片内部的模块，但是也很多存在芯片外的模块。密钥的层次涉及了需要现代attestation协议，可能和标准的TPM-based协议不同，一些需要引入对称密钥来解决性能问题。</p>
+<p>​	之后我们将关注TEE如何实现运行时的隔离来保证数据的机密性和完整性。我们对于隔离机制进行了分类，分类从资源分区和强制隔离两个维度进行分析。我们之后使用这些维度对于不同TEE使用的技术进行分析。即使每一种策略对于每一种资源都有相应的优缺点，但是我们分析对于各种攻击者的攻击下，CPU和内存的隔离在哪种策略有更好的适应性。之后通过描述架构上的隔离组件来总结不同TEE如何使用这些策略。相比之下，内存的保护机制是多样的，一些TEE会采用机制来对应不同的攻击者。</p>
+<p>​	安全IO或者说可信IO从支持用户IO到各种加速器。大多数的可信IO方案都包含两个主要组件：一条到设备的可信路径和可信设备用于像CPU一样提供敏感数据的保护。我们分析两种TEE使用的可信路径，分别是逻辑上的和密码学上的。之后，我们介绍不同方法去实现可信路径，包括它们在不同场景下的适用性还有架构上的支持。最后我们使用在上一节中的分配策略去理解不同可信设备架构。</p>
+<p>​	安全存储就是保证持久存储的敏感数据只能被可信实体获取。这个概念涉及到sealing。和测量和attestation相似，早期的sealing机制依赖于TPM。我们发现sealing机制为了适应需求已经演进了好几代，现在只依赖芯片内的组件。我们揭示了现在TEE只有三分之一有sealing支持，并且大都采用了相似机制。</p>
+<p>​	综上所述，这篇文章对于理解现在的TEE架构做出了如下的贡献：</p>
+<ul>
+<li>这篇文章介绍了各种攻击模型，包括软件的、硬件的和它们对应的能力。我们认为对于攻击者的分类，我们认为这样的分类在设计TEE时，对于选择怎么样选择机制并分析其安全性是很大的意义的。因为这根源于TEE的设计不仅要考虑到保护的是什么资源，还要考虑攻击者的能力。</li>
+<li>据我们了解，我们这篇文章是第一篇对于TEE为了达到安全目标时选择的机制进行分析分类的文章。我们认为这种系统化的分析可以作为设计新的TEE时的基础。</li>
+<li>基于调查的TEE架构，我们总结出了四个安全目标的设计空间是相对小的，新的设计往往利用之前的设计选择，总是在统一组件下做出很小的修改。</li>
+</ul>
+<h3 id="研究范围">研究范围</h3>
+<p>​	近年来提出了各种TEE架构，奇怪的是，即使出现了大量的TEE解决方案，并没一个被广泛接受的TEE定义。在这篇文章中，我们不准备去寻找这样一个统一的定义。取而代之的是，我们调研了现在的一系列方案并系统化的根据四个安全目标进行分析。根据现有TEE设计的不同，我们试图找到底层设计决策来连接这些相似的方案。因为TEE的性能往往是否处理器本身决定的，我并不调研各种TEE之间的性能差异。</p>
+<ul>
+<li>我们专注于硬件辅助TEE，并且不调研更加复杂的软件方法，比如基于可信虚拟机。</li>
+<li>我们考虑不同架构上的TEE，我们选择了四种处理器架构：x86、ARM、POWER和RISC-V。同时我们也分析在SPARC和OpenRISC上方案。</li>
+<li>一些提案有时候不被视为TEE(如ARM Trustzone)，我们会将这些尽可能放到TEE的框架中。</li>
+<li>我们故意地不考虑一些基于协处理器的方案如Google Titan和Apple's Secure Enclaves，或者基于硬件安全模块。我们专注于通用处理器上的方案。</li>
+</ul>
+<p>术语：</p>
+<p>​	在学术界和工业界，下列几个名字往往用于指代TEE。</p>
+<ul>
+<li>Intel SGX，TEE实体叫做Enclave</li>
+<li>TDX和AMD SEV-SNP，实体叫做安全虚拟机</li>
+<li>ARM CCA</li>
+</ul>
+<p>​	这篇文章中使用enclave指代TEE实体，使用TCB指代底层的可信组件。我们使用TEE指代整个用于创建Enclave的架构。</p>
+<h3 id="系统和敌手模型">系统和敌手模型</h3>
+<p>A. 系统模型</p>
+<p>​	大多数TEE都是定位在一个通用处理器上，并且包含了一个SoC，SoC中会有片外存储，外设等等。SoC上可以包含一个或者多个核，同时共享一个Cache，这个Cache下连接到一个内存控制器，同时也有一个IO多选器用于连接外设到SoC中。典型的软件栈包含操作系统，多个用户程序。如果实现了虚拟化，还会有一个hypervisor，其上会运行一个或者多个虚拟机。用于完成完成TEE安全保护机制的软硬件称为TCB。</p>
+<p>B. 敌手模型</p>
+<p>​	TEE用于在同一平台对一系列攻击者进行防御。这些不可信的软硬件包括其他enclave，操作系统，不可信的IO设备，物理攻击者等等。</p>
+<p>​	Enclave攻击者：这种攻击发生一个平台支持同时运行多个Enclave的情况。这种情况十分常见，例如，在多用户的云服务平台，在同一硬件平台上，不同用户可以在之上运行Enclave。在移动平台上也有这种情况，多个服务提供商也会同时运行Enclave。</p>
+<p>​	来自非特权软件的攻击：例子有，在云服务平台上，控制客户虚拟机启动和Enclave运行在同一特权级的程序。</p>
+<p>​	特权软件的攻击：这里的攻击者指的是具有系统管理功能的软件，如OS。同样这里的攻击者也包括云服务平台上的hypervisor，移动平台上的OS。</p>
+<p>​	启动阶段的攻击：这种攻击指的是控制系统的启动阶段，之后就可以控制TEE。这种攻击者通过例如内存或者IO的错误配置，来导致整个TEE的错误。这种攻击者可以是一个恶意的BIOS。</p>
+<p>​	外设攻击：很多外设并在Enclave的TCB内。这些外设可以是在SoC内的，也可以是通过外部总线接入的。这些外设通常都假设为不可信。</p>
+<p>​	来自总线的攻击。</p>
+<p>​	侵略性的攻击：攻击可以发动侵略性的攻击，诸如探测底层芯片、操纵时钟和发动电压攻击来窃取密钥或者控制执行路径。</p>
+<p>C. 侧信道攻击</p>
+<p>​	多个基于物理的、微结构的侧信道攻击已经可以在TEE平台上发起。这种攻击是是因为Enclave使用一些没有专门分配给Enclave的共享的计算资源。TEE往往依赖专门的对策来应对这类攻击。例如，专门的软件对抗方法包括消除机密信息的内存访问或消除依赖机密信息的分支。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sok_TEE_adversary.png" alt="" loading="lazy"></figure>
+<h3 id="可验证的启动">可验证的启动</h3>
+<p>​	Enclave安全执行的第一步就是安全的设置过程，这样才能保证Enclave的执行环境被正确配置。流行的验证方法就是Enclave测量和attestation。从直觉上讲，对于一个Enclave的测量就是记录一个初始状态，更加具体地讲，就是一系列密码学的哈希操作。这个测量过程本身必须是可信的。这个过程必须开始于可信测量根RTM，最终用于测量Enclave。这个Enclave测量值之后也将用于数字签名报告交给一个验证器进行验证。</p>
+<p>A. RTM</p>
+<p>​	可信启动的核心就是RTM，目前的TEE存在三种方案，静态的、动态的、硬件的。</p>
+<p>​	静态的，即SRTM。这个可信链条，要从系统启动到enclave运行保持住。这种方案进行时各种不可信部分往往还未启动，除了基于总线的攻击者，所以这种启动方式要做到不使用片外的设备。典型的SRTM仅仅依赖硬件或者不可变的BootROM中的软件。</p>
+<p>​	相对的，DRTM可以不信任在它之前的代码，建立一个新的RTM。这种实现必须实现体系结构上的拓展，使得Enclave启动时有办法对抗一些不可信的组件。这个通过特殊的指令挂起其他的不可信的软件同时disable所有的IO设备和中断。之后，硬件会加载、测量、验证经过签名的代码模块来作为Enclave的可信基。</p>
+<p>B.测量</p>
+<p>​	在STRM和DRTM的过程中，每一个在信任链上的实体都是Enclave的可信基，在转移到下一个组件前都会对其进行测量，同时还会进行进行完整性检查。几乎所有的TEE都采用了类似的方式。一旦一个组件的测量完毕，必须将这个测量存储到一个攻击者无法访问到的地方。</p>
+<p>C. Attestation</p>
+<p>​	这是可验证启动的最后一个环节，验证器会验证一个Enclave的初始状态是否正确。就是一个Enclave的Hash值和可信基是否符合预期的值。有两种attestation，一种是本地的，就是enclave和验证器在同一个平台上。相反，如果是远程的attestation，enclave和验证器将不在一个平台上。远程attestation依赖非对称加密，会引发更大的检查开销。相反，本地的attestation会使用对称加密，这会更加高效。事实上，大对数TEE都支持远程attestation，只有少数TEE同时支持两个。</p>
+<h3 id="运行时隔离">运行时隔离</h3>
+<p>​	在正确设置完Enclave后，就可以开始执行。为了防止攻击者干扰Enclave的执行，所有Enclave拥有的资源如CPU和内存，不能被未授权的软件访问。这种保护机制我们称之为运行时隔离。接下来，我们将介绍一系列的隔离策略分类，之后介绍如何将这种策略应用到CPU和内存的隔离上。最后，我们调研了现有的TEE使用的隔离策略。</p>
+<p>A. 隔离策略的分类</p>
+<p>​	总的来说，隔离机制是为了实现受保护资源的机密性和完整性。</p>
+<p>​	资源分区：大体分为时间、空间上的隔离。</p>
+<p>​	对时间上的隔离，往往是将资源分配到一个时间域上，随着时间将资源分给不同的执行上下文。在任何一个时间点，只有一个执行上下文能够访问对应的资源。时间上的分区隔离需要一个机制去安全切换上下文。这个安全切换需要较快，这样才不会影响系统的整体性能。时间上的隔离往往用于那些空间上进行隔离很困难，多个上下文同时进行访问是不必要的情况。</p>
+<p>​	对空间上的隔离，资源往往分为可信上下文和非可信上下文的部分，使用独立的分区。这用于同一资源有多个或者一个资源可以细分为多个的情况。同时一个上下文可能被给与多个资源实体。从结果上，空间隔离技术往往用于那些相对容易复制或者分离的设备上。</p>
+<p>​	时空隔离：提供了更多灵活性和性能优化。</p>
+<p>​	另外一种就是强制隔离：分为逻辑上的和基于密码学的</p>
+<p>​	逻辑上的隔离利用了一些访问控制机制来实现强制隔离，这些机制会防止攻击者访问受保护的数据。例如，在一个可信的上下文切换中，这个机制将保证下一个执行的线程不能任何受保护的数据。另一方面，许多隔离机制会拦截访问请求并且检查访问控制信息。这里的访问控制信息，必须由系统的可信组件进行生成和管理。如果要实现灵活的管理，会需要在运行时修改控制信息，用于实现灵活的再分配。对于这些资源的访问控制信息需要根据访问的粒度和资源的类型进行变化。更进一步地，这些访问控制信息本身需要被保护。</p>
+<p>​	另外一种是基于密码学方法的隔离，通过机密可以实现机密性，只有经过认证过的下文可以得到密钥解密数据。而完整性认证可以通过消息认证码的方式实现。这样就可以阻止恶意的程序去修改密文发起攻击。对于完整性的保护需要对抗重放攻击。</p>
+<p>B. CPU隔离</p>
+<p>​	在本篇文章的讨论中，专注于保护CPU中架构相关的寄存器状态。</p>
+<p>​	CPU隔离策略的选择，往往使用时间上的隔离，因为这样不用添加任何运行时的检查。</p>
+<p>​	而密码学的隔离方法有很大的性能开销。</p>
+<p>​	对于CPU隔离的架构支持，就像之前提到的那样，实现安全的上下文切换的方法就是利用分时复用，对于上下文中的寄存器进行存储、清除、恢复。这个切换过程必须保证Enclave中的数据不被泄露。另外，这个CPU恢复Enclave执行状态的过程也不能被干扰。为了保证TCB可以充分协调每一次上下文切换，TEE利用多个特权级来完成这件事。</p>
+<p>​	除了上下文切换，CPU模式和特权级是TCB组件和安全运行Enclave所必要的，这允许运行在高特权级的TCB可以实现一些安全机制例如测量，attestation，内存隔离，可信IO，安全存储等等。</p>
+<p>C. 内存隔离</p>
+<p>​	TEE设计需要保证Enclave使用的内存在运行时不被未授权地访问或者修改。这种保护不仅仅覆盖了off-chip的保护，也包括片内的一些指令或者Cache。于此同时，大多数TEE支持虚拟存储，这个地址转化过程的可信是内存隔离的关键。同时对于处理器Cache，TLB存有最近的地址翻译，一定得保护其不被误用或者错误配置。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SoK_industry_tee.png" alt="" loading="lazy"></figure>
+<p>​	对于内存隔离策略的选择：</p>
+<p>​	所有之前讨论的隔离策略都可以用到内存隔离中，但是TEE使用的内存隔离策略会更加灵活。对于采用内存完全分区的策略，有专门的内存区域划分给TCB和Enclave。这种策略在只用支持有限数量的Enclave的系统中可以很好地工作。这种内存资源要求相对静态并且预先已经知道，同时对于隔离粒度不高的应用很适合这种策略。</p>
+<p>​	完全分时隔离需要允许内存只能被当前活跃的Enclave访问，并且在上下文进行切换时需要能安全地存储和恢复寄存器。这种隔离策略适用的场景十分有限，需要无论何时只有一个执行上下文是有效的情况。因此在需要并行运行Enclave的情况不是很搞笑。另外，同时将内存的内存存入磁盘需要耗费大量的时间。所以，这种策略很少被使用。</p>
+<p>​	时空同时隔离的策略，也是更为常用，更为灵活的。内存区域可以被不同Enclave分时复用。</p>
+<p>​	对于逻辑强制隔离依赖访问控制信息，来使得只有经过授权的访问才能访问enclave的资源。这种隔离需要对于每一次访问都进行检查，比如通过MMU就可以实现。</p>
+<p>​	对于密码学的强制隔离机密性通过加密实现，通过MAC来完成完整性的保证。为了防御重放攻击还需要记录一些刷新的信息，比如counter，我们常常使用merkle-tree来进行具体的实现。和上面的隔离策略形成对比的是，基于密码学的隔离可以对抗总线攻击者。但是，基于密码学的隔离很难进行扩展，特别是在不同的上下文需要使用不同的密钥的时候，因为它需要在SoC上存储大量密钥。</p>
+<p>​	在调研TEE的过程中，我们发现了一系列的策略。许多的TEE会同时使用多种策略。比如Intel SGX会使用时空隔离加上逻辑隔离保护Enclave Memory。但是它用了空间隔离隔离的方法保护TCB，同时使用加密的方法对抗总线攻击者。</p>
+<p>​	对于内存隔离的架构支持：通过一个访存控制检查可以进行一次检查，在调研的TEE中，它们有两个选项，一个是内存保护单元，另外一个是MMU。两者主要的不同就是，前者直接操作物理地址，而后者会基于虚拟地址。同时，MPU往往只会支持有限的规则，而MMU则更加得灵活。我们发现使用MMU的TEE会更加复杂，需要更加深入的安全性分析。另一方面，MPU则相对简单，因此可以简化安全性分析。许多的现代学术界TEE依赖MPU进行隔离。另一方面，许多商业TEE会更加倾向于使用复杂的MMU。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Sok_isolation_strategies.png" alt="" loading="lazy"></figure>
+<p>​	我们也发现这些访问控制信息，如可信页表、MPU的访问控制规则，其他的辅助元数据需要自己防御未授权访问。这种情况往往是同启动时配置MPU实现的。</p>
+<p>​	Caches: Cache中会保存有最近访问过的数据来提升软件性能。通常，CPU中包含多个cache层次，有一些是专门属于一个核，也有的共享的。在一些TEE架构中，（SGX中可信实体的Cache数据不被不可信部分访问）？，Arm TrustZone会添加额外的保护机制来使得Enclave的Cache数据不被访问。</p>
+<p>​	基于空间的Cache隔离，将一部分Cache变成一个Enclave的专属Cache，这会降低资源的利用率，同时降低系统的性能。但是这样的作法可以用于消除侧信道。分时复用Cache也不是十分高效，因为这需要在切换上下文时刷新整个Cache，因此，写TEE会将一小部分专属于一个Core。并且密码学操作并不适合于Cache这类微架构，因为密码学硬件会带来的面积开销和延迟。</p>
+<h3 id="可信io">可信IO</h3>
+<p>​	早期的TEE设计专注于CPU，最近也将兴趣转移到如何和外设进行可信的交互。可信IO分为两个部分：1）建立一条可信路径，Enclave对于设备进行访问的机密性和完整性；2）在可信外设上保护Enclave的数据。</p>
+<p>A. 建立可信路径</p>
+<p>​	这条可信路径用于建立enclave和外设之间的通信。通过逻辑上的和密码学上的操作可以建立一条可信路径。如果这个可信路径有多跳，那么可以在每一跳可以实现一种隔离。注意在每一跳都可以使用逻辑上的或者密码学上的方法，除了基于总线的攻击，只能使用密码学的方法。</p>
+<p>​	一种构建逻辑上可信路径的方法就是建立访问控制过滤器，这样就可以过滤一些MMIO请求。这个过滤可以是静态的，也可以是可编程的。许多依赖trustZone Protection Controller进行过滤。另外一种选项就是通过MPU配置，来保证Enclave访问时只有其能进行访问。</p>
+<p>​	体系结构上对于密码学安全路径的支持：对于在两个端点之间实现密码学安全路径，这种方法会造成一些难以避免的开销。为了建立这个安全路径，Enclave和外设之间要预分配证书和密钥。</p>
+<p>B.可信设备架构</p>
+<p>​	对于任何一种可信IO用途，都可以建立一条从enclave到设备的路径。但是新出现的设备可能需要计算处理用户的数据，所以这种设备可能也需要像CPU一样保护用户数据的机密性和完整性。</p>
+<p>​	今天，一系列的加速器，如专用AI处理加速芯片、FPGA、GPGPU等等。这些系统底层架构有很大的不同，因此需要分别实现特定的机制来实现enclave数据。但是这些机制并不在本篇文章的讨论范围内。可是仍然有一些更为统一的策略。</p>
+<p>​	空间隔离：为每一个Enclave使用专门的加速器。但是这种在办法需要为Enclave一个整个生命周期中分配一个设备，这样开销是很大的。因此，这种策略并不是很实用。只能说在有专门的设备存在的情况，可以建立一条达到设备的路径。</p>
+<p>​	时间隔离：直到最近，加速器仍然假设在任何一个时刻，只有单个上下文正在执行。因此可以对设备进行分时共享。这种策略需要一个安全上下文切换机制，这可以通过软件实现，也可以通过加速器硬件实现。</p>
+<p>​	时空隔离和逻辑强制隔离：这种策略用于多个enclave需要并行地访问加速器。这种策略需要硬件的支持，即硬件支持多用户运行。这里的策略是设备定制的，但是它是包含保持记录资源所有权的访问控制信息。</p>
+<p>​	基于密码学的隔离：这个不适用于于保护片上加速器资源。</p>
+<h3 id="安全存储">安全存储</h3>
+<p>​	在许多引用场景下，enclave需要在不断启动后，维持一个持久的状态。这个过程需要将数据进行加密。这个过程叫做sealing，反过来进行解密的过程称之为unsealing。</p>
+<p>​	即使安全存储是一个很常见的需求，但是现在大多数TEE并没有描述地很确切。一些TEE提供了原语来支持安全存储，但没有完整描述一整套方案。因此我们在这里就不再过多描述这些TEE。所以接下来的小节中，我们将专注于那些提供了一整套机密方案的TEE：Flicker、SEA、IBM-PEF、Intel SGX、TIMBERV、Keystone和Sanctuary。</p>
+<p>A. Sealing方案及其权衡</p>
+<p>​	所有调研TEE中的sealing方案都基于TPM。Flicker，SEA和IB,-PEF都直接依赖TPM的原始sealing机制。这包括生成一对非对称密钥，并且使用它们进行加密一个机密信息，这样只有系统被指和加密时一致才能正确进行解密。这里sealing和unsealing过程中使用的系统配置信息使用的是记录在TPM's Platform Configuaration寄存器中的测量值。因为TPMs的存储空间十分有限，一个典型的保护大量数据的方法就是生成一个对称密钥，使用对称密钥对大量的数据进行加密，seal这个密钥到TPM中。</p>
+<p>​	现在存在很多方法可以unseal之前seal的数据，一些TEE只允许有相同TCB下且拥有相同测量值的Enclave对数据进行unseal。其他方法，有的允许所有被同一个开发者签名过的Enclave对数据进行unseal。还有一些以云为场景的TEE允许enclave迁移seal的数据到不同host上。</p>
+<p>B. 对于Sealing架构上的支持</p>
+<p>​	像OP-TEE、Keystone、TIMBERV和Sanctury使用了软件TCB为每一个Enclave提供了sealing支持。这里，TCB会暴露一个接口用于Enclave创建Sealing密钥。这种方案不需要二外的硬件或者架构支持，可以部署到任何运行时软件TCB中。对于TPM-based的解决方案，需要一个TPM芯片来支持sealing。因为TPM往往是片外的组件，Intel SGX使用特殊的硬件指令来进行sealing，通过绑定的方法进行sealing密钥的使用。</p>
+<h3 id="tcb">TCB</h3>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SoK_tee_tcb.png" alt="" loading="lazy"></figure>
+<p>​		这一节将概述现存TEE设计的TCB。通用的做法是使用代码行数作为TCB衡量的尺度，但是并不是所有的TCB组件都能这么做。论文中还讨论了TCB可变的情况，因为有一些组件可能是可变的，并且改变会在attestation阶段反应出来。总的来说可变的部分往往实现在软件，而硬件的部分不可变。这不是绝对的，比如ROM中的代码，CPU中的微代码等等。</p>
+<p>​	如上表中所示，所有TEE的RTM都是不可变的。在安全引导的过程中，它会测量下一阶段的TCB组件，并且由这个TCB组件测量enclave。而运行时隔离组件的TCB使用一般是一个可变的软件TCB，用于管理上下文的切换和内存隔离。Secure IO的TCB，大多数的TEE并不支持可信IO，诸如cure、Trustlite都依赖了可变的软件TCB。安全存储的TCB，上表中10个TEE显示地支持了这个特性，如SEA和IBM PEF使用了TPM来完成这些工作，而Timber-V、Keystone和Trustlie使用了软件来完成。即使SGX完成了这个功能，但是还不清楚它的这部分是否是可变的。</p>
+<p>​	通常来说TEE会试图减小TCB，来减小存在安全漏洞的风险，如果想从理论上保证安全就得依靠形式化证明。然而，在实践过程中，更好的做法是可以实现对TCB的更新，而不是期待TCB是bug-free的。</p>
+<h2 id="总结">总结</h2>
+<p>​	这边文章分析了工业界和学术界的TEE底层设计，来完成：1）可验证启动，2）运行时隔离，3）安全IO，4）安全存储。即使不同的机器上看起很不同，但大都采用相似的设计选择。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[IO虚拟化]]></title>
+        <id>https://porterlu.github.io/post/io-xu-ni-hua/</id>
+        <link href="https://porterlu.github.io/post/io-xu-ni-hua/">
+        </link>
+        <updated>2023-04-16T15:41:20.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="为什么需要io虚拟化">为什么需要IO虚拟化</h2>
+<p>​	如果让<code>VM</code>直接管理物理网卡：</p>
+<ul>
+<li>
+<p>正确性问题：所有的<code>VM</code>都使用相同的<code>MAC</code>地址、<code>IP</code>地址无法正常接受发送网络包</p>
+</li>
+<li>
+<p>安全性问题：恶意<code>VM</code>可以直接读取其他<code>VM</code>的数据</p>
+</li>
+</ul>
+<p>​	而<code>I/O</code>虚拟化的目标就是，为虚拟机提供正常使用虚拟外部设备，隔离不同虚拟机对于外部设备的访问，提高物理设备的资源利用率。</p>
+<h2 id="如何实现io虚拟化">如何实现IO虚拟化</h2>
+<h3 id="设备模拟">设备模拟</h3>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/kvm_io_emulation_network.png" alt="" loading="lazy"></figure>
+<p>​	当虚拟机中的程序试图访问网卡时，就会陷入虚拟机，<code>KVM</code>会使用<code>QEMU</code>，<code>QEMU</code>会发起一次系统调用，请求物理机上的网卡驱动。之后再原路返回。</p>
+<p>​	这样的话就可以模拟任何设备，还允许在<code>QEMU</code>的层面检查网络包的内容，还不用修改硬件。但是性能非常差。</p>
+<h3 id="半虚拟化方式">半虚拟化方式</h3>
+<p>​	让虚拟机知道运行在虚拟化环境下，虚拟机运行前端驱动，<code>VMM</code>运行后端驱动，<code>VMM</code>主动提供<code>Hypercall</code>给<code>VM</code>，通过共享内存传递指令和命令。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/virtio_kvm.png" alt="" loading="lazy"></figure>
+<p>​	<code>VMM</code>和<code>VM</code>之间存在一个传递<code>IO</code>请求的队列：</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/virtio_queue.png" alt="" loading="lazy"></figure>
+<p>​	通过一个<code>IO</code>队列直接将请求发送给<code>VMM</code>，可以将多个<code>IO</code>合并为一个，同时实现简单。但是需要修改虚拟机和操作系统内核。</p>
+<h3 id="设备直通">设备直通</h3>
+<p>​	如果让虚拟机直接管理物理设备，会存在诸如<code>DMA</code>恶意读写内存的问题。</p>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/IOMMU.png" alt="" loading="lazy"></figure>
+<p>​	<code>SMMU</code>是<code>ARM</code>中<code>IOMMU</code>的实现，这里也存在两阶段地址翻译，<code>IOVA-&gt;GPA</code>，第二个阶段进行<code>GPA-&gt;HPA</code>。</p>
+<figure data-type="image" tabindex="6"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/process_smmu.png" alt="" loading="lazy"></figure>
+<p>​	除了隔离问题，还要解决设备独占的问题，满足<code>SR-IOV</code>标准的设备，可以使用如下的复用。</p>
+<figure data-type="image" tabindex="7"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SR-IOV.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[内存虚拟化]]></title>
+        <id>https://porterlu.github.io/post/nei-cun-xu-ni-hua/</id>
+        <link href="https://porterlu.github.io/post/nei-cun-xu-ni-hua/">
+        </link>
+        <updated>2023-04-16T06:20:49.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="三种地址">三种地址</h2>
+<ul>
+<li>客户虚拟地址<code>Guest Virtual Address</code></li>
+<li>客户物理地址<code>Guest Physical Address</code></li>
+<li>主机物理地址<code>Host Physical Address</code></li>
+</ul>
+<p>将<code>GPA</code>和<code>HPA</code>进行管理，是<code>VMM</code>需要负责的工作。</p>
+<h3 id="内存虚拟化的方式">内存虚拟化的方式</h3>
+<h3 id="影子页表">影子页表</h3>
+<pre><code class="language-c">set_cr3 (guest_page_table):
+	for GVA in 0 to pow(2, 20)
+        if guest_page_table[GVA] &amp; PTE_P:
+			GPA = guest_page_table[GVA] &gt;&gt; 12
+            HPA = host_page_table[GPA] &gt;&gt; 12
+            shadow_page_table[GVA] = (HPA &lt;&lt; 12) | PTE_P
+        else
+            shadow_page_table[GVA] = 0
+   	CR3 = PHYSICAL_ADDR(shadow_page_table)
+</code></pre>
+<p>​	这里遍历了页表，将影子页表设置为了将<code>GVA</code>翻译为<code>HPA</code>的结构，这个过程需要遍历所有<code>GVA</code>项，最后将影子页表基地址设置到<code>CR3</code>中。</p>
+<p>​	这样<code>VMM</code>就可以拥有一个独立的影子页表，相应的，一旦<code>guest OS</code>修改页表，影子页表也要做相应的更新。</p>
+<p>​	为了达到这样的目的，这里使用一些手法，将这些页中的所有页都设置为只读，如果<code>guest OS</code>修改了这些页，那么硬件就会触发缺页异常。这样<code>VMM</code>就可以处理缺页异常，更新影子页表。如何将<code>Guest OS</code>和<code>Guest app</code>进行隔离？在影子页表的实现中，需要同时维护两个页表，当<code>guest os</code>切换到<code>U</code>，<code>VMM</code>也要做切换影子页表的操作。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/vmm_kernel_only_page.png" alt="" loading="lazy"></figure>
+<p>​		如果切换到<code>U</code>，我们需要调用<code>set_ptp(current, 0)</code>,  这样只有标注为<code>User</code>，会被添加到影子页表中。</p>
+<h3 id="直接映射">直接映射</h3>
+<p>​		这是一种半虚拟化的方式，我们需要直接修改<code>guest OS</code>代码，只用<code>GVA</code>和<code>HPA</code>，<code>Guest OS</code>接着操纵它的<code>HPA</code>空间，然后使用<code>hypercall</code>将自己要修改的信息告诉<code>VMM</code>， <code>VMM</code>来更新页表，<code>CR3</code>指向这个<code>GUEST OS</code>的页表。</p>
+<h3 id="硬件虚拟化对于内存翻译的支持">硬件虚拟化对于内存翻译的支持</h3>
+<p>​	创建一个新的页表将<code>GPA</code>翻译为<code>HPA</code>，这个表由<code>VMM</code>直接控制，每个<code>VM</code>一个表，<code>Intel</code>称之为<code>EPT</code>，<code>ARM</code>上叫<code>Stage-2 Page Table</code>。这样在翻译完成<code>GVA-&gt;GPA</code>后会自动进一步的翻译。</p>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/gva_hpa_translation.png" alt="" loading="lazy">	由于本身一次非虚拟化页表的页表访问需要4次内存访问，但是在虚拟化场景下，这里的地址都变为了<code>GPA</code>了，需要进行进一步的翻译。不同的是，每一级的都要将<code>GPA</code>翻译为<code>HPA</code>，总共需要24次访存。</p>
+<p>​	这里<code>TLB</code>可以缓存<code>GVA-&gt;HPA</code>，大大加速了翻译过程。同时一阶段页表缺失不会引起<code>VM Exit</code>.</p>
+]]></content>
+    </entry>
+</feed>

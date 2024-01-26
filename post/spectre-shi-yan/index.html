@@ -1,0 +1,258 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Spectre实验 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Spectre实验
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-07 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/mH0XNdvCc/" class="post-tags">
+                            # sidechannel
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="cache-timing">Cache timing</h3>
+<p>​	我们需要测得<code>Cache timing</code>命中与不命中的时间差别。我们引入两个库：</p>
+<ul>
+<li><code>emmintrin.h</code></li>
+<li><code>x86intrin.h</code></li>
+</ul>
+<p>​	我们首先为了测到被访问数据，需要将cache清空，这样被访问的数据，就会因为已经进入<code>Cache</code>而访问时间短了一些。</p>
+<pre><code class="language-c">int junk = 0;
+register uint64_t time1, time2;
+volatile int ui;
+int i;
+
+for(i=0; i&lt;10; i++){
+    array[i*4096] = 1;
+}
+
+for(i=0; i&lt;256; i++){
+    _mm_clflush(&amp;array[i*4096]);
+}
+
+array[3*4096] = 1;
+
+for(i=0; i&lt;10; i++){
+    addr = &amp;array[i*4096];
+    time1 = __rdtscp(&amp;ui);
+    junk  = *addr;
+    time2 = __rdtscp(&amp;ui) - time1;
+    printf(&quot;%d\n&quot;, time2-time1);
+}
+</code></pre>
+<p>​	我们通过<code>_mm_clflush</code>刷新<code>cache</code>空间，同时使用<code>__rdtscp</code>来获取运行的时钟周期数。</p>
+<h3 id="flush-and-reload">Flush and Reload</h3>
+<p>​	<code>flush</code>意味着我们预先将<code>cache</code>内的数据清空，之后我们假设被攻击的函数有如下代码。</p>
+<pre><code class="language-c">void victim(){
+    temp = array[secret*4096+DELTA];
+}
+</code></pre>
+<p>​	这样我们通过遍历secret的取值范围，通过测量时间，就可以知道<code>secret</code>的值。</p>
+<h3 id="spectre">Spectre</h3>
+<p>​	<code>spectre</code>是利用分支预测漏洞和处理器乱序执行，来达到访问原本访问不到的数据。如被攻击函数有如下的代码。</p>
+<pre><code class="language-c">void victim(size_t x){
+    if(x &lt; size){
+        temp = array[x*4096 + DELTA];
+    }
+}
+</code></pre>
+<p>​	我们首先训练分支预测器，这里假设<code>size</code>为30， 这样有如下代码：</p>
+<pre><code class="language-c">for(int i = 0; i &lt; 30; i++){
+    victim(i);
+}
+</code></pre>
+<p>​	接着执行<code>victim(index_out_bound)</code>, 这样这个数据就进入了<code>cache</code>中，这时由于分支预测存在，这里被预测为执行成功，等到知道结果为不执行的时候，数据已经进入了<code>cache</code>，这样通过<code>cache timing</code>就可以知道这个<code>index_out_bound</code>到底是多少。</p>
+<h3 id="attack">Attack</h3>
+<p>​	当然我们需要获取数据，而不是一个<code>index</code>，我们改进代码。</p>
+<pre><code class="language-c">s = restrictedAccess(index_beyond);
+if(s!=0)
+    array[s*4096+DELTA] = 1;
+</code></pre>
+<p>​	这样数据就进入了<code>cache</code>中，我们在通过<code>cache</code>测量获取机密数据，实践中，还可以通过多次测量减小误差。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

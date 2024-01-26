@@ -1,0 +1,430 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore 第七章 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore 第七章
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-13 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="管道">管道</h2>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/rcore_pipe.png" alt="" loading="lazy"></figure>
+<p>​	在引入文件系统后，我们使用<code>File Trait</code>对于一个进程可以读写的文件进行说明，基于<code>File Trait</code>我们实现管道，它可以将不同进程的输入和输出进行连接。我们为用户提供<code>sys_pipe</code>接口，用户可以通过这个接口，获取到一对读写口。</p>
+<pre><code class="language-rust">pub fn sys_pipe(pipe: *mut usize) -&gt; isize;
+</code></pre>
+<p>​	我们只需要将<code>pipe</code>设置为一种特殊的<code>File Trait</code>, 在内核空间中会有如下过程，</p>
+<pre><code class="language-rust">pub fn make_pipe() -&gt; (Arc&lt;Pipe&gt;, Arc&lt;Pipe&gt;) {
+    let buffer = Arc::new(unsafe { UPSafeCell::new(PipeRingBuffer::new()) });
+    let read_end = Arc::new(Pipe::read_end_with_buffer(buffer.clone()));
+    let write_end = Arc::new(Pipe::write_end_with_buffer(buffer.clone()));
+    buffer.exclusive_access().set_write_end(&amp;write_end);
+    (read_end, write_end)
+}
+</code></pre>
+<p>​	这个读口和写口会独自占用一个<code>fd_table</code>中文件描述符号，通过文件描述符可以读写内核空间中的管道，这样一旦调用<code>fork</code>就可以读写内核中同一<code>ringbuffer</code>。为了保证写口被关闭时，直接返回，我们可以通过<code>ringbuffer</code>中的<code>weak</code>连接判断写口是否已经关闭。</p>
+<p>​	如下是这个可阻塞的<code>ringbuffer</code>的部分代码示例，</p>
+<pre><code class="language-rust">let mut ring_buffer = self.buffer.exclusive_access();
+let loop_read = ring_buffer.available_read();
+if loop_read = 0 {
+    if ring_buffer.all_write_ends_closed() {
+        return already_read;
+    }
+    drop(ring_buffer);
+    suspend_current_and_run_next();
+    continue;
+}
+for _ in 0..loop_read {
+	if let Some(byte_ref) = buf_iter.next() {
+        unsafe {
+            *byte_ref = ring_buffer.read_byte();
+        }
+        already_byte += 1;
+        if already_read == want_to_read {
+            return want_to_read;
+        }
+    } else {
+        return already_read;
+    }
+}
+</code></pre>
+<p>​	如果缓冲区中已经为空，那么就要进行阻塞调度下一个进程，但是写口关闭我们直接返回；否则，在<code>buffer</code>中有多少字符读多少字符。</p>
+<h2 id="输入输出重定向">输入输出重定向</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/user_app_args.png" alt="" loading="lazy"></figure>
+<p>为了实现<code>cat</code>工具来验证我们的输入输出重定向，我们必须介绍参数是如何通过<code>exec</code>系统调用传入最后进程的用户栈的。首先<code>shell</code>要将<code>ls -lia</code>分成两个字符串进行传入，那么在<code>exec</code>系统调用是会将上图所示的结构压入到用户栈，由于一些机器不支持非对其访存，可能引发异常，所以我们这里进行一次对齐。之后，执行这个应用程序时，运行时库会将<code>exec</code>传入的参数<code>argc</code>和<code>argv</code>进行分析，构造成<code>str</code>引用的各式，最后传入到我们的应用程序。</p>
+<p>​	之后就是重定向本身的实现，我们需要新添加一个系统调用<code>sys_dup</code>，它接受一个文件描述符号，并且拷贝它。我们由于关闭了<code>stdout</code>，那么新的<code>fd</code>号就可以替代原来<code>stdout</code>的位置，从而达成重定向。</p>
+<h2 id="信号">信号</h2>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/signal.png" alt="" loading="lazy"></figure>
+<p>这里是<code>rCore</code>中所用到的信号的数据结构，我们用<code>bitflags</code>来实现一个信号变量，每一个<code>bit</code>表示一个信号，同时定义<code>SignalAction</code>, 定义来信号对应的处理函数和执行这个信号<code>handler</code>时需要屏蔽的信号。最后是添加了信号后，我们需要扩展我们的<code>TaskControlBlock</code>:</p>
+<ul>
+<li>这里的<code>signals</code> 表示<code>pending</code>等待处理的信号。</li>
+<li><code>signal_mask</code>, 表示进程屏蔽的信号。</li>
+<li><code>handling_sig</code>, 表示正在处理的信号。</li>
+<li><code>killed</code>，表示目前进程是否要被杀除。</li>
+<li><code>frozen</code>,  表示目前进程是否因为信号被阻塞。</li>
+<li><code>trap_cx_backup</code>，表示调用用户的<code>signal handler</code>时，我们需要存储<code>trap</code>上下文。</li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/signal_process.png" alt="" loading="lazy"></figure>
+<p>根据上图的流程，我们展示<code>trap</code>文件中的内容</p>
+<pre><code class="language-rust"> //...
+	Trap::Exception(Exception::StoreFault)
+        | Trap::Exception(Exception::StorePageFault)
+        | Trap::Exception(Exception::InstructionFault)
+        | Trap::Exception(Exception::InstructionPageFault)
+        | Trap::Exception(Exception::LoadFault)
+        | Trap::Exception(Exception::LoadPageFault) =&gt; {
+            println!(
+                &quot;[kernel] {:?} in application, bad addr = {:#x}, bad instruction = {:#x}, kernel killed it.&quot;,                scause.cause(),
+                stval, 
+                current_trap_cx().sepc
+            );
+            //exit_current_and_run_next(-2);
+			current_add_signal(SignalFlags::SIGSEGV);
+        }
+        Trap::Exception(Exception::IllegalInstruction) =&gt; {
+            println!(&quot;[kernel] IllegalInstruction in application, kernel killed it.&quot;);
+            //exit_current_and_run_next(-3);
+			current_add_signal(SignalFlags::SIGILL);
+        }
+        Trap::Interrupt(Interrupt::SupervisorTimer) =&gt; {
+            set_next_trigger();
+            suspend_current_and_run_next();
+        }
+//...
+</code></pre>
+<p>​	我们可以看到在发生一些异常时，我们将信号添加到了该进程的信号<code>pending</code>队列中，这样之后我们就可以检查到了。</p>
+<p>​	同时信号除了上述的产生方式，还有两种异步的产生方式：</p>
+<ul>
+<li>进程通过<code>kill</code>给自己或者其他的进程发送信号</li>
+<li>内核检测到某些事件，然后给某些进程发信号，这里没有实现。</li>
+</ul>
+<pre><code class="language-rust">pub fn sys_kill(pid: usize, signum: i32) -&gt; isize {
+    if let Some(task) = pid2task(pid) {
+        if let Some(flag) = SignalFlags::from_bits(1 &lt;&lt; signum) {
+            //...
+            task_ref.signals.insert(flag);
+           	0
+        } else {
+            -1
+        }
+    } //...
+}
+</code></pre>
+<p>​	而信号的处理，由两个主要函数：</p>
+<pre><code class="language-rust">pub fn handle_signals() {
+    loop {
+        check_pending_signals();
+        let (frozen, killed) = {
+            let task = current_task().unwrap();
+            let task_inner = task.inner_exclusive_access();
+            (task_inner.frozen, task_inner.killed)
+        };
+        if !frozen || killed {
+            break;
+        }
+        suspend_current_and_run_next();
+    }
+}
+</code></pre>
+<p>​	在<code>trap</code>结束前，会执行<code>handle_signals</code>这个函数。同时</p>
+<pre><code class="language-rust">fn check_pending_signals() {
+    for sig in 0..(MAX_SIG+1) {
+        let task = current_task().unwrap();
+        let task_inner = task.inner_exclusive_access();
+        let signal = SignalFlags::from_bits(1 &lt;&lt; sig).unwrap();
+        if task_inner.signals.contains(signal) &amp;&amp; (!task_inner.signal_mask.contains(signal)) {
+            let mut masked = true;
+            let handling_sig = task_inner.handling_sig;
+            if handling_sig == -1 {
+                masked = false;
+            } else {
+                let handling_sig = handling_sig as usize;
+                if !task_inner.signal_actions.table[handling_sig]
+                	.masl
+                	.contains(signal)
+                {
+                    masked = false;
+                }
+            }
+            if !masked {
+                drop(task_inner);
+                drop(task);
+                if signal == SignalFlags::SIGKILL
+                	|| signal == SignalFlags::SIGSTOP
+                	|| signal == SignalFlags::SIGCONT
+                	|| signal == SignalFlags::SIGDEF
+                {
+                    call_kernel_signal_handler(signal);
+                } else {
+                    call_user_signal_handler(sig, signal);
+                    return;
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<p>​	在<code>check_pending_signals</code>这个函数中，所有的信号都会被检查一遍，如果这个信号在<code>pending</code>队列中，并且没有被屏蔽。如果现在这个进程没有正在处理信号，那么这个信号肯定没屏蔽的；否则，正在处理的信号可能将这个判断的信号进行了屏蔽。</p>
+<p>​	接着在处理函数进行了写死，<code>SIGKILL</code>、<code>SIGSTOP</code>、<code>SIGCONT</code>、<code>SIGDEF</code>由内核进行处理：</p>
+<pre><code class="language-rust">fn call_kernel_signal_handler(signal: SignalFlags) {
+    let task = current_task().unwrap();
+    let mut task_inner = task.inner_exclusive_access();
+    match signal {
+        SignalFlags::SIGSTOP =&gt; {
+            task_inner.frozen = true;
+            task_inner.signals ^= SignalFlags::SIGSTOP;
+        }
+        SignalFlags::SIGCONT =&gt; {
+            if task_inner.signals.contains(SignalFlags::SIGCONT) {
+                task_inner.signals ^= SignalFlags::SIGCONT;
+                task_inner.frozen = false;
+            }
+        }
+        _ =&gt; {
+            task_inner.killed = true;
+        }
+    }
+}
+</code></pre>
+<p>​	除了<code>SIGSTOP</code>和<code>SIGCONT</code>进行特殊处理，其他的直接将<code>killed</code>置位进行杀除。</p>
+<p>​	否则调用<code>user</code>的处理函数：</p>
+<pre><code class="language-rust">fn call_user_signal_handler(sig: usize, signal: SignalFlags) {
+    let task = current_task().unwrap();
+    let mut task_inner = task.inner_exclusive_access();
+    
+    let handler = task_inner.signal_actions.table[sig].handler;
+    if handler != 0 {
+        task_inner.handling_sig = sig as isize;
+        task_inner.signals ^= signal;
+        
+        let mut trap_ctx = task_inner.get_trap_cx();
+        task_inner.trap_ctx_backup = Some(*trap_ctx);
+        
+        trap_ctx.sepc = handler;
+        
+        trap_ctx.x[10] = sig;
+    } else {
+        //...
+    }
+}
+</code></pre>
+<p>​	这里如果是<code>user_handler</code>的话，需要获取处理函数的地址，同时保存现在的上下文，最后将上下文中的返回值设置为<code>sig</code>。执行完这些函数<code>check_pending_signals</code>将会返回。</p>
+<pre><code class="language-rust">handle_signals();
+
+if let Some((errno, msg)) = check_signals_error_of_current() {
+	println!(&quot;[kernel] {}&quot;, msg);
+	exit_current_and_run_next(errno);
+}
+
+trap_return();
+</code></pre>
+<p>​	我们看到，如果发现信号中包含的错误信息，会直接退出该进程。</p>
+<p>​	最后是用户如何在处理完信号之后进行返回，</p>
+<pre><code class="language-rust">pub fn sys_sigreturn() -&gt; isize {
+	if let Some(task) = current_task() {
+        let mut inner = task.inner_exclusvie_access();
+        inner.handling_sig = -1;
+        let trap_ctx = inner.get_trap_cx();
+        *trap_ctx = inner.trap_ctx_back.unwrap();
+        trap_ctx.x[10] as isize
+    } else {
+        -1
+    }
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rvwmo-guan-ta-ren-bo-ke-zong-jie/" class="post-title gt-a-link">
+                    RVWMO观他人博客总结
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

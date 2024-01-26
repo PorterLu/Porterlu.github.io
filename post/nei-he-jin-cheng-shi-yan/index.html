@@ -1,0 +1,294 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>内核进程实验 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    内核进程实验
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-10 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/rmElbrhZn/" class="post-tags">
+                            # linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="实验目的">实验目的</h3>
+<p>​	通过<code>/proc/&lt;PID&gt;/ctx</code>，查看进程被调用的次数。认识<code>linux</code>中的进程结构。</p>
+<h3 id="实验环境">实验环境</h3>
+<ul>
+<li>宿主机：<code>Ubuntu 20.04</code></li>
+<li>内核版本：<code>v6.1</code></li>
+</ul>
+<h3 id="实验内容">实验内容</h3>
+<h4 id="task_struct">task_struct</h4>
+<p>​	在<code>linux</code>中使用<code>task_struct</code>作为进程描述符，用于进程管理。我们可以在<code>include/linux/sched.h</code>中看到它的结构。下面是参考的报告中的内容：</p>
+<pre><code class="language-c">struct task_struct {
+    int ctx;   //add a type
+    
+    int on_rq;
+    
+  	int prio;
+    int static_prio;
+    int normal_prio;
+    unsigned int rt_priority;
+    //...
+}
+</code></pre>
+<h4 id="进程的创建">进程的创建</h4>
+<p>​	<code>linux</code>进程创建的代码位于<code>kernel/fork.c</code>中。</p>
+<p>​	首先分析<code>Linux</code> 中三个系统调用<code>fork</code>，<code>vfork</code>, <code>clone</code>，这三个系统调用都在设置参数后，通过<code>_do_fork</code>返回。</p>
+<pre><code class="language-c">long _do_fork(struct kernel_clone_args *args){
+    //...
+}
+</code></pre>
+<p>​	可以看出<code>_do_fork()</code>会完成进程的复制。<code>_do_fork()</code>会调用<code>copy_process</code>函数，接着添加<code>lantent entropy</code>，随后调用<code>trace_sched_process_fork()</code>函数唤醒新的线程。</p>
+<pre><code class="language-c">p = copy_process(NULL, trace, NUMA_NO_NODE, args);
+add_latent_entropy();
+if(IS_ERR(p))
+    return PTR_ERR(p);
+
+/*
+*	Do this prior waking up the new thread - the thread pointer
+*   might get invalid affter that point, if the thread exits quickly.
+*/
+trace_sched_process_fork(current, p);
+</code></pre>
+<p>​	加下来是<code>copy_process</code>的函数说明, 我们在这一步进行<code>ctx</code>变量的初始化。</p>
+<pre><code class="language-c">static __latent_entropy struct task_struct *copy_process(
+		struct pid *pid,
+    	int trace,
+    	int node,
+    	struct kernel_clone_args *args)
+{
+    p-&gt;ctx = 0;
+    
+    retval = sched_fork(clone_flags, p);
+    if(retval)
+        goto bad_fork_cleanup_policy;
+    //...
+}
+</code></pre>
+<p>​	每次进程被调度时，我们要对其进行加1的操作，我们定位到<code>kernel/sched/core.c</code>中的<code>schedule</code>函数，我们在每次调用时，对<code>ctx</code>进行加1的操作。</p>
+<pre><code class="language-c">asmlinkage __visible void __sched schedule(void){
+    struct task_struct *tsk = current;
+    
+    tsk-&gt;ctx ++;
+    
+    sched_submit_work(tsk);
+    do{
+        preempt_disable();
+        __schedule(false);
+        sched_preempt_enable_no_resched();
+    } while(need_resched());
+    sched_update_worker(tsk);
+}
+EXPORT_SYMBOL(schedule);
+</code></pre>
+<p>​	该函数会创建指向当前进程的指针<code>tsk</code>，并调用<code>sched_submit_work()</code>死锁检测，然后在循环中进行该进程的调度，<code>preempt_disable()</code>用于禁用内核抢占，然后<code>__schedule()</code>函数进行调度。</p>
+<h4 id="伪文件接口">伪文件接口</h4>
+<p>​	<code>linux</code>中<code>proc</code>中<code>pid</code>对应的目录文件实现在<code>fs/proc/base.c</code>中，其中<code>pid_entry</code>数组<code>tgid_base_stuff[]</code>定义了可以访问的<code>pid</code>,我们参照<code>personality</code>的声明格式，定义一个<code>handle function</code>, 最后我们只需要调用<code>cat /proc/[PID]/ctx</code>就可以进行<code>ctx</code>输出</p>
+<pre><code class="language-c">static int proc_pid_ctx(struct seq_file*m, struct pid_namespace *ns, 
+                       struct pid *pid, struct task_struct *task){
+    int err = lock_trace(task);
+    if(!err){
+        seq_printf(m, &quot;%d\n&quot;, task-&gt;ctx);
+        unlock_trace(task)；
+    }
+    
+    return err;
+}
+</code></pre>
+<h3 id="说明">说明</h3>
+<p>​	该实验说明书写时，笔者实验环境已经被拆除，并没有进行重现，报告参考<code>[DicardoX/SJTU_CS353_Linux_Kernel (github.com)](https://github.com/DicardoX/SJTU_CS353_Linux_Kernel)</code></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/nei-he-mo-kuai-bian-cheng/" class="post-title gt-a-link">
+                    内核模块编程
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

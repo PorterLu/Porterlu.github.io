@@ -1,0 +1,285 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>RVWMO观他人博客总结 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    RVWMO观他人博客总结
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-09 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/eV0vOdGnE/" class="post-tags">
+                            # riscv
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>#RISC-V弱内存模型</p>
+<p>这里RISC-V内存模型为了保证执行顺序和程序的一致性，利用了四大类，13个规则。这里下面的指令是指访存指令，我们可以看看下面的规则，如何保证执行时保证前后两条访存的顺序。</p>
+<h2 id="重叠地址">重叠地址</h2>
+<h3 id="一-store-在后">一、 store 在后</h3>
+<p>不像TSO对于<code>store</code>的顺序要求很严格，这里只要求对于同一个地址的顺序。</p>
+<pre><code class="language-assembly">a) load/store  addr0
+b) store addr0
+</code></pre>
+<p>对于后面<code>b</code>是<code>store</code>的情况，我们必须保证这个顺序。</p>
+<h3 id="二-corr">二、CoRR</h3>
+<p>对于两条<code>load</code>之间没有写指令的情况，我们保证后一个<code>load</code>不会读取到更老的值。</p>
+<pre><code class="language-assembly">a) load a0,addr0
+b) load a1,addr0
+</code></pre>
+<p>即使其他核上对<code>addr0</code>，进行了写入，也只可能让<code>b</code>读取到更新的值。</p>
+<h3 id="三-原子指令">三、原子指令</h3>
+<p>前一个指令是原子指令，后一条指令是读取，那么后一条指令一定能读取到前一条指令写入的值。</p>
+<h2 id="显示同步">显示同步</h2>
+<h3 id="四-fence指令">四、FENCE指令</h3>
+<p>如果两条访存指令之间有一条<code>fence</code>指令，那么必须根据<code>fence</code>的要求进行顺序的确定。</p>
+<h3 id="五-acquire">五、acquire</h3>
+<p>如果前一条指令有acquire，那么必须要求后面的指令不能超前。</p>
+<h3 id="六-release">六、release</h3>
+<p>如果后面一条指令有release，那么要求前面的指令不能延后。</p>
+<h3 id="七-两条指令都有acquire和release标志">七、两条指令都有acquire和release标志</h3>
+<p>当然也必须顺序</p>
+<h3 id="八-lrsc">八、LR/SC</h3>
+<p>这里<code>LR</code>是<code>Load reserved</code>，<code>SC</code>是<code>store condition</code>，会要求只用先进行<code>LR</code>之后才能<br>
+<code>SC</code>。</p>
+<h2 id="语法依赖">语法依赖</h2>
+<p>语法依赖感觉有点像流水线中的依赖关系</p>
+<ul>
+<li>九，后一条指令的地址依赖于前一条指令</li>
+<li>十，后一条指令的数据依赖于前一条指令</li>
+<li>十一，后一条指令在控制流上依赖前一条指令，即一个分支是否流向了后一条指令。</li>
+</ul>
+<h2 id="流水线依赖">流水线依赖</h2>
+<h3 id="十二">十二</h3>
+<pre><code class="language-assembly">a) store/load 
+&lt;memory operation depend on a&gt;
+b) load value stored by last memory op
+</code></pre>
+<h3 id="十三">十三</h3>
+<pre><code class="language-assembly">a) load/store
+&lt;memory operation address depend on a&gt;
+b) store
+</code></pre>
+<h2 id="例子">例子</h2>
+<pre><code class="language-c">int x = 0;
+int y = 0;
+
+void t1() {
+    y = 1;
+    int res = x;
+    printf(&quot;x=%d\n&quot;, res);
+}
+
+void t2() {
+    x = 1;
+    int res = y;
+    printf(&quot;y=%d\n&quot;,res);
+}
+</code></pre>
+<p>这个程序在<code>x86</code>上会出现<code>0, 0</code>的情况，因为它是<code>TSO</code>, 在如上的<code>RISC-V</code>机器上也可能出现。</p>
+<h1 id="sequential-consistency">Sequential Consistency</h1>
+<p>在程序顺序上的前后，在插入全局内存序，依旧保持，而且部分是否是同一地址。<br>
+但是<code>SC</code>也无法保证不同核上程序之间到底是什么顺序，我们可能需要一些原子指令。</p>
+<pre><code class="language-assembly">int sum  = 0;
+void t1() {
+    sum += 1;
+}
+void t2() {
+    sum += 2;
+}
+</code></pre>
+<p>这个程序由于没有原子性的保证所以，结果可能不是3。在<code>RISC-V</code>中，我们可以使用<code>LR</code>和<code>SC</code>进行。</p>
+<h1 id="tso">TSO</h1>
+<p>在流水线设计中，我们往往会加入一个<code>store buffer</code>, <code>load</code>可以使用<code>buffer</code>转发的方式获取最新的值，<code>store buffer</code>大大提高了外设和内存的访问效率。当然如果是外设的情况，不能进行转发，因为<code>IO</code>必须保证顺序。<br>
+如果是这样，为了适应<code>store buffer</code>的加入，<code>load</code>就可以乱序到<code>store</code>前面，那么就有了<code>TSO</code>这种模型进行说明。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/keystone/" class="post-title gt-a-link">
+                    Keystone
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

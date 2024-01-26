@@ -1,0 +1,447 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Revisit rCore 第二章  | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Revisit rCore 第二章 
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-16 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="trap初始化">trap初始化</h2>
+<p>​	在主函数中清空<code>bss</code>段后，执行了三个函数<code>trap::init</code>、<code>batch::init</code>、<code>batch::run_next_app</code>。首先分析<code>trap::init</code>，</p>
+<pre><code class="language-rust">pub fn init() {
+    extern &quot;C&quot; {
+        fn __alltraps();
+    }
+    
+    unsafe {
+        stvec::write(__alltraps as usize, TrapMode::Direct)
+    }
+}
+</code></pre>
+<p>​	这段代码首先引入了在汇编代码中说明的<code>__alltraps</code>，这个是<code>trap</code>的入口，之后通过<code>unsafe</code>将这个值写入<code>stvec</code>寄存器，并且模式设置为<code>direct</code>，说明入口函数有且仅有一个。</p>
+<h2 id="batch初始化">batch初始化</h2>
+<p>​	<code>batch</code>模块中的<code>init</code>函数十分简单：</p>
+<pre><code class="language-rust">pub fn init() {
+    print_app_info();
+}
+</code></pre>
+<p>​	之后我们可以看看是如何进行输出的，这个是当前模块中<code>AppManager</code>中的<code>pub</code>方法。</p>
+<pre><code class="language-rust">impl AppManager {
+    pub fn print_app_info(&amp;self){
+        println!(&quot;[kernel] num_app = {}&quot;, self.num_app);
+        for i in 0..self.num_app {
+            println!(
+            	&quot;[kernel] app_{} [{:#x}, {:#x})&quot;,
+                i,
+                self.app_start[i],
+                self.app_start[i+1]
+            );
+        }
+    }
+    
+    //...
+}
+</code></pre>
+<p>​	这里对于<code>AppManager</code>的结构进行遍历，输出了各个<code>app</code>的地址范围。之所以没有初始化<code>App</code>仍旧能够输出，这里是因为使用<code>lazy_static</code>。</p>
+<pre><code class="language-rust">lazy_static! {
+    static ref APP_MANAGER: UPSafeCell&lt;AppManager&gt; = unsafe {
+        UPSafeCell::new({
+            extern &quot;C&quot;{
+                fn _num_app();
+            }
+            let num_app_ptr = _num_app as usize as *const usize;
+            let num_app = num_app_ptr.read_volatile();
+            let mut app_start:[usize; MAX_APP_NUM+1] = [0; MAX_APP_NUM+1];
+            let app_start_raw: &amp;[usize] = core::slice::from_raw_parts[num_app_ptr.add(1), num_app+1];
+            app_start[..=].copy_from_slice(app_start_raw);
+            AppManager {
+                num_app,
+                current_app: 0,
+                app_start,
+            }
+        })
+    };
+}
+</code></pre>
+<p>​	在第一次使用时会进行初始化，这里根据地址值和长度生成一个引用的结构，因为<code>rust</code>中引用是一个固定长度的结构，由一个地址和一个长度构成，指向堆区。我们读出地址值作为<code>*const usize</code>，通过<code>from_raw_part</code>我们可以直接构造一个引用，最后间数据拷贝到我们的<code>app_start</code>中，最后对<code>AppManager</code>的进行初始化。</p>
+<h2 id="调度">调度</h2>
+<p>​	在<code>main</code>函数中，执行完前两个初始化函数后就会执行<code>run_next_app()</code>，它的内容如下：</p>
+<pre><code class="language-rust">pub fn run_next_app() -&gt; !{
+    let mut app_manager = APP_MANAGER.exclusive_access();
+    let current_app = app_manager.get_cuurent_app();
+    unsafe{
+        app_manager.load_app(current_app);
+    }
+    app_manager.move_to_next_app();
+    drop(app_manager);
+    extern &quot;C&quot; {
+        fn __restore(cx_addr: usize);
+    }
+    unsafe {
+        __restore(KERNEL_STACK.push_context(TrapContext::app_init_context(
+        	APP_BASE_ADDRESS,
+            USER_STACK.get_sp(),
+        )) as *const _ as usize);
+    }
+    panic!(&quot;Unreachable in batch::run_current_app!&quot;);
+}
+</code></pre>
+<p>​	这里调用了<code>AppManager</code>的<code>exclusive_access</code>方法，这个方法用于解决实现全局可访问的可变变量的问题。它的结构如下：</p>
+<h3 id="upsafecell">UPSafeCell</h3>
+<pre><code class="language-rust">use core::cell::{RefCell, RefMut};
+
+pub struct UPSafeCell&lt;T&gt; {
+    inner: RefCell&lt;T&gt;,
+}
+
+unsafe impl&lt;T&gt; Sync for UPSafeCell&lt;T&gt; {}
+
+impl&lt;T&gt; UPSafeCell&lt;T&gt; {
+    pub unsafe fn new(value: T) -&gt; Self {
+        Self {
+            inner: RefCell::new(value),
+        }
+    }
+    
+    pub fn exclusive_access(&amp;self) -&gt; RefMut&lt;'_, T&gt; {
+        self.inner.borrow_mut()
+    }
+}
+</code></pre>
+<p>​	我们不使用<code>static mut</code>这种使用方法是<code>unsafe</code>的，所以我们使用<code>RefCell</code>这个方法可以在运行时改变自己的可访问性，通过实现<code>Sync</code>向编译器说明，由我们保证并发时的安全。然后，我们实现<code>exclusive_access</code>方法，返回一个<code>mut</code>，如果同时有两个<code>mut</code>，就会发生<code>panic</code>，所以我们使用必须在申请使用完后，马上进行销毁。</p>
+<h3 id="加载运行">加载运行</h3>
+<p>​	获取到<code>AppManager</code>的结构体后，可以使用<code>load_app</code>方法将<code>app</code>加载到对应的位置。我们可以查看这个函数的实现</p>
+<pre><code class="language-rust">unsafe fn load_app(&amp;self, app_id: usize) {
+    if app_id &gt;= self.num_app {
+        println!(&quot;All application completed!&quot;);
+        use crate::board::QEMUExit;
+        crate::board::QEMU_EXIT_HANDLE.exit_success();
+    }
+    println!(&quot;[kernel] Loading app_{}&quot;, app_id);
+    asm!(&quot;fence.i&quot;);
+    core::slice::from_raw_parts_mut(APP_BASE_ADDRESS as *mut u8, APP_SIZE_LIMIT).fill(0);
+    let app_src = core::slice::from_raw_parts(
+    	self.app_start[app_id] as *const u8,
+        self.app_start[app_id+1] - self.app_start[app_id],
+    );
+    let app_dst = core::slice::from_raw_parts_mut(APP_BASE_ADDRESS as *mut u8, app_src.len());
+    app_dst.copy_from_slice(app_src);
+}
+</code></pre>
+<p>​	这里构造了两个引用进行数据拷贝，又有一个引用负责进行将程序运行的区域进行初始化归零。第一个:</p>
+<pre><code class="language-rust">core::slice::from_raw_parts_mut(APP_BASE_ADDRESS as *mut u8, APP_SIZE_LIMIT).fill(0);
+</code></pre>
+<p>​	将这个区域置零，由于我们的测试程序都不大，可以通过一个<code>APP_SIZE_LIMIT</code>直接写死。</p>
+<pre><code class="language-rust">let app_src = core::slice::from_raw_parts(
+    	self.app_start[app_id] as *const u8,
+        self.app_start[app_id+1] - self.app_start[app_id],
+    );
+let app_dst = core::slice::from_raw_parts_mut(APP_BASE_ADDRESS as *mut u8, app_src.len());
+app_dst.copy_from_slice(app_src);
+</code></pre>
+<p>​	直接程序拷贝到其所要运行的地址<code>0x80400000</code>。</p>
+<p>​	接着开始运行函数如下：</p>
+<pre><code class="language-rust">unsafe {
+    __restore(KERNEL_STACK.push_context(TrapContext::app_init_context(
+        	APP_BASE_ADDRESS,
+            USER_STACK.get_sp(),
+        )) as *const _ as usize);
+}
+</code></pre>
+<p>​	首先这里需要创建一个内核栈的上下文。</p>
+<pre><code class="language-rust">pub fn push_context(&amp;self, cx: TrapContext) -&gt; &amp;'static mut TrapContext {
+    let cx_ptr: *mut TrapContext = (self.get_sp() - core::mem::size_of::&lt;TrapContext&gt;()) as *mut TrapContext;
+    unsafe {
+        *cx_ptr = cx;
+    }
+    unsafe { cx_ptr.as_mut().unwrap() }
+}
+</code></pre>
+<p>​	这里在内核栈的空间上申请了一个上下文大小的空间，将这个空间赋值为<code>cx</code>即我们传入的结构体，之后将这个结构体返回。</p>
+<p>​	而这个结构体根据上方调用处的代码，是直接初始化的一个上下文结构。根据<code>trap</code>模块中的代码可以直接还原其结构，其中<code>x2</code>寄存器中存储内核栈的地址。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/init_context_rcore.png" alt="" loading="lazy"></figure>
+<p>​</p>
+<p>​	于是<code>__restore</code>作为入口，通过<code>a0</code>传入内核栈中的上下文地址，加载上下文中的内容到寄存器，最后交换内核栈的地址到<code>sscratch</code>，并将用户栈指针写入<code>sp</code>, 将执行流转移到用户程序。</p>
+<p>​	<img src="https://raw.githubusercontent.com/PorterLu/picgo/main/next_app_rcore.png" alt="" loading="lazy"></p>
+<h2 id="系统调用">系统调用</h2>
+<p>​	在我们的批处理操作系统中存在一个<code>trap_handler</code>,  一旦用户程序进行<code>ecall</code>，有的<code>trap</code>会被委托到<code>S</code>模式，于是根据<code>scause</code>我们可以具体判断要进行哪些处理。这里在第二章中，只用考虑<code>UserEnvCall</code>，首先<code>sepc+4</code>因为，系统调用结束要执行下一条置零，之后分析具体是哪个系统调用。</p>
+<pre><code class="language-rust">pub fn trap_handler(cx: &amp;mut TrapContext) -&gt; &amp;mut TrapContext {
+    let scause = scause::read();
+    let stval = stval::read();
+    match scause.cause(){
+        Trap::Exception(Exception::UserEnvCall) =&gt; {
+            cx.sepc += 4;
+            cx.x[10] = syscall(cx.x[17], [cx.x[10], cx.x[11], cx.x[12]]) as usize;
+        }
+        Trap::Exception(Exception::StoreFault) | Trap::Exception(Exception::StorePageFault) =&gt; {
+            println!(&quot;[kernel] PageFault application, kernel killed it.&quot;);
+            run_next_app();
+        }
+        Trap::Exception(Exception::IllegalInstruction) =&gt; {
+            println!(&quot;[kernel] IllegalInstruction in application, kernel killed it.&quot;);
+            run_next_app();
+        }
+        _ =&gt; {
+         	panic!(
+                &quot;Unsupported trap {:?}, stval = {:#x}!&quot;,
+                scause.cause(),
+                stval
+            );   
+        }
+    }
+}
+</code></pre>
+<p>​	具体是哪个系统系统调用的判断位于<code>syscall</code>模块下，代码如下：</p>
+<pre><code class="language-rust">pub fn syscall(syscall_id: usize, args:[usize; 3]) -&gt; isize {
+    match syscall_id {
+        SYSCALL_WRITE =&gt; sys_write(args[0], args[1] as *const u8, args[2]),
+        SYSCALL_EXIT =&gt; sys_exit(args[0], as i32),
+        _ =&gt; panic!(&quot;Unsupported syscall_id: {}&quot;, syscall_id),
+    }
+}
+</code></pre>
+<p>​	 根据系统调用号，可以具体判断执行哪个系统调用，<code>write</code>是进行输出，并返回输出长度。而<code>sys_exit</code>会进行<code>run_next_app()</code></p>
+<p>​	在运行的<code>app</code>中，所有的<code>app</code>都通过如下的模式进行，所以每个程序退出都会自动执行下一个程序。</p>
+<pre><code class="language-rust">pin extern &quot;C&quot; fn _start() -&gt; !{
+    clear_bss();
+    exit(main());
+    panic!(&quot;unreachable after sys_exit!&quot;);
+}
+</code></pre>
+<p>​	我们可以再次考虑在系统调用的情况下上下文是如何保存和恢复的。我们首先将内核栈的地址转移到<code>sp</code>中，用户栈的地址转移到<code>sscratch</code>中，接着在内核栈中存储<code>app</code>的上下文。于是通过<code>a0</code>做作为上下文指针就可以将整个结构体传递给<code>trap_handler</code>。接着考虑如何进行恢复，返回时<code>a0</code>寄存器中的值是上下文在核内栈中的地址，根据这个上下文进行恢复即可。最后一步再次交换内核栈和用户栈的指针，就可恢复到用户栈。</p>
+<pre><code class="language-assembly">__alltraps:
+	csrrw sp, sscratch, sp
+	sd x1, 1*8(sp)
+	sd x3, 3*8(sp)
+	.set n, 5
+	.rept 27
+		SAVE_GP %n
+		.set n, n+1
+	.endr
+	csrr t0, sstatus
+	csrr t1, sepc
+	sd t0, 32*8(sp)
+	sd t1, 33*8(sp)
+	csrr t2, sscratch
+	sd t2, 2*8(sp)
+	mv a0, sp
+	call trap_handler
+	
+__restore:
+	mv sp, a0
+	ld t0, 32*8(sp)
+	ld t1, 33*8(sp)
+	ld t2, 2*8(sp)
+	csrw sstatus, t0
+	csrw sepc, t1
+	csrw sscratch, t2
+	ld x1, 1*8(sp)
+	ld x3, 3*8(sp)
+	.set n, 5
+	.rept 27
+		LOAD_GP %n
+		.set n, n+1
+	.endr
+	addi sp, sp, 34*8
+	csrw sp, sscratch, sp
+	sret
+</code></pre>
+<p>​</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/revisit-rcore-di-yi-zhang/" class="post-title gt-a-link">
+                    Revisit rCore 第一章 
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

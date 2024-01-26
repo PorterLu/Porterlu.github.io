@@ -1,0 +1,328 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Rust链表 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Rust链表
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-18 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/v4HdSX9Dy/" class="post-tags">
+                            # rust
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="初始实现">初始实现</h2>
+<p>​	我们实现的目标是要将整个链表，除了指向链表的指针，其他部分全部放在堆上。我们使用<code>Enum</code>来实现链表结构。</p>
+<pre><code class="language-rust">pub struct List {
+    head: Link,
+} 
+
+enum Link {
+    Empty,
+    More(Box&lt;Node&gt;),
+}
+
+struct Node {
+    elem: i32,
+    next: Link,
+}
+</code></pre>
+<p>​	这样我们只需要申请一个<code>List</code>，之后所有的内容都可以放在堆上，每个<code>Link</code>都可以是空或者一个具体节点的指针。</p>
+<p>​	接下需要为<code>List</code>定义一系列的操作：</p>
+<pre><code class="language-rust">impl List {
+    pub fn new() -&gt; Self {
+        List { head: Link::Empty }
+    }
+    
+    pub fn push(&amp;mut self, elem: i32) {
+        let new_node = Box::new(Node {
+            elem: elem,
+            next: std::mem::replace(&amp;mut self.head, Link::Empty),
+        });
+        
+        self.head = Link::More(new_node);
+    }
+    
+    pub fn pop(&amp;mut self) -&gt; Option&lt;i32&gt; {
+        match std::mem::replace(&amp;mut self, Link::Empty) {
+            Link::Empty =&gt; {
+                None
+            }
+            Link::More(node) =&gt; {
+                self.head = node.next;
+                Some(node.elem)
+            }
+        }
+    }
+}
+</code></pre>
+<p>​	这里实现了初始化，压入，弹出三个操作：</p>
+<ul>
+<li>对于初始化操作，直接申请一个<code>Link::Empty</code>，并将其所有权传出。</li>
+<li>对于压入操作，需要跟换头节点，并将当前节点设置为下一个节点。这里的<code>replace</code>操作，用将<code>self.head</code>中的值替换为<code>Empty</code>，并将其原本的值取出。这样只需将新申请的节点作为头节点即可。</li>
+<li><code>pop</code>操作用于将一个头节点取出</li>
+</ul>
+<p>​	最后实现<code>Drop</code>用将申请的空间释放，本来编译器会自己实现<code>Drop</code>方法，不过由于这里作为一个链表，如果直接递归调用，会有爆栈的可能。</p>
+<pre><code class="language-rust">impl Drop for List {
+    fn drop(&amp;mut self) {
+        let mut cur_link = std::mem::replace(&amp;mut self.HEAD, Link::Empty);
+        
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = std::mem::replace(&amp;mut boxed_node.next, Link::Empty);
+        }
+    }
+}
+</code></pre>
+<p>​	我们使用顺序遍历方式替代递归解决爆栈的问题。</p>
+<h2 id="使用option">使用Option</h2>
+<pre><code class="language-rust">pub struct List {
+    head: Link,
+}
+
+type Link = Option&lt;Box&lt;Node&gt;&gt;;
+
+struct Node {
+    elem: i32,
+    next: Link,
+}
+</code></pre>
+<p>​	这里定义了类型<code>Link</code>，<code>Option&lt;Box&lt;Node&gt;&gt;</code>和之前的结构实现了一样的结构。</p>
+<pre><code class="language-rust">impl List {
+    pub fn new() -&gt; Self {
+        List { head: None }
+    }
+    
+    pub fn push(&amp;mut self, elem: i32) {
+        let new_node = Box::new(Node {
+            elem: elem,
+            next: self.head.take(),
+        });
+        
+        self.head = Some(new_node);
+    }
+    
+    pub fn pop(&amp;mut self) -&gt; Option&lt;i32&gt; {
+        self.head.take().map(|node| {
+            self.head = node.next;
+            node.elem
+        })
+}
+
+impl Drop for List {
+    fn drop(&amp;mut self) {
+        let mut cur_link = self.head.take();
+        while let Some(mut boxed_node) = cur_link {
+            cur_link = boxed_node.next.take();
+        }
+    }
+}
+</code></pre>
+<p>​	这里有了<code>Option</code>之后我们不用再使用<code>replace</code>，而是使用<code>take</code>，<code>take</code>可以直接将<code>Option</code>中的内容取出并替换为<code>None</code>。</p>
+<p>​	同时对于</p>
+<pre><code class="language-rust">match option {
+    None =&gt; None, 
+    Some(x) =&gt; Some(y)
+}
+</code></pre>
+<p>​	可以直接使用<code>map</code>替代，可以将<code>Some</code>替换为<code>Some(y)</code>。</p>
+<p>​	最后再实现泛型，支持更多的类型而不仅仅是<code>i32</code>。以<code>pop</code>为例子：</p>
+<pre><code class="language-rust">impl&lt;T&gt; List&lt;T&gt; {
+    pub fn pop(&amp;mut self) -&gt; Option&lt;T&gt; {
+        self.head = node.next;
+        node.elem
+    }
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-si-zhang-lian-xi/" class="post-title gt-a-link">
+                    rCore第四章练习
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

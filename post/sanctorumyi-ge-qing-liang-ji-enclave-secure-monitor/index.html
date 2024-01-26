@@ -1,0 +1,243 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Sanctorum：一个轻量级Enclave Secure Monitor | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Sanctorum：一个轻量级Enclave Secure Monitor
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-01-11 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/jN8FVGalh/" class="post-tags">
+                            # paper
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="概述">概述</h3>
+<p>​	Sanctorum是一个拥有小TCB的通用的Enclave框架，可以用于实现和Intel SGX相似的原语。Sanctorum实现了一套形式化证明过的Enclave实现用例说明，只要根据这套用例说明实现，就可以在一个顺序多核系统上达到基本的安全要求，具体可以参考Sanctum处理器和Keystone enclave框架。Sanctorum的设计模式，保证了硬件可以自由发展，只要硬件设计可以实现最小的隔离原语，那么Security monitor就可以用于保障其安全性。</p>
+<h3 id="框架">框架</h3>
+<h4 id="security-monitor的可信管理">Security Monitor的可信管理</h4>
+<p>​	一个Enclave二进制文件是值得相信的，只要我们通过Enclave初始化时得到的测量值进行检验就可以了。Security Monitor本身当然也是可信的，通过一套安全引导协议，来为Security Monitor授予证书。硬件平台是无条件相信的，硬件定义了一系列的密码学操作，用于远程证明。在远程证明时，通过Hardware中公私钥和经过其验证的Security Monitor，可以保证这个过程的可信性。</p>
+<p>​	对于Enclave本身代码，我们信任其不会自己泄露自己的信息，将自己的信息传输给潜在的攻击者。Enclave会和外界进行通信，这个通信至少会泄露时间信息，可能进一步泄露Enclave执行过程中微架构相关的信息。我们只能假设，Enclave谨慎使用通信手段，并且信任硬件。</p>
+<p>​	Security monitor可以将高级的Enclave原语映射到底层的硬件配置。为了达到可信，Security monitor必须检查OS的资源分配抉择，保证可信内存区间的隔离性和唯一性。Security monitor是利用底层硬件实现的隔离，为了防御侧信道攻击，在进程切换期间进行共享硬件的刷新，来保证不同隔离域间不可以通过这些硬件获取信息。</p>
+<h4 id="硬件平台的要求">硬件平台的要求</h4>
+<p>​	硬件平台需要提供隔离的手段，来实现一个可信区，使得Secuirty和Enclave与不可信的OS相隔离。同时对于其他潜在的内存访问，如DMA对内存的访问也要进行隔离。</p>
+<p>​	硬件提供一定手段进行共享资源的隔离，这些资源可以通过分时、分区地共享，Security Monitor进行刷新。例如，在Sanctum处理器上，所有处理器在切换上下文时，需要清空寄存器、L1 Cache等信息，同时通过L2 Cache分区，来完成隔离。</p>
+<p>​	硬件需要为Security Monitor设定专门的特权级，为了防止恶意的OS对于Security Monitor的攻击，我们必须保证Security Monitor运行在比OS更高的特权级，并且这个特权级可以自由地访问物理内存。同时Security Monitor还必须能知道或者截获任何异常和中断，因为这些时间可能对于整个执行流都由影响，Security Monitor必须进行管理和分配。例如，一个OS可以触发一个软中断，但是Security Monitor必须收到这个中断，然后进行一个enclave之后，之后再转移执行权限给操作系统。</p>
+<p>​	硬件需要提供密码学相关的证明手段。Enclave可以通过一个可信的随机源来生成随机数，硬件还必须为Security Monitor提供一套公私钥保证证明，这些可以用于远程证明和信根测量。</p>
+<h3 id="security-monitor具体实现">Security Monitor具体实现</h3>
+<h4 id="security-monitor接口">Security Monitor接口</h4>
+<p>​	Enclave和OS必须通过Security Monitor API进行资源的分配，这个是通过Machine Mode syscall实现的。Security Monitor还可以插入任何一个异常和中断处理。于是中断和异常的管理可以由下图所示：</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SM_API.png" alt="" loading="lazy"></figure>
+<p>​	如果是本身执行的OS的代码，直接转发给OS进行执行就可以了。如果是Enclave代码正在执行，则要分为两种情况，如果是需要交给OS进行实现的功能，需要进行一个异步退出，保存Enclave状态，将权限交给OS；如果是Enclave本身就实现处理函数的功能，则将给Enclave进行执行。对于一个Machine Mode syscall进行两部检查，一是身份检查，二是请求合法性检查，成功则进行调用。</p>
+<h4 id="security-monitor资源管理">Security Monitor资源管理</h4>
+<p>​	资源管理的要求就是可信区代码之间要进行强隔离，同时为了防御一些侧信道，通过共享的资源来获取泄露的信息的攻击方法，隔离区域之间不能有重合。这也意味着一个可信区Enclave不能直接修改其他可信区的资源分配，否则一个恶意的OS可以通过移除一部分内存资源，来获取page fault时的信息。但是这也不意味着资源分配是静态的，Enclave可以通过OS进行新的资源的申请，通过通过Security Monitor syscall扩展可信区。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/Enclave_resource.png" alt="" loading="lazy"></figure>
+<h4 id="security-monitor的enclave管理">Security Monitor的Enclave管理</h4>
+<p>​	Security Monitor保证了<code>enclave</code>可以很强的隔离并且使用硬件的共享资源。一个最小的Enclave至少拥有自己的私有地址空间和页表。同时在Security Monitor的空间还维护了Enclave的元数据，比如线程的ID，Enclave的硬件资源，信箱等等。通过Enclave ID就可以访问这些资源，当然Security Monitor会对访问者的身份进行验证。Enclave通过自己私有的页表进行虚拟地址空间访问，跟上面提到的一样，访问和OS共享的空间可能泄露信息。</p>
+<p><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/enclave_init.png" alt="" loading="lazy">	上面提到了Enclave所拥有的资源，这些在Enclave初始化时时就要进行说明，这一步在会创建Enclave的数据结构，申请物理地址空间，建立虚拟地址到物理地址的映射，最后通过Security Monitor请求会对这个Enclave进行一个&quot;Seal&quot;，Security Monitor中会对已经建立元数据进行测量，之后就可以调度到一个核上。</p>
+<p>​	Enclave线程会在核上一直执行，除非Security Monitor syscall的enclave退出或者一个Enclave异步退出。在一个Enclave退出发生时，Security Monitor会保存状态，将状态信息保存到Enclave的元数据结构中。当再次进入Enclave，会从入口点进入，从Enclave元数据区恢复执行状态。同时在将执行权交给OS前，要清空核的状态。线程的状态机转移如下图所示，在Security Monitor中会维护线程的元数据信息，包括Enclave信息、线程锁、线程所在的核等等。一旦一个线程被创建可以分配一个Enclave，一旦一个Enclave被销毁，这个线程会被block，这样它就可以被清空或者重新分配给一个Enclave。 <img src="https://raw.githubusercontent.com/PorterLu/picgo/main/enclave_state.png" alt="" loading="lazy"></p>
+<h3 id="enclave证明">Enclave证明</h3>
+<h4 id="测量">测量</h4>
+<p>​	在每一个Enclave初始化时，Security Monitor都会使用SHA3对Enclave进行一个哈希。这个测量值会覆盖Enclave的配置信息，Enclave私有空间信息，全局状态信息。为了保证这个测量值的唯一性，这里要求虚拟地址到物理地址的映射是唯一的，并且页的数量不能减少。最后，Enclave的页表必须要在数据加载前，已经初始化完毕。对于Enclave初始状态的测量可以用于验证一个Enclave，Security Monitor保证一个Enclave的测量值在初始化完成后不会再改变，在远程验证和本地验证中这点都很重要。</p>
+<h4 id="本地证明">本地证明</h4>
+<p>​	Enclave如果想证明或者验证本地的另外一个Enclave，Security Monitor提供了手段。Security Monitor保证了完整性和发送者的身份，这样就不需要通过密码学证明来进行这个验证，因为Security Monitor对于其他软件本身就有可信的权威。具体的实现上，Security Monitor在元数据区为每个Enclave实现了一个Buffer，我们称之为“mailbox”，通过Security Monitor API, 发送者可以接受和发送消息。为了防止一个发送者拒绝服务攻击，接受者需要显示声明它们希望从某个发送人那接受到消息。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/local_attestation.png" alt="" loading="lazy"></figure>
+<h4 id="远程证明">远程证明</h4>
+<p>​	进行一次远程的可信通信需要密码学操作的帮助。这个过程开始于一次密钥协议建立的请求，首先在本地生成一个随机数发送给远端，远端Enclave接受到后需要将收到的随机数发送给自己的Signing Enclave，Signing Enclave会对随机数和接受的Enclave的测量值进行签名，接着发送给接受的Enclave。接受的Enclave接受到&quot;mailbox&quot;中的邮件后，附上Security Monitor的证书作为邮件，发送给本地的我们，这里在本地使用处理器的公钥对证书进行验证，之后对邮件内容进行验证，就可以判断远端是否可信。</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/remote_attestation.png" alt="" loading="lazy"></figure>
+<h3 id="总结">总结</h3>
+<p>​	Sanctum使用了64个DRAM隔离域，每个隔离域是32MB。隔离域之间在L2 Cache就进行隔离，同时专门的PTW保证了Enclave使用自己的页表进行访问，一旦一个隔离域进行再分配，TLB要进行击落。同时Sanctum处理器设计一套安全引导方法，用于建立信根，这个再后面的Keystone和蓬莱同样使用。</p>
+<p>​	Keystone是一个开源TEE实现，利用RISC-V本身的PMP，且不用修改硬件。PMP实现了内存访问的白名单机制，通过PMP，Keystone实现了Sanctorum的相同目标。为了实现内存隔离，Keystone使用PMP为自己隔离了一片区域，只能在M mode下进行访问, OS只能访问其他区域。Enclave也相似地申请这样一块块区域进行隔离，同时Enclave使用自己的页表进行访问。如果要访问共享的区域，Enclave拥有一款共享的Buffer，这块内存同样也映射到页表中。Keystone并没有在微架构层面进行Cache的隔离。</p>
+<p>​	最后，Sanctum is a great work，但是现在只是为后来者提供养分了。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/nei-he-jin-cheng-shi-yan/" class="post-title gt-a-link">
+                    内核进程实验
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第三章练习 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第三章练习
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-16 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="获取任务信息">获取任务信息</h2>
+<p><code>ch3</code> 中，我们的系统已经能够支持多个任务分时轮流运行，我们希望引入一个新的系统调用 <code>sys_task_info</code> 以获取任务的信息，定义如下：</p>
+<pre><code>fn sys_task_info(id: usize, ts: *mut TaskInfo) -&gt; isize
+</code></pre>
+<ul>
+<li><code>syscall ID</code>: 410</li>
+<li>根据任务 ID 查询任务信息，任务信息包括任务 ID、任务控制块相关信息（任务状态）、任务使用的系统调用及调用次数、任务总运行时长。</li>
+</ul>
+<pre><code>struct TaskInfo {
+    id: usize,
+    status: TaskStatus,
+    call: [SyscallInfo; MAX_SYSCALL_NUM],
+    time: usize
+}
+</code></pre>
+<ul>
+<li>系统调用信息采用数组形式对每个系统调用的次数进行统计，相关结构定义如下：</li>
+</ul>
+<pre><code>struct SyscallInfo {
+    id: usize,
+    times: usize
+}
+</code></pre>
+<ul>
+<li>
+<ul>
+<li>
+<p>参数：</p>
+<p><code>id</code>: 待查询任务<code>idts</code>: 待查询任务信息</p>
+</li>
+</ul>
+</li>
+<li>
+<p>返回值：执行成功返回0，错误返回-1</p>
+</li>
+<li>
+<ul>
+<li>
+<p>说明：</p>
+<p>相关结构已在框架中给出，只需添加逻辑实现功能需求即可。</p>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<p>提示：</p>
+<p>大胆修改已有框架！除了配置文件，你几乎可以随意修改已有框架的内容。程序运行时间可以通过调用 <code>get_time()</code> 获取。系统调用次数可以考虑在进入内核态系统调用异常处理函数之后，进入具体系统调用函数之前维护。阅读<code>TaskManager</code>的实现，思考如何维护内核控制块信息（可以在控制块可变部分加入其他需要的信息）</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="我的实现">我的实现</h2>
+<h3 id="简述">简述</h3>
+<p>​	在<code>user</code>目录中实现一个<code>sys_task_info</code>，系统调用返回后，传入的<code>*mut TaskInfo</code> 中将获得要查询的<code>app</code>的信息。而在<code>os</code>端，要从创建这个<code>app</code>的控制块开始就维护这个信息，我在<code>task.rs</code>中创建<code>TaskInfo</code>的结构体，并在<code>TASK_MANAGER</code>初始化时也对每个<code>app</code>的<code>TaskInfo</code>进行初始化。同时这里控制块处理再添加一个<code>TaskInfo</code>外，还要加入一个<code>last_time</code>，用于记录这个任务被调度的时间。于是<code>suspend</code>,<code>exit</code>,<code>run</code>等行为会修改控制块中的<code>status</code>和<code>time</code>，<code>time</code>可以每次加上<code>get_time() - last_time</code>。</p>
+<p>​	而<code>syscall</code>的信息在<code>syscall_handler</code>的<code>match</code>语句前调用<code>record(syscall_id)</code>函数，对<code>current</code>的<code>app</code>的<code>syscall_id</code>调用加1。</p>
+<h3 id="代码分析">代码分析</h3>
+<pre><code class="language-rust">pub fn syscall(syscall_id: usize, args: [usize; 3]) -&gt; isize {
+    set_syscall_record(syscall_id);
+    match syscall_id {
+        SYSCALL_WRITE =&gt; sys_write(args[0], args[1] as *const u8, args[2]),
+        SYSCALL_EXIT =&gt; sys_exit(args[0] as i32),
+        SYSCALL_YIELD =&gt; sys_yield(),
+        SYSCALL_GET_TIME =&gt; sys_get_time(),
+        SYSCALL_TASK_INFO =&gt; sys_task_info(args[0], args[1] as *mut TaskInfo),
+        _ =&gt; panic!(&quot;Unsupported syscall_id: {}&quot;, syscall_id),
+    }
+}
+</code></pre>
+<p>​	这里第二条语句对于当前这个系统调用进行了记录，还有倒数第4行添加了<code>sys_task_info</code>的系统调用。</p>
+<pre><code class="language-rust">fn set_syscall_record(&amp;self, syscall_id: usize) {
+    let mut inner = self.inner.exclusive_access();
+    let current = inner.current_task;
+    inner.tasks[current].task_info.call[syscall_id].id = syscall_id;
+    inner.tasks[current].task_info.call[syscall_id].times += 1;
+    drop(inner);
+}
+
+fn get_task_info(&amp;self, id: usize, task_info: *mut TaskInfo) -&gt; isize {
+    if id &lt; MAX_APP_NUM {
+        let inner = self.inner.exclusive_access();
+        let current = inner.current_task;
+        unsafe {
+            (*task_info).id = id;
+            (*task_info).status = inner.tasks[current].task_status;
+            (*task_info).time = inner.tasks[current].task_info.time;
+            (*task_info).call = inner.tasks[current].task_info.call;
+        }
+        drop(inner);
+        0
+    } else {
+        -1
+    }
+}
+</code></pre>
+<p>​	这里可以看到对应的实现，<code>set_syscall_record</code>将对应的<code>syscall_id</code>中的<code>id</code>赋值，表示这个系统调用被执行过。<code>get_task_info</code>将<code>kernel</code>记录的信息，一项一项地拷贝到了<code>app</code>传入的结构体中。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-er-zhang-shi-yan-lian-xi/" class="post-title gt-a-link">
+                    rCore第二章练习
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

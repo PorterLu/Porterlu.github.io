@@ -1,0 +1,236 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>IO虚拟化 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    IO虚拟化
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-04-16 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/Ml-Q-VwEq/" class="post-tags">
+                            # virtualization
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/ipads_copyright.png" alt="" loading="lazy"></figure>
+<h2 id="为什么需要io虚拟化">为什么需要IO虚拟化</h2>
+<p>​	如果让<code>VM</code>直接管理物理网卡：</p>
+<ul>
+<li>
+<p>正确性问题：所有的<code>VM</code>都使用相同的<code>MAC</code>地址、<code>IP</code>地址无法正常接受发送网络包</p>
+</li>
+<li>
+<p>安全性问题：恶意<code>VM</code>可以直接读取其他<code>VM</code>的数据</p>
+</li>
+</ul>
+<p>​	而<code>I/O</code>虚拟化的目标就是，为虚拟机提供正常使用虚拟外部设备，隔离不同虚拟机对于外部设备的访问，提高物理设备的资源利用率。</p>
+<h2 id="如何实现io虚拟化">如何实现IO虚拟化</h2>
+<h3 id="设备模拟">设备模拟</h3>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/kvm_io_emulation_network.png" alt="" loading="lazy"></figure>
+<p>​	当虚拟机中的程序试图访问网卡时，就会陷入虚拟机，<code>KVM</code>会使用<code>QEMU</code>，<code>QEMU</code>会发起一次系统调用，请求物理机上的网卡驱动。之后再原路返回。</p>
+<p>​	这样的话就可以模拟任何设备，还允许在<code>QEMU</code>的层面检查网络包的内容，还不用修改硬件。但是性能非常差。</p>
+<h3 id="半虚拟化方式">半虚拟化方式</h3>
+<p>​	让虚拟机知道运行在虚拟化环境下，虚拟机运行前端驱动，<code>VMM</code>运行后端驱动，<code>VMM</code>主动提供<code>Hypercall</code>给<code>VM</code>，通过共享内存传递指令和命令。</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/virtio_kvm.png" alt="" loading="lazy"></figure>
+<p>​	<code>VMM</code>和<code>VM</code>之间存在一个传递<code>IO</code>请求的队列：</p>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/virtio_queue.png" alt="" loading="lazy"></figure>
+<p>​	通过一个<code>IO</code>队列直接将请求发送给<code>VMM</code>，可以将多个<code>IO</code>合并为一个，同时实现简单。但是需要修改虚拟机和操作系统内核。</p>
+<h3 id="设备直通">设备直通</h3>
+<p>​	如果让虚拟机直接管理物理设备，会存在诸如<code>DMA</code>恶意读写内存的问题。</p>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/IOMMU.png" alt="" loading="lazy"></figure>
+<p>​	<code>SMMU</code>是<code>ARM</code>中<code>IOMMU</code>的实现，这里也存在两阶段地址翻译，<code>IOVA-&gt;GPA</code>，第二个阶段进行<code>GPA-&gt;HPA</code>。</p>
+<figure data-type="image" tabindex="6"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/process_smmu.png" alt="" loading="lazy"></figure>
+<p>​	除了隔离问题，还要解决设备独占的问题，满足<code>SR-IOV</code>标准的设备，可以使用如下的复用。</p>
+<figure data-type="image" tabindex="7"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/SR-IOV.png" alt="" loading="lazy"></figure>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/nei-cun-xu-ni-hua/" class="post-title gt-a-link">
+                    内存虚拟化
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

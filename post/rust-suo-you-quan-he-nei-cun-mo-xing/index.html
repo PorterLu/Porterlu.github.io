@@ -1,0 +1,279 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>RUST所有权和内存模型  | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    RUST所有权和内存模型 
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-02-05 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/v4HdSX9Dy/" class="post-tags">
+                            # rust
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="借用和引用">借用和引用</h2>
+<p>​	在深入所有权之前，先再次介绍引用。引用是一种<code>Rust</code>提供的指针语义，它基于指针实现，引用可以看作某块内存的别名，它需要满足编译器的各种安全检查规则。我们使用<code>&amp;</code>表示不可变应用类型，同时使用<code>&amp;mut</code>表示可变引用类型。接着介绍借用的概念，通过<code>&amp;</code>接上一个变量，可以实现对于所有权的借用，借用所有权并不会让所有权发生转移，但是所有者会受到如下的限制：</p>
+<ul>
+<li>在不可变借用期间，所有者不能修改内存内容，也不能再次出借为可变借用。</li>
+<li>在可变借用期间，所有者不能访问内存内容，并且不能再次出借。</li>
+</ul>
+<p>​	当借用者离开作用域时，所有权就会归还。同时借用有如下的规则：</p>
+<ol>
+<li>
+<p>借用的声明周期不能长于出借方的声明周期。</p>
+</li>
+<li>
+<p>可变借用不能有多个。</p>
+</li>
+<li>
+<p>不可变借用不能出借为可变借用。</p>
+</li>
+</ol>
+<p>这里举几个常见例子。</p>
+<h3 id="例子1">例子1</h3>
+<pre><code class="language-rust">fn main() {
+    let mut a = vec![1, 2, 3];
+    let b: &amp;mut Vec&lt;i32&gt; = &amp;mut a;
+    
+    for i in b {
+        println!(&quot;{}&quot;, i);
+    }
+    
+    println!(&quot;{}&quot;, b[0]);
+}
+</code></pre>
+<p>​	这里将<code>a</code>声明为一个可变的<code>vec</code>，<code>b</code>接着对<code>a</code>进行一次可变引用。但是<code>b</code>，这里在<code>for i in b</code>这个语句中，会自动调用<code>into_iter(b)</code>导致了所有权的转移，接着使用<code>b[0]</code>就会出错。但是如果改为<code>b.iter()</code>，会自动扩展为<code>(&amp;mut *b).iter()</code>，这样循环结束后，由于再借用结束，<code>b</code>就可以继续使用。</p>
+<h3 id="例子2">例子2</h3>
+<pre><code class="language-rust">impl List {
+    //...
+    pub fn push(&amp;mut self, elem: i32) {
+        let new_code = Box::new(Node {
+            elem:
+            next: self.head
+        })
+        
+        self.head = Link::More(new_node);
+    }
+}
+</code></pre>
+<p>​	如上是一个栈的实现代码，这里<code>next: self.head</code>会报错，因为<code>self</code>这里已经被借用，被借用后就不能再移动了，除非所有权被归还。</p>
+<h3 id="例子3">例子3</h3>
+<pre><code class="language-rust">#[derive(Debug)]
+struct Student {
+    age: i32,
+    id: i32,
+}
+
+fn main() {
+    let mut a = Student { age: 1, id: 0 };
+    let b = &amp;mut a.age;
+    let c = b;
+    *c = 3
+}
+</code></pre>
+<p>如上的代码可以被正确的执行，因为它并不违反可变借用只能有一个的原则，这里<code>b</code>对<code>a</code>进行了可变借用，但是b右将所有权交给了<code>c</code>，从始至终只有一个可变引用，不违反借用规则。</p>
+<h3 id="例子4">例子4</h3>
+<pre><code class="language-rust">fn main() {
+    let mut a = 1;
+    let b = &amp;a;
+    let c = &amp;a;
+    println!(&quot;{} {}&quot;, b, c);
+}
+</code></pre>
+<p>这里由于默认是不可变借用，所以根据借用规则，不可变借用可以有多个。</p>
+<h2 id="内存模型">内存模型</h2>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/PorterLu/picgo/main/rust_memory_model.png" alt="" loading="lazy"></figure>
+<p>​		这里介绍了各种只能指针和引用在内存是如何分布的，大部分都是使用一个类似指针的一个变量指向内存的一个位置。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-san-zhang/" class="post-title gt-a-link">
+                    rCore第三章 
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

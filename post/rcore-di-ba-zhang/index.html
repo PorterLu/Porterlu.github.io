@@ -1,0 +1,965 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rCore第八章 | Porterlu Personal Blog</title>
+
+<link rel="shortcut icon" href="https://porterlu.github.io/favicon.ico?v=1706271939855">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://porterlu.github.io/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/9.12.0/languages//dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Porterlu Personal Blog
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://porterlu.github.io/post/link" class="menu gt-a-link">
+                    友链
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1706271939855"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rCore第八章
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-20 ·
+                    </time>
+                    
+                        <a href="https://porterlu.github.io/tag/PYI5DtfFd/" class="post-tags">
+                            # rCore
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h3 id="用户线程">用户线程</h3>
+<h4 id="数据结构">数据结构</h4>
+<pre><code>use std::arch::asm;
+
+const DEFAULT_STACK_SIZE: usize = 1024 * 1024 * 2;
+const MAX_THREADS: usize = 4;
+static mut RUNTIME: usize = 0;
+</code></pre>
+<p>声明一些全局变量。</p>
+<pre><code>pub struct Runtime {
+	threads: Vec&lt;Thread&gt;,
+    current: usize,
+}
+
+#[derive(PartialEq, Eq, Debug)]
+enum State {
+    Available,
+    Running,
+    Ready,
+}
+
+struct Thread {
+	id: usize,
+    stack: Vec&lt;u8&gt;,
+    ctx: ThreadContext,
+    state: State,
+}
+
+#[derive(Debug, Default)]
+#[repr(C)]
+struct ThreadContext {
+    rsp: u64,
+    r15: u64,
+    r14: u64,
+    r13: u64,
+    r12: u64,
+    rbx: u64,
+    rbp: u64,
+}
+</code></pre>
+<p>​	声明用户态线程所需要的数据结构，由于用户态线程对于内核是不可知的，我们需要一个<code>Runtime</code>进行调度，这里<code>Runtime</code>中维护了一个<code>Thread</code>队列。由于用户态线程除了单独的栈，调用和普通函数一样，我们在保存寄存器状态时，只需要保存<code>callee</code>保存寄存器。</p>
+<h4 id="runtime">Runtime</h4>
+<p>在运行用户态线程之前，我们需要对运行时进行初始化。</p>
+<pre><code>impl Thread {
+    fn new(id: usize) -&gt; Self {
+        Thread {
+            id, 
+            stack: vec![0_u8; DEFAULT_STACK_SIZE],
+            ctx: ThreadContext::default(),
+            state: State:;Available,
+        }
+    }
+}
+impl Runtime {
+    pub fn new() -&gt; Self {
+        let base_therad = Thread {
+            id: 0,
+            stack: vec![0_u8; DEFAULT_STACK_SIZE],
+            ctx: ThreadContext::default(),
+            state: State::Running,
+        }
+        
+        let mut threads = vec![base_thread];
+        let mut available_threads: Vec&lt;Thread&gt; = (1..MAX_THREADS)
+        								.map(|i| Thread::new(i))
+        								.collect();
+        threads.append(&amp;mut available_threads);
+        
+        Runtime {
+            threads,
+            current: 0,
+        }
+    }
+    
+    pub fn init(&amp;self) {
+        unsafe {
+            let r_ptr: *const Runtime = self;
+            RUNTIME = r_ptr as usize;
+        }
+    }
+}
+</code></pre>
+<p>这里初始化了主线程，这个线程用于调度其他的线程，是一开始默认调度的线程。同时将所有线程模板加入到队列中。运行时就是这个队列和当前线程号组成的。</p>
+<pre><code>impl Runtime {
+    #[inline(never)]
+    fn t_yield(&amp;mut self) -&gt; bool {
+        let mut pos = self.current;
+        while self.threads[pos].state != State::Ready {
+            pos += 1;
+            if pos == self.threads.len() {
+                pos = 0;
+            }
+            if pos == self.current {
+                return false;
+            }
+        }
+        
+        if self.threads[self.current].state != State::Available {
+            self.threads[self.current].state = State::Ready;
+        }
+        
+        self.threads[pos].state = State::Running;
+        let old_pos = self.current;
+        self.current = pos;
+        
+        unsafe {
+            let old: *mut ThreadContext = &amp;mut self.threads[old_pos].ctx;
+            let new: *const ThreadContext = &amp;self.threads[pos].ctx;
+            asm!(&quot;call switch&quot;, in(&quot;rdi&quot;) old, in(&quot;rsi&quot;) new, clobber_abi(&quot;C&quot;));
+        }
+        
+        self.threads.len() &gt; 0
+    }
+}
+</code></pre>
+<p>首先介绍<code>t_yield</code>，这个方法会遍历<code>thread</code>队列，找到一个状态是<code>Ready</code>的线程，我们会将自己的<code>current</code>的状态设置为<code>Ready</code>。同时将我们选择的线程状态设置为<code>running</code>, 之后交换新旧线程的上下文。</p>
+<pre><code>pub fn spawn(&amp;mut self, f: fn()) {
+    let available = self
+    		.threads
+    		.iter_mut()
+    		.find(|t| t.state == State:;Available)
+    		.expect(&quot;no available thread.&quot;)
+    let size = available.stack.len();
+    unsafe {
+        let s_ptr = available.stack.as_mut_ptr().offset(size as isize);
+        let s_ptr = (s_ptr as usize as !15) as *mut u8;
+        std::ptr::write(s_ptr.offset(-16) as *mut u64, guard as u64);
+        std::ptr::write(s_ptr.offset(-24) as *mut u64, skip as u64);
+        std::ptr::write(s_ptr.offset(-32) as *mut u64, f as u64);
+        available.ctx.rsp = s_ptr.offset(-32) as u64;
+    }
+    available.state = State::Ready;
+}
+#[naked]
+unsafe extern &quot;C&quot; fn skip() {
+    asm!(&quot;ret&quot;, options(noreturn))
+}
+
+fn guard() {
+    unsafe {
+        let rt_ptr = RUNTIME as *mut Runtime;
+        (*rt_ptr).t_return();
+    };
+}
+</code></pre>
+<p>这里<code>spawn</code>会遍历队列，找到一个没有被占位的<code>Thread</code>结构体，往线程对应的栈中压入<code>f</code>、<code>skip</code>、<code>guard</code>函数，之后将上下文中的<code>sp</code>指针指向<code>f</code>的位置，那么这个<code>Thread</code>就被创建完成加入到了队列中。</p>
+<p>当所有的线程创建完毕时，在主线程中会调用<code>run</code>方法，</p>
+<pre><code>impl runtime {
+    pub fn run(&amp;mut self) -&gt; ! {
+        while self.t_yield() {}
+        std::process::exit(0);
+    }
+    fn t_return(&amp;mut self) {
+        if self.current != 0 {
+            self.threads[self.current].state = State::Available;
+            self.t_yield();
+        }
+    }
+}
+</code></pre>
+<p><code>run</code>中将会不断地调用我们如下分析过的<code>t_yield</code>方法。</p>
+<pre><code>#[naked]
+#[no_mangle]
+unsafe extern &quot;C&quot; fn switch() {
+    asm!(
+&quot;mov [rdi + 0x00], rsp&quot;,
+        &quot;mov [rdi + 0x08], r15&quot;,
+        &quot;mov [rdi + 0x10], r14&quot;,
+        &quot;mov [rdi + 0x18], r13&quot;,
+        &quot;mov [rdi + 0x20], r12&quot;,
+        &quot;mov [rdi + 0x28], rbx&quot;,
+        &quot;mov [rdi + 0x30], rbp&quot;,
+        &quot;mov rsp, [rsi + 0x00]&quot;,
+        &quot;mov r15, [rsi + 0x08]&quot;,
+        &quot;mov r14, [rsi + 0x10]&quot;,
+        &quot;mov r13, [rsi + 0x18]&quot;,
+        &quot;mov r12, [rsi + 0x20]&quot;,
+        &quot;mov rbx, [rsi + 0x28]&quot;,
+        &quot;mov rbp, [rsi + 0x30]&quot;,
+        &quot;ret&quot;, options(noreturn)    
+    );
+}
+</code></pre>
+<p>如上是<code>switch</code>函数，我们需要交换所有的线程中的<code>callee</code>保存寄存器。</p>
+<h3 id="内核线程">内核线程</h3>
+<p>​	<img src="https://raw.githubusercontent.com/PorterLu/picgo/main/threads.png" alt="" loading="lazy"></p>
+<p>这里存在三种资源分配器，一个是<code>pid</code>，<code>kstack_id</code>和<code>userRes_id</code>, 由于<code>userRes</code>在每个<code>pid</code>分配的资源中进行再分配，所以<code>userRes</code>从0号开始分配。同时<code>kstack_id</code>则是所有进程的线程是同等，需要一个跨越不同进程的分配器，让不同的进程中线程分配的内核栈空间不重合。</p>
+<p>​	对于一个<code>ProcessControlBlock</code> 其中根据上面的描述，它有一个独立的<code>tid_allocator</code>来管理线程号，还有一个地址空间映射，进程中的所有的线程共享这个地址空间。同时<code>tasks</code>队列中有一些线程控制块<code>TaskControlBlock</code>， 线程控制块中保存了一些线程独有的信息，如<code>tid</code>, <code>task_cx</code>,  <code>trap_cx_ppn</code>。</p>
+<p>​	当我们创建一个进程时，代码如下：</p>
+<pre><code class="language-rust">pub fn new(elf_data: &amp;[u8]) -&gt; Arc&lt;Self&gt; {
+    let (memory_set, ustack_base, entry_point) = MemorySet::from_elf(elf_data);
+    let pid_handle = pid_alloc();
+    let process = Arc::new(Self {
+        pid: pid_handle,
+        inner: unsafe {
+            UPSafeCell::new(ProcessControlBlockInner {
+                is_zombie: false,
+                memory_set: None,
+                parent: None,
+                children: Vec::new(),
+                exit_code: 0,
+                fd_table: vec![
+                    Some(Arc::new(Stdin)),
+                    Some(Arc::new(Stdout)),
+                    Some(Arc::new(Stdout)),
+                ],
+                signals: SignalFlags::empty(),
+                tasks: Vec::new(),
+                task_res_allocator: RecycleAllocator::new(),
+                mutex_list: Vec::new(),
+                semaphore_list: Vec::new(),
+                condvar_list: Vec::new(),
+            })
+        },
+    });
+    let task = Arc::new(TaskControlBlock::new(
+    	Arc::clone(&amp;process),
+        ustack_base,
+        true,
+    ));
+    let task_inner = task.inner_exclusive_access();
+    let trap_cx = task_inner.get_trap_cx();
+    let ustack_top = task_inner.res.as_ref().unwrap().ustack_top();
+    let kstack_top = task.kstack.get_top();
+    drop(task_inner);
+    *trap_cx = TrapContext::app_init_context(
+    	entry_point,
+        ustack_top,
+        KERNEL_SPACE.exclusive_access().token(),
+        kstack_top,
+        trap_handler as usize,
+    );
+    let mut process_inner = process.inner_exclusive_access();
+    process_inner.tasks.push(Some(Arc::clone(&amp;task)));
+    drop(process_inner);
+    insert_into_pid2process(process.getpid(), Arc::clone(&amp;process));
+    add_task(task);
+    process
+}
+</code></pre>
+<p>​		根据<code>ELF</code>文件的内容获取到地址空间<code>memory_set</code>, 接着申请一个<code>pid</code>，根据这些结构申请一个<code>process control Block</code>结构，这个结构中有<code>memory_set</code>, 父子关系，<code>exit_code</code>, 文件描述符表，信号队列，线程队列，线程号分配器，互斥锁，信号量，条件变量。</p>
+<p>​	其中部分资源需要进行初始化，比如线程队列，我们需要压入一个主线程，它的线程号为0，我们需要设置线程的入口地址，栈空间，<code>satp</code>,  陷入处理函数。最后将这个线程压入队列，同时将这个线程加入整个调度队列中，最后返回这个<code>process</code></p>
+<pre><code class="language-rust">pub fn exec(self: &amp;Arc&lt;Self&gt;, elf_data: &amp;[u8], args: Vec&lt;String&gt;) {
+    assert_eq!(self.inner_exclusive_access().thread_count(), 1);
+    let (memory_set, ustack_base, entry_point) = MemorySet::from_elf(elf_data);
+    let new_token = memory_set.token();
+    self.inner_exclusive_access().memory_set = memory_set;
+    let task = self.inner_exclusive_access().get_task(0);
+    let mut task_inner = task.inner_exclusive_access();
+    task_inner.res.as_mut().unwrap().ustack_base = ustack_base;
+    task_inner.res.as_mut().unwrap().alloc_user_res();
+    task_inner.trap_cx_ppn = task_inner.res.as_mut().unwrap().trap_cx_ppn();
+    let mut user_sp = task_inner.res.as_mut().unwrap().ustack_top();
+    user_sp -= (arg.len() + 1) * core::mem::size_of::&lt;usize&gt;();
+    let mut argv: Vec&lt;_&gt; = (0..=args.len())
+    	.map(|arg| {
+        	translated_refmut(
+            	new_token,
+                (argv_base + arg * core::mem::size_of::&lt;usize&gt;()) as *mut usize,
+            )    
+    	})
+    	.collect();
+    *argv[args.len()] = 0;
+    for i in 0..args.len() {
+        user_sp -= args[i].len() + 1;
+        *argv[i] = user_sp;
+        let mut p = user_sp;
+        for c in args[i].as_bytes() {
+            *translated_refmut(new_token, p as *mut u8) = *c;
+            p += 1;
+        }
+        *translated_refmut(new_token, p as *mut u8) = 0;
+    }
+    user_sp -= user_sp % core::mem::size_of::&lt;usize&gt;();
+    let mut trap_cx = TrapContext::app_init_context(
+    	entry_point,
+        user_sp,
+        KERNEL_SPACE.exclusive_access().token(),
+        task.kstack.get_top(),
+        trap_handler as usize,
+    );
+    trap_cx.x[10] = args.len();
+    trap_cx.x[11] = argv_base;
+    *task_inner.get_trap_cx() = trap_cx;
+}
+</code></pre>
+<p>​	对于执行一个<code>ELF</code>文件，我们通过要解析<code>ELF</code>文件后获取<code>memory_set</code>， 替换原来的<code>memory_set</code>, 之后替换原来主线程的用户栈（栈底的位置），分配<code>tid</code>号同时分配对应的资源，设置新的<code>trap_cx_ppn</code>。压入<code>exec</code>的传给用户进程的参数。最后我们要对刚才的<code>trap_cx_ppn</code>处的内容进行初始化，设置完返回值后，返回。</p>
+<pre><code class="language-rust">//对于fork我们只支持只有一个线程的进程
+pub fn fork(self: &amp;Arc&lt;Self&gt;) -&gt; Arc&lt;Self&gt; {
+    let mut parent = self.inner_exclusive_access();
+    assert_eq!(parent.thread_count(), 1);
+    let memory_set = MemorySet::from_existed_user(&amp;parent.memory_set);
+    let pid = pid_alloc();
+    let mut new_fd_table: Vec&lt;Option&lt;Arc&lt;dyn File + Send + Sync&gt;&gt;&gt; = Vec::new();
+    for fd in parent.fd_table.iter() {
+        if let Some(file) = fd {
+            new_fd_table.push(Some(file.clone()));
+        } else {
+            new_fd_table.push(None);
+        }
+    }
+    let child = Arc::new(Self {
+        pid,
+        inner: unsafe {
+            UPSafeCell::new(ProcessControlBlockInner{
+                is_zombie: false,
+                memory_set,
+                parent: Some(Arc::downgrade(self)),
+                children: Vec::new(),
+                exit_code: 0,
+                fd_table: new_fd_table,
+                signals: SignalFlags::empty(),
+                tasks: Vec::new(),
+                tasks_res_allocator: RecycleAllocator::new(),
+                mutex_list: Vec::new(),
+                semaphore_list: Vec::new(),
+                condvar_list: Vec::new(),
+            })
+        },
+    });
+    parent.children.push(Arc::clone(&amp;child));
+    let task = Arc::new(TaskControlBlock::new(
+    	Arc::clone(&amp;child),
+        parent
+        	.get_task(0)
+        	.inner_exclusvie_access()
+        	.res
+        	.as_ref()
+        	.unwrap()
+        	.ustack_base(),
+        false,
+    ));
+    let mut child_inner = child.inner_exclusive_access();
+    child_inner.tasks.push(Some(Arc::clone(&amp;task)));
+    drop(child_inner);
+    let task_inner = task.inner_exclusive_access();
+    let trap_cx = task_inner.get_trap_cx();
+    trap_cx.kernel_sp = task.kstack.get_top();
+    drop(task_inner);
+    insert_into_pid2process(child.getpid(), Arc::clone(&amp;child));
+    add_task(task);
+    child
+}
+</code></pre>
+<p>​	首先复制父进程的地址空间，申请一个<code>pid</code>, 之后复制父进程的文件描述符表。接着我们需要压入子进程。和上面的函数类似，我们需要为我们的进程创建主线程，将这个线程压入<code>process control block</code>的线程队列中。最后将这个进程的主线程压入到调度队列中。</p>
+<p>​	但是在加入多线程后更加复杂的是退出的功能，我们要对退出的是主线程的情况进行区分。</p>
+<pre><code class="language-rust">pub fn exit_current_and_run_next(exit_code: i32) {
+    let task = take_current_task().unwrap();
+    let mut task_inner = task.inner_exclusive_access();
+    let process = task.process.upgrade().unwrap();
+    let tid = task_inner.res.as_ref().unwrap().tid;
+    task_inner.exit_code = Some(exit_code);
+    task_inner.res = None;
+    drop(task_inner);
+    drop(task);
+    if tid == 0 {
+        let pid = process.getpid();
+        if pid == IDLE_PID {
+            println!(
+            	&quot;[kernel] Idle process exit with exit_code {} ...&quot;,
+                exit_code
+            );
+            if exit_code != 0 {
+                crate::board::QEMU_EXIT_HANDLE.exit_failure();
+            } else {
+                crate::board::QEMU_EXIT_HANDLE.exit_success();
+            }
+        }
+        remove_from_pid2process(pid);
+        let mut process_inner = process.inner_exclusive_access();
+        process_inner.is_zombie = true;
+        process_inner.exit_code = exit_code;
+        
+        {
+            let mut initproc_inner = INITPROC.inner_exclusive_access();
+            for child in process_inner.children.iter() {
+                child.inner_exclusive_access().parent = Some(Arc::downgrade(&amp;INITPROC));
+                initproc_inner.children.push(child.clone());
+            }
+        }
+        
+        let mut recycle_res = Vec::&lt;TaskUserRes&gt;&gt;::new();
+        for task in process_inner.tasks.iter().filter(|t| t.is_some()) {
+            let task = task.as_ref().unwrap();
+            remove_inactive_task(Arc::clone(&amp;task));
+            if let Some(res) = task_inner.res.take() {
+                recycle_res.push(res);
+            }
+        }
+        
+        drop(process_inner);
+        recycle_res.clear();
+        
+        let mut process_inner = process.inner_exclusive_access();
+        process_inner.children.clear();
+        process_inner.memory_set.recycle_data_pages();
+        process_inner.fd_table.clear();
+        process_inner.tasks.clear();
+    }
+    drop(process);
+    let mut _unused = TaskContext::zero_init();
+    schedule(&amp;mut _unused as *mut _);
+}
+</code></pre>
+<p>​	首先获取当前线程的<code>tid</code>， 设置线程的<code>exit_code</code>， 之后如果<code>tid</code>为0，我们需要设置进程的<code>exit_code</code>, 之后将子进程都转移到<code>init</code>进程下。接下来我们需要回收线程的资源。我们生成一个<code>TaskUserRes</code>， 接着遍历进程的<code>task</code>队列，将这些线程移除队列，并回收对应的线程号。</p>
+<p>​	最后将文件描述表，子进程表，页资源回收。调度下一个线程。</p>
+<p>​	接下来是系统调用是如何实现的代码：</p>
+<pre><code class="language-rust">pub fn sys_thread_create(entry: usize, arg: usize) -&gt; isize {
+    let task = current_task().unwrap();
+    let process = task.process.upgrade().unwrap();
+    let new_task = Arc::new(TaskControlBlock::new(
+    	task.inner_exclusive_access()
+        	.res
+        	.as_ref()
+        	.unwrap()
+        	.ustack_base,
+        	true,
+    ));
+    add_task(Arc::clone(&amp;new_task));
+    let new_task_inner = new_task.inner_exclusive_access();
+    let new_task_res = new_task_inner.res.as_ref().unwrap();
+    let new_task_tid = new_task_res.tid;
+    let mut process_inner = process.inner_exclusive_access();
+    let tasks = &amp;mut process_inner.tasks;
+    while tasks.len() &lt; new_task_tid + 1 {
+        tasks.push(None)
+    }
+    tasks[new_task_tid] = Some(Arc::clone(&amp;new_task));
+    let new_task_trap_cx = new_task_inner.get_trap_cx();
+    *new_task_trap_cx = TrapContetx::app_init_context(
+    	entry,
+        new_task_res.ustack_top(),
+        kernel_token(),
+        new_task.kstack.get_top(),
+        trap_handler as usize,
+    )
+    (*new_task_trap_cx.x[10]) = arg;
+    new_task_tid as usize
+}
+</code></pre>
+<p>​	线程的创建我们需要获取现在的父进程，之后创建一个空的线程结构，分配一个<code>tid</code>，将这个线程加入进程的队列中，接下来将这个线程的<code>trap</code>上下文设置好就可以返回。</p>
+<pre><code class="language-rust">pub fn sys_waittid(tid: usize) -&gt; i32 {
+    let tasks = current_task().unwrap();
+    let process = tasks.process.upgrade().unwrap();
+    let task_inner = task.inner_exclusive_access();
+    let mut process_inner = processor.inner_exclusive_access();
+    if task_inner.res.as_ref().unwrap().tid == tid {
+        return -1;
+    }
+    let mut exit_code: Option&lt;i32&gt; = None;
+    let waited_task = processor_inner.tasks[tid].as_ref();
+    if let Some(waited_task) = waited_task {
+        if let Some(waited_exit_code) = waited_task.inner_exclusive_access().exit_code {
+            exit_code = Some(waited_exit_code);
+        }
+    } else {
+        // waited thread does not exist
+        return -1;
+    }
+    if let Some(exit_code) = exit_code {
+        // dealloc the exited thread
+        process_inner.tasks[tid] = None;
+        exit_code
+    } else {
+        // waited thread has not exited
+        -2
+    }
+} 
+</code></pre>
+<p>​	获取进程控制块后，会检查子进程中的<code>exit_code</code>，进行返回。</p>
+<h3 id="同步互斥">同步互斥</h3>
+<p>​	这里互斥锁的实现是一个自旋锁或者阻塞锁：</p>
+<pre><code class="language-rust">pub struct MutexSpin {
+    locked: UPSafeCell&lt;bool&gt;,
+}
+
+impl MutexSpin {
+    pub fn new() -&gt; Self {
+        Self {
+            locked unsafe { UPSafeCell}
+        }
+    }
+}
+
+impl Mutex for MutexSpin {
+    fn lock(&amp;self) {
+        loop {
+            let mut locked = self.locked.exclusive_access();
+            if *locked {
+                drop(locked);
+                suspend_current_and_run_next();
+                continue;
+            } else {
+                *locked = true;
+                return ;
+            }
+        }
+    }
+    
+    fn unlock(&amp;self) {
+        let mut locked = self.locked.exclusive_access();
+        *locked = false;
+    }
+}
+</code></pre>
+<p>​	对于<code>spin</code>形式的锁，会直接判断这个锁是否已经获取，如果已经被其他的线程获取了，那么就调度其他线程进行执行。而<code>MutexBlocking</code>内部维护了一个队列：</p>
+<pre><code class="language-rust">pub struct MutexBlocking {
+    inner: UPSafeCell&lt;MutexBlockingInner&gt;,
+}
+
+pub struct MutexBlockingIner {
+    locked: bool,
+    wait_queue: VecDeque&lt;Arc&lt;TaskControlBlock&gt;&gt;,
+}
+
+impl MutexBlocking {
+    pub fn new() -&gt; Self {
+        Self {
+            inner: unsafe {
+                UPSafeCell::new(MutexBlockingInner{
+                    locked: false,
+                    wait_queue: VecDeque::new(),
+                })
+            },
+        }
+    }
+}
+
+impl Mutex for MutexBlocking {
+    fn lock(&amp;self) {
+        let mut mutex_inner = self.inner.exclusive_access();
+        if mutex_inner.locked {
+            mutex_inner.wait_queue.push(current_task().unwrap());
+            drop(mutex_inner);
+            block_current_and_run_next();
+        } else {
+            mutex_inner.locked = true;
+        }
+    }
+    
+    fn unlock(&amp;self) {
+        let mut mutex_inner = self.inner.exclusive_access();
+        assert!(mutex_inner.locked);
+        if let Some(waking_task) = mutex_inner.wait_queue.pop_front() {
+            wakeup_task(waking_task);
+        } else {
+            mutex_inner.locked = false;
+        }
+    }
+}
+</code></pre>
+<p>​	这里可以发现调用的是<code>block_current_and_run_next</code>， 所说这个线程将被拿出调度队列，于是内核调度时就不会考虑这个线程。而对锁解锁时，就可以拿出一个<code>wait_queue</code>中的阻塞线程加入到调度队列中。</p>
+<p>​	下面是信号量的实现，也十分类似：</p>
+<pre><code class="language-rust">pub struct Semaphore {
+    pub inner: UPSafeCell&lt;Semaphore&gt;,
+}
+
+pub struct SemaphoreInner {
+    pub count: isize,
+    pub wait_queue: VecDeque&lt;Arc&lt;TaskControlBlock&gt;&gt;,
+}
+
+impl Semaphore {
+    pub fn new(res_count: usize) -&gt; Self {
+        Self {
+            inner: unsafe {
+                UPSafeCell:new(SemaphoreInner {
+                    count: res_count as isize,
+                    wait_queue: VecDeque::new(),
+                })
+            },
+        }
+    }
+    
+    pub fn up(&amp;self) {
+        let mut inner = self.inner.exclusive_access();
+        inner.count += 1;
+        if inner.count &lt;= 0 {
+            if let Some(task) = inner.wait_queue.pop_front() {
+                wakeup_task(task);
+            }
+        }
+    }
+    
+    pub fn down(&amp;self) {
+        let mut inner = self.inner.exclusive_access();
+        inner.count -= 1;
+        if inner.count &lt; 0 {
+            inner.wait_queue.push_back(current_task().unwrap());
+            drop(inner);
+            block_current_and_run_next();
+        }
+    }
+}
+</code></pre>
+<p>​	同样我们维护了一个队列，相当于对于<code>mutexBlock</code>进行了扩展, 只要信号量小于0，就要压入队列中。</p>
+<p>​	下面是条件变量：</p>
+<pre><code class="language-rust">pub struct Condvar {
+    pub inner: UPSafeCell&lt;CondvarInner&gt;,
+}
+
+pub struct CondvarInner {
+    pub wait_queue: VecDeque&lt;Arc&lt;TaskControlBlock&gt;&gt;,
+}
+
+impl Condvar {
+    pub fn new() -&gt; Self {
+        inner: unsafe {
+            UPSafeCell::new(CondvarInner {
+                wait_queue: VecDeque::new(),
+            })
+        },
+    }
+    
+    pub fn signal(&amp;self) {
+        let mut inner = self.inner.exclusive_access();
+        if let Some(task) = inner.wait_queue.pop_front() {
+            wakeup_task(task);
+        }
+    }
+    
+    pub fn wait(&amp;self, mutex: Arc&lt;dyn Mutex&gt;) {
+        mutex.unlock();
+        let mut inner = self.inner.exclusive_access();
+        inner.wait_queue.push_back(current_task().unwrap());
+        drop(inner);
+        block_current_and_run_next();
+        mutex.lock();
+    }
+}
+</code></pre>
+<p>​	这里采用比较常用的方式，使用<code>mutex</code>和阻塞实现条件变量。</p>
+<pre><code class="language-rust">pub fn sys_mutex_create(blocking: bool) -&gt; isize {
+    let process = current_process();
+    let mutex: Option&lt;Arc&lt;dyn Mutex&gt;&gt; = if !blocking {
+        Some(Arc::new(MutexSpin::new()))
+    } else {
+        Some(Arc::new(MutexBlocking::new()))
+    };
+    let mut process_inner = process.inner_exclusive_access();
+    if let Some(id) = process_inner
+        .mutex_list
+        .iter()
+        .enumerate()
+        .find(|(_, item)| item.is_none())
+        .map(|(id, _)| id)
+    {
+        process_inner.mutex_list[id] = mutex;
+        id as isize
+    } else {
+        process_inner.mutex_list.push(mutex);
+        process_inner.mutex_list.len() as isize - 1
+    } 
+}
+</code></pre>
+<p>​	这里将<code>mutex</code>设置为一个<code>Spin</code>或者<code>Block</code>的锁，之后遍历<code>process</code>中的<code>mutex</code>队列，将这个申请的<code>mutex</code>放入队列中。最后会返回锁的<code>ID</code>。</p>
+<pre><code class="language-rust">pub fn sys_mutex_lock(mutex_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let mutex = Arc::clone(process_inner.mutex_list[mutex_id].as_ref().unwrap());
+    drop(process_inner);
+    drop(process);
+    mutex.lock();
+    0
+}
+</code></pre>
+<p>​	这里会对应的锁进行锁住，在锁被占用的情况，如果是<code>spin</code>的锁将直接调度下一个进程，如果是<code>block</code>锁，会将对应的线程加入到锁的阻塞队列中。</p>
+<pre><code class="language-rust">pub fn sys_mutex_unlock(mutex_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let mutex = Arc::clone(process_inner.mutex_list[mutex_id].as_ref().unwrap());
+    drop(process_inner);
+    drop(process);
+    mutex.unlock();
+}
+</code></pre>
+<p>​	对于信号量，我们需要<code>up</code>和<code>down</code>函数，来对统计量进行控制。</p>
+<pre><code class="language-rust">pub fn sys_semaphore_create(res_count: usize) -&gt; isize {
+    let process = current_process();
+    let mut process_inner = process.inner_exclusive_access();
+    let id = if let Some(id) = process_inner
+        .semaphore_list
+        .iter()
+        .enumerate()
+        .find(|(_, item)| item.is_none())
+        .map(|(id, _)| id)
+    {
+        process_inner.semaphore_list[id] = Some(Arc::new(Semaphore::new(res_count)));
+        id
+    } else {
+        process_inner
+            .semaphore_list
+            .push(Some(Arc::new(Semaphore::new(res_count))));
+        process_inner.semaphore_list.len() - 1
+    };
+    id as isize
+}
+
+pub fn sys_semaphore_up(sem_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let sem = Arc::clone(process_inner.semaphore_list[sem_id].as_ref().unwrap());
+    drop(process_inner);
+    sem.up();
+    0
+}
+
+pub fn sys_semaphore_down(sem_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let sem = Arc::clone(process_inner.semaphore_list[sem_id].as_ref().unwrap());
+    drop(process_inner);
+    sem.down();
+    0
+}
+</code></pre>
+<p>​	信号量的创建过程和<code>mutex</code>类似，但是这里需要<code>up</code>和<code>down</code>两个函数对于<code>count</code>进行维护，一旦<code>up</code> 表示一类资源进行了释放，可以从队列中取出一个阻塞的任务进行执行。</p>
+<pre><code class="language-rust">pub fn sys_condvar_create() -&gt; isize {
+    let process = current_process();
+    let mut process_inner = process.inner_exclusive_access();
+    let id = if let Some(id) = process_inner
+        .condvar_list
+        .iter()
+        .enumerate()
+        .find(|(_, item)| item.is_none())
+        .map(|(id, _)| id)
+    {
+        process_inner.condvar_list[id] = Some(Arc::new(Condvar::new()));
+        id
+    } else {
+        process_inner
+            .condvar_list
+            .push(Some(Arc::new(Condvar::new())));
+        process_inner.condvar_list.len() - 1
+    };
+    id as isize
+}
+
+pub fn sys_condvar_signal(condvar_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let condvar = Arc::clone(process_inner.condvar_list[condvar_id].as_ref().unwrap());
+    drop(process_inner);
+    condvar.signal();
+    0
+}
+
+pub fn sys_condvar_wait(condvar_id: usize, mutex_id: usize) -&gt; isize {
+    let process = current_process();
+    let process_inner = process.inner_exclusive_access();
+    let condvar = Arc::clone(process_inner.condvar_list[condvar_id].as_ref().unwrap());
+    let mutex = Arc::clone(process_inner.mutex_list[mutex_id].as_ref().unwrap());
+    drop(process_inner);
+    condvar.wait(mutex);
+    0
+}
+</code></pre>
+<p>​	对于条件变量，创建过程一样，需要在进程的条件变量队列中进行申请。这里分析<code>signal</code>和<code>wait</code>，可以发现这里不同的一点是<code>wait</code>需要传入一个<code>mutex_id</code>,  这里<code>wait</code>是会将这个锁打开，让后将线程控制块加入到队列中。一旦一个<code>signal</code>发生，会将一个线程控制块取出，之后线程控制块的代码从<code>sys_condvar_wait</code>代码中恢复，将锁再次锁住。</p>
+<p>​	这样使用一个条件变量时，就必须先使用<code>wait</code>。等待一个事件进行<code>signal</code>。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://porterlu.github.io/post/rcore-di-liu-zhang-lian-xi/" class="post-title gt-a-link">
+                    rCore第六章练习  
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'Ma3lilz8JpC72f6quYbJRcMH-gzGzoHsz',
+		appKey: '0kQkGQodcF690ezf72ZZnRPP',
+		avatar: '',
+		pageSize: 5,
+		recordIp: false,
+		placeholder: 'Just Go Go',
+		visitor: false,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">Note Records</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://porterlu.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
